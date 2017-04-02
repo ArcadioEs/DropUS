@@ -7,12 +7,13 @@ import javax.persistence.*;
  * Entity representing User in the system.
  */
 @Entity
+@Table(name = "USER_ENTITY")
 public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column
+    @Column(nullable = false)
     private String username;
 
     public UserEntity(String userName) {
@@ -25,7 +26,7 @@ public class UserEntity {
     @Override
     public String toString() {
         return String.format(
-                "User[id=%d, username='%s']",
+                "User with id=%d and username='%s']",
                 id, username);
     }
 
