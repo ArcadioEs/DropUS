@@ -1,6 +1,6 @@
-package org.engeneer.work.services;
+package org.engeneer.work.service;
 
-import org.engeneer.work.entities.UserEntity;
+import org.engeneer.work.model.UserEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +15,7 @@ public interface UserService {
 	/**
 	 * Gets specific user for given id.
 	 */
-	UserEntity getUserById(final Long id);
+	UserEntity getUserByUsername(final String username);
 
 	/**
 	 * Gets specific user for given username.
@@ -26,4 +26,10 @@ public interface UserService {
 	 * Gets all users from database.
 	 */
 	List<UserEntity> getAllUsers();
+
+	/**
+	 * Deletes user with given username.
+	 * If user will be found and deleted returns true, false otherwise.
+	 */
+	boolean deleteUser(final String username);
 }

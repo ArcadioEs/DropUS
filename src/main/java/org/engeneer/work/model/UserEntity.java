@@ -1,4 +1,4 @@
-package org.engeneer.work.entities;
+package org.engeneer.work.model;
 
 import javax.persistence.*;
 
@@ -19,7 +19,8 @@ public class UserEntity {
         this.username = userName;
     }
 
-    protected UserEntity() { }
+    protected UserEntity() {
+    }
 
     @Override
     public String toString() {
