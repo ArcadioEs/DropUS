@@ -25,10 +25,10 @@ public class UserController {
     public String getUser(@PathVariable("username") String username) {
         UserEntity user = userService.getUserByUsername(username);
 
-        if (user == null) {
-            return "User " + username + " could not be found.";
+        if (user != null) {
+            return user.toString();
         }
-        return user.toString();
+        return "User " + username + " could not be found.";
     }
 
     @RequestMapping(value = "add/{username}", method = RequestMethod.GET)
@@ -48,11 +48,16 @@ public class UserController {
         return "At this moment there are no users in the system.";
     }
 
-    @RequestMapping(value = "/delete/{username}", method = RequestMethod.GET)
-    public String deleteUser(@PathVariable("username") String username) {
-        if (userService.deleteUser(username)) {
-            return "User " + username + " deleted.";
+    @RequestMapping(value = "/delete/{userId}", method = RequestMethod.GET)
+    public String deleteUser(@PathVariable("userId") Long userId) {
+        UserEntity user = userService.getUserById(userId);
+
+        if(user != null) {
+            final String username = userService.getUserById(userId).getUsername();
+            if (userService.deleteUser(userId)) {
+                return "User with id " + userId + " (" + username + ") deleted.";
+            }
         }
-        return "User " + username + " could not be deleted.";
+        return "User with id " + userId + " could not be found.";
     }
 }

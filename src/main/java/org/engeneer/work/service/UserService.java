@@ -15,12 +15,17 @@ public interface UserService {
 	/**
 	 * Gets specific user for given id.
 	 */
+	UserEntity getUserById(final Long userId);
+
+	/**
+	 * Gets specific user for given username.
+	 */
 	UserEntity getUserByUsername(final String username);
 
 	/**
 	 * Gets specific user for given username.
 	 */
-	UserEntity saveUser(final String username);
+	void saveUser(final String username);
 
 	/**
 	 * Gets all users from database.
@@ -31,5 +36,5 @@ public interface UserService {
 	 * Deletes user with given username.
 	 * If user will be found and deleted returns true, false otherwise.
 	 */
-	boolean deleteUser(final String username);
+	boolean deleteUser(final Long userId);
 }

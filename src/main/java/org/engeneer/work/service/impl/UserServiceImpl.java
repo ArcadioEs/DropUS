@@ -17,22 +17,29 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    UserRepository repository;
+    UserRepository userRepository;
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public UserEntity getUserByUsername(final String username) {
-        return repository.findByUsername(username);
+    public UserEntity getUserById(final Long userId) {
+        return userRepository.findById(userId);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserEntity saveUser(final String username) {
-        return repository.save(new UserEntity(username));
+    public UserEntity getUserByUsername(final String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void saveUser(final String username) {
+        userRepository.save(new UserEntity(username));
     }
 
     /**
@@ -41,7 +48,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserEntity> getAllUsers() {
         final List<UserEntity> list = new ArrayList<>();
-        repository.findAll().iterator().forEachRemaining(list::add);
+        userRepository.findAll().iterator().forEachRemaining(list::add);
 
         return list;
     }
@@ -50,11 +57,11 @@ public class UserServiceImpl implements UserService {
      * {@inheritDoc}
      */
     @Override
-    public boolean deleteUser(final String username) {
-        UserEntity user = repository.findByUsername(username);
+    public boolean deleteUser(final Long userId) {
+        UserEntity user = userRepository.findById(userId);
 
         if (user != null) {
-            repository.delete(user);
+            userRepository.delete(user);
             return true;
         }
         return false;
