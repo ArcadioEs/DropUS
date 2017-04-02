@@ -23,7 +23,7 @@ public class UserController {
 
     @RequestMapping(value = "get/{username}", method = RequestMethod.GET)
     public String getUser(@PathVariable("username") String username) {
-        UserEntity user = userService.getUserByUsername(username);
+        final UserEntity user = userService.getUserByUsername(username);
 
         if (user != null) {
             return user.toString();
@@ -40,7 +40,7 @@ public class UserController {
 
     @RequestMapping(value = "/all")
     public String getAllUsers() {
-        List<UserEntity> users = userService.getAllUsers();
+        final List<UserEntity> users = userService.getAllUsers();
 
         if(! users.isEmpty()) {
             return users.toString();
@@ -50,7 +50,7 @@ public class UserController {
 
     @RequestMapping(value = "/delete/{userId}", method = RequestMethod.GET)
     public String deleteUser(@PathVariable("userId") Long userId) {
-        UserEntity user = userService.getUserById(userId);
+        final UserEntity user = userService.getUserById(userId);
 
         if(user != null) {
             final String username = userService.getUserById(userId).getUsername();
