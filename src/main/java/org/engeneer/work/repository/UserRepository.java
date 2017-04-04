@@ -14,9 +14,4 @@ public interface UserRepository extends CrudRepository<UserEntity, Long> {
 	 * Gets specific user for given id.
 	 */
 	UserEntity findById(Long userId);
-
-	/**
-	 * Gets specific user for given username.
-	 */
-	UserEntity findByUsername(String username);
 }

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-
 /**
  * Controller to display specific {@link UserEntity}.
  */
@@ -21,14 +20,14 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "get/{username}", method = RequestMethod.GET)
-    public String getUser(@PathVariable("username") String username) {
-        final UserEntity user = userService.getUserByUsername(username);
+    @RequestMapping(value = "get/{id}", method = RequestMethod.GET)
+    public String getUser(@PathVariable("id") Long userId) {
+        final UserEntity user = userService.getUserById(userId);
 
         if (user != null) {
             return user.toString();
         }
-        return "User " + username + " could not be found.";
+        return "User with id: " + userId + " could not be found.";
     }
 
     @RequestMapping(value = "add/{username}", method = RequestMethod.GET)
@@ -40,12 +39,8 @@ public class UserController {
 
     @RequestMapping(value = "/all")
     public String getAllUsers() {
-        final List<UserEntity> users = userService.getAllUsers();
-
-        if(! users.isEmpty()) {
-            return users.toString();
-        }
-        return "At this moment there are no users in the system.";
+        System.out.println(userService.getAllUsers().toString());
+        return userService.getAllUsers().toString();
     }
 
     @RequestMapping(value = "/delete/{userId}", method = RequestMethod.GET)

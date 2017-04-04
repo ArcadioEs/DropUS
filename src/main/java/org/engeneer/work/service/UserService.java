@@ -20,13 +20,6 @@ public interface UserService {
 	UserEntity getUserById(final Long userId);
 
 	/**
-	 * Gets specific user for given username.
-	 * @return
-	 * 			{@link UserEntity} for given username if found, null otherwise.
-	 */
-	UserEntity getUserByUsername(final String username);
-
-	/**
 	 * Adds new user to the system.
 	 */
 	void saveUser(final String username);

@@ -30,14 +30,6 @@ public class UserServiceImpl implements UserService {
      * {@inheritDoc}
      */
     @Override
-    public UserEntity getUserByUsername(final String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void saveUser(final String username) {
         userRepository.save(new UserEntity(username));
     }
