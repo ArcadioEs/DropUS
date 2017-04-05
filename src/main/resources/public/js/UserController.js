@@ -1,12 +1,16 @@
-var app = angular.module('users', []);
+var app = angular.module('DropUS', []);
 
 app.controller('userList', function ($scope, $http) {
 
     $scope.users = [];
 
     $scope.getAllUsers = function() {
-        $http.get("user/all").success(function(data) {
-            $scope.users = data;
+        $http({
+            method: 'GET',
+            url: 'user/all'
+        }).then(function(obj) {
+            $scope.users = obj.data;
+            console.log(obj)
         });
     }
 

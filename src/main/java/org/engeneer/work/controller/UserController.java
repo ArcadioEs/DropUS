@@ -37,17 +37,16 @@ public class UserController {
         return "User " + username + " added to the system.";
     }
 
-    @RequestMapping(value = "/all")
-    public String getAllUsers() {
-        System.out.println(userService.getAllUsers().toString());
-        return userService.getAllUsers().toString();
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    public List<UserEntity> getAllUsers() {
+        return userService.getAllUsers();
     }
 
     @RequestMapping(value = "/delete/{userId}", method = RequestMethod.GET)
     public String deleteUser(@PathVariable("userId") Long userId) {
         final UserEntity user = userService.getUserById(userId);
 
-        if(user != null) {
+        if (user != null) {
             final String username = userService.getUserById(userId).getUsername();
             if (userService.deleteUser(userId)) {
                 return "User with id " + userId + " (" + username + ") deleted.";

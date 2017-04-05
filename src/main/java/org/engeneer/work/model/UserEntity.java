@@ -26,7 +26,7 @@ public class UserEntity {
     @Override
     public String toString() {
         return String.format(
-                "User with id=%d and username='%s']",
+                "User with id=%d and username='%s'",
                 id, username);
     }
 
