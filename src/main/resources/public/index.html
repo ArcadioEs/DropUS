@@ -10,17 +10,23 @@
 
         <script src="js/UserController.js"></script>
 
-        <link rel="stylesheet" type="text/css" href="lib/bootstrap.min.css"/>
-        <link rel="stylesheet" type="text/css" href="lib/ng-grid.min.css"/>
-        <link rel="stylesheet" type="text/css" href="css/style.css"/>
+        <link rel="stylesheet" type="text/css" src="lib/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" src="lib/ng-grid.min.css"/>
+        <link rel="stylesheet" type="text/css" src="css/style.css"/>
     </head>
 
     <body>
     <br>
         <div>
-            <div ng-controller="userList">
+            <div ng-controller="userList" ng-init="getAllUsers()">
 
-                <button type="button" ng-click="getAllUsers()" class="btn btn-default">Get all users</button>
+                <input type="text" class="form-control" ng-model="usernameToAdd" placeholder="Add user">
+                <button type="button" ng-click="addUser()" class="btn">Add user</button>
+                <div>{{addUserMessage}}</div>
+
+                <input type="text" class="form-control" ng-model="userIdToDelete" placeholder="Delete user">
+                <button type="button" ng-click="deleteUser()" class="btn">Delete user</button>
+                <div>{{deleteUserMessage}}</div>
 
                 <ul>
                     <li ng-repeat="user in users">Username: {{user.username}}, with ID: {{user.id}}</li>
