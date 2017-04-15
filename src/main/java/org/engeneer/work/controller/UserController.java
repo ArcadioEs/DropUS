@@ -22,7 +22,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "get/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "get/{id}", method = RequestMethod.GET)
     public String getUser(@PathVariable("id") Long userId) {
         final UserEntity user = userService.getUserById(userId);
 
@@ -32,7 +32,7 @@ public class UserController {
         return "User with id: " + userId + " could not be found.";
     }
 
-    @RequestMapping(value = "add/{username}", method = RequestMethod.POST)
+    @RequestMapping(value = "add/{username}", method = RequestMethod.PUT)
     public Map<String, Object> addUser(@PathVariable("username") String username) {
         userService.saveUser(username);
         final Map<String, Object> model = new HashMap<>();
@@ -43,12 +43,12 @@ public class UserController {
         return model;
     }
 
-    @RequestMapping(value = "/all", method = RequestMethod.POST)
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
     public List<UserEntity> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @RequestMapping(value = "/delete/{userId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/delete/{userId}", method = RequestMethod.DELETE)
     public Map<String, Object> deleteUser(@PathVariable("userId") Long userId) {
         final UserEntity user = userService.getUserById(userId);
         final Map<String, Object> model = new HashMap<>();

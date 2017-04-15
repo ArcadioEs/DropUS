@@ -7,14 +7,14 @@ app.controller('userList', function ($scope, $http) {
     $scope.deleteUserMessage = '';
 
     $scope.getAllUsers = function() {
-        $http.post("user/all").success(function (model) {
+        $http.get("user/all").success(function (model) {
             console.log(model);
             $scope.users = model;
         });
     };
 
     $scope.addUser = function() {
-        $http.post("user/add/" + $scope.usernameToAdd).success(function (model) {
+        $http.put("user/add/" + $scope.usernameToAdd).success(function (model) {
             console.log(model);
             $scope.addUserMessage = model.message;
             $scope.getAllUsers();
@@ -23,7 +23,7 @@ app.controller('userList', function ($scope, $http) {
 
     $scope.deleteUser = function() {
         if( !isNaN($scope.userIdToDelete) && angular.isNumber(+$scope.userIdToDelete)) {
-            $http.post("user/delete/" + $scope.userIdToDelete).success(function (model) {
+            $http.delete("user/delete/" + $scope.userIdToDelete).success(function (model) {
                 console.log(model);
                 $scope.deleteUserMessage = model.message;
                 $scope.getAllUsers();
