@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<!-- Declares the root element that allows behaviour to be modified through Angular custom HTML tags. -->
+<html ng-app="users">
+    <head>
+        <title></title>
+        <script src="lib/angular.js"></script>
+        <link href="lib/bootstrap-theme.css" rel="stylesheet" />
+        <link href="lib/bootstrap.css" rel="stylesheet" />
+
+        <script src="js/UserController.js"></script>
+    </head>
+
+    <body>
+    <br>
+        <div ng-show="!authenticated">
+            <div ng-controller="userList" ng-init="getAllUsers()">
+
+                <input type="text" class="form-control" ng-model="usernameToAdd" placeholder="Add user">
+                <button type="button" ng-click="addUser()" class="btn btn-info">Add user</button>
+                <div>{{addUserMessage}}</div>
+
+                <input type="text" class="form-control" ng-model="userIdToDelete" placeholder="Delete user">
+                <button type="button" ng-click="deleteUser()" class="btn btn-danger">Delete user</button>
+                <div>{{deleteUserMessage}}</div>
+
+                <ul>
+                    <li ng-repeat="user in users">Username: {{user.username}}, with ID: {{user.id}}</li>
+                </ul>
+            </div>
+        </div>
+
+        <div  ng-show="authenticated">
+            <p>Login to see your greeting</p>
+        </div>
+    </body>
+</html>

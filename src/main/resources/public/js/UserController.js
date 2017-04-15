@@ -1,4 +1,4 @@
-var app = angular.module('DropUS', []);
+var app = angular.module('users', []);
 
 app.controller('userList', function ($scope, $http) {
 
@@ -7,31 +7,25 @@ app.controller('userList', function ($scope, $http) {
     $scope.deleteUserMessage = '';
 
     $scope.getAllUsers = function() {
-        $http({
-            method: 'GET',
-            url: 'user/all'
-        }).then(function(model) {
-            $scope.users = model.data;
+        $http.post("user/all").success(function (model) {
+            console.log(model);
+            $scope.users = model;
         });
     };
 
     $scope.addUser = function() {
-        $http({
-            method: 'GET',
-            url: 'user/add/' + $scope.usernameToAdd
-        }).then(function (model) {
-            $scope.addUserMessage = model.data.message;
+        $http.post("user/add/" + $scope.usernameToAdd).success(function (model) {
+            console.log(model);
+            $scope.addUserMessage = model.message;
             $scope.getAllUsers();
         });
     };
 
     $scope.deleteUser = function() {
         if( !isNaN($scope.userIdToDelete) && angular.isNumber(+$scope.userIdToDelete)) {
-            $http({
-                method: 'GET',
-                url: 'user/delete/' + $scope.userIdToDelete
-            }).then(function (model) {
-                $scope.deleteUserMessage = model.data.message;
+            $http.post("user/delete/" + $scope.userIdToDelete).success(function (model) {
+                console.log(model);
+                $scope.deleteUserMessage = model.message;
                 $scope.getAllUsers();
             });
         } else {

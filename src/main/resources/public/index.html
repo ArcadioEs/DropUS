@@ -1,37 +1,9 @@
-<!DOCTYPE html>
-<!-- Declares the root element that allows behaviour to be modified through Angular custom HTML tags. -->
-<html ng-app="DropUS">
-    <head>
-        <title></title>
-        <script src="lib/angular.js"></script>
-        <script src="lib/jquery.js"></script>
-        <script src="lib/ui-bootstrap-tpls-2.5.0.js"></script>
-        <script src="lib/ng-grid.min.js"></script>
-
-        <script src="js/UserController.js"></script>
-
-        <link rel="stylesheet" type="text/css" src="lib/bootstrap.min.css"/>
-        <link rel="stylesheet" type="text/css" src="lib/ng-grid.min.css"/>
-        <link rel="stylesheet" type="text/css" src="css/style.css"/>
-    </head>
-
-    <body>
-    <br>
-        <div>
-            <div ng-controller="userList" ng-init="getAllUsers()">
-
-                <input type="text" class="form-control" ng-model="usernameToAdd" placeholder="Add user">
-                <button type="button" ng-click="addUser()" class="btn">Add user</button>
-                <div>{{addUserMessage}}</div>
-
-                <input type="text" class="form-control" ng-model="userIdToDelete" placeholder="Delete user">
-                <button type="button" ng-click="deleteUser()" class="btn">Delete user</button>
-                <div>{{deleteUserMessage}}</div>
-
-                <ul>
-                    <li ng-repeat="user in users">Username: {{user.username}}, with ID: {{user.id}}</li>
-                </ul>
-            </div>
-        </div>
-    </body>
+<!DOCTYPE html> <html ng-app> <head>
+    <title>Pierwszy test</title>
+    <script src="lib/angular.js"></script>
+    <link href="lib/bootstrap-theme.css" rel="stylesheet" />
+    <link href="lib/bootstrap.css" rel="stylesheet" />
+</head> <body>
+<div class="btn btn-default">{{"AngularJS"}}</div>
+<div class="btn btn-success">Bootstrap</div> </body>
 </html>
