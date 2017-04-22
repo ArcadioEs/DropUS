@@ -6,12 +6,12 @@ import org.springframework.stereotype.Repository;
 
 
 /**
- * Repository to retrieve {@link UserEntity}.
+ * Repository to manage {@link UserEntity}.
  */
 @Repository
-public interface UserRepository extends CrudRepository<UserEntity, Long> {
+public interface UserRepository extends CrudRepository<UserEntity, String> {
 	/**
-	 * Gets specific user for given id.
+	 * Gets specific user for given username.
 	 */
-	UserEntity findById(Long userId);
+	UserEntity findByUsername(String username);
 }

@@ -19,49 +19,55 @@ import java.util.Map;
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+	@Autowired
+	private UserService userService;
 
-    @RequestMapping(value = "get/{id}", method = RequestMethod.GET)
-    public String getUser(@PathVariable("id") Long userId) {
-        final UserEntity user = userService.getUserById(userId);
+//	@RequestMapping(value = "get/{id}", method = RequestMethod.GET)
+//	public String getUser(@PathVariable("id") Long userId) {
+//
+//		final UserEntity user = userService.getUserById(userId);
+//
+//		if (user != null) {
+//			return user.toString();
+//		}
+//		return "User with id: " + userId + " could not be found.";
+//	}
 
-        if (user != null) {
-            return user.toString();
-        }
-        return "User with id: " + userId + " could not be found.";
-    }
+	@RequestMapping(value = "add/{username}&{password}&{isAdmin}", method = RequestMethod.GET)
+	public Map<String, Object> addUser(@PathVariable("username") String username, @PathVariable("password") String password, @PathVariable("isAdmin") boolean isAdmin) {
 
-    @RequestMapping(value = "add/{username}", method = RequestMethod.PUT)
-    public Map<String, Object> addUser(@PathVariable("username") String username) {
-        userService.saveUser(username);
-        final Map<String, Object> model = new HashMap<>();
+		final Map<String, Object> model = new HashMap<>();
+		String message = "Both fields username and password must not be empty!";
 
-        String message = "User " + username + " added to the system.";
+		if (!username.isEmpty() && !password.isEmpty()) {
+			userService.saveUser(username, password, isAdmin);
+			message = "User " + username + " added to the system.";
+		}
 
-        model.put("message", message);
-        return model;
-    }
+		model.put("message", message);
+		return model;
+	}
 
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public List<UserEntity> getAllUsers() {
-        return userService.getAllUsers();
-    }
+	@RequestMapping(value = "/all", method = RequestMethod.GET)
+	public List<UserEntity> getAllUsers() {
+		return userService.getAllUsers();
+	}
 
-    @RequestMapping(value = "/delete/{userId}", method = RequestMethod.DELETE)
-    public Map<String, Object> deleteUser(@PathVariable("userId") Long userId) {
-        final UserEntity user = userService.getUserById(userId);
-        final Map<String, Object> model = new HashMap<>();
-        String message = "User not found or could not be deleted";
-
-        if (user != null) {
-            final String username = userService.getUserById(userId).getUsername();
-            if (userService.deleteUser(userId)) {
-                message = "User " + username + " removed from the system";
-            }
-        }
-
-        model.put("message", message);
-        return model;
-    }
+//	@RequestMapping(value = "/delete/{userId}", method = RequestMethod.DELETE)
+//	public Map<String, Object> deleteUser(@PathVariable("userId") Long userId) {
+//
+//		final UserEntity user = userService.getUserById(userId);
+//		final Map<String, Object> model = new HashMap<>();
+//		String message = "User not found or could not be deleted.";
+//
+//		if (user != null) {
+//			final String username = userService.getUserById(userId).getUsername();
+//			if (userService.deleteUser(userId)) {
+//				message = "User " + username + " removed from the system.";
+//			}
+//		}
+//
+//		model.put("message", message);
+//		return model;
+//	}
 }
