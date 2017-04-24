@@ -1,8 +1,9 @@
 package org.engeneer.work.model;
 
-import org.engeneer.work.utils.EncryptUtils;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 
 /**

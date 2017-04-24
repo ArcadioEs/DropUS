@@ -11,6 +11,11 @@ import java.util.List;
 public interface UserService {
 
 	/**
+	 *
+	 */
+	UserEntity getUserByUsername(final String username);
+
+	/**
 	 * Adds new user to the system.
 	 */
 	void saveUser(final String username, final String password, boolean isAdmin);
@@ -21,8 +26,8 @@ public interface UserService {
 	List<UserEntity> getAllUsers();
 
 	/**
-	 * Deletes user with given id.
+	 * Deletes user with given username.
 	 * If user is found and deleted - returns true, false otherwise.
 	 */
-//	boolean deleteUser(final Long userId);
+	boolean deleteUser(final String username);
 }

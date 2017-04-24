@@ -15,8 +15,8 @@ import javax.sql.DataSource;
  */
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter
-{
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
 	@Autowired
 	private DataSource dataSource;
 
@@ -24,9 +24,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 				.authorizeRequests()
-				.antMatchers("/user/**").access("hasRole('ROLE_ADMIN')")
-				.antMatchers("/", "/home").access("hasRole('ROLE_USER')")
-				.antMatchers("/init").permitAll()
+//				.antMatchers("/user/**").access("hasRole('ROLE_ADMIN')")
+//				.antMatchers("/", "/home").access("hasRole('ROLE_USER')")
+				.antMatchers("/init", "/", "/home", "/registration").permitAll()
 				.anyRequest().authenticated()
 				.and()
 				.formLogin()

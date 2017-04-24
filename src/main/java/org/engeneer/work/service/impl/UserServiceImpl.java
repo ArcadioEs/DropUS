@@ -25,6 +25,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRoleRepository userRoleRepository;
 
+    @Override
+    public UserEntity getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -51,14 +56,14 @@ public class UserServiceImpl implements UserService {
     /**
      * {@inheritDoc}
      */
-//    @Override
-//    public boolean deleteUser(final Long userId) {
-//        final UserEntity user = userRepository.findById(userId);
-//
-//        if (user != null) {
-//            userRepository.delete(user);
-//            return true;
-//        }
-//        return false;
-//    }
+    @Override
+    public boolean deleteUser(final String username) {
+        final UserEntity user = userRepository.findByUsername(username);
+
+        if (user != null) {
+            userRepository.delete(user);
+            return true;
+        }
+        return false;
+    }
 }
