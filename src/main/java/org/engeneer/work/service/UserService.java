@@ -6,28 +6,21 @@ import java.util.List;
 
 
 /**
- * Service implementation to retireve {@link UserEntity}.
+ * Service used to add users to the system.
  */
 public interface UserService {
 
-	/**
-	 *
-	 */
 	UserEntity getUserByUsername(final String username);
 
 	/**
-	 * Adds new user to the system.
+	 * Returns true if user is saved properly, false otherwise.
 	 */
-	void saveUser(final String username, final String password, boolean isAdmin);
+	boolean saveUser(final String username, final String password, boolean isAdmin);
 
-	/**
-	 * Gets all users from the system.
-	 */
 	List<UserEntity> getAllUsers();
 
 	/**
-	 * Deletes user with given username.
-	 * If user is found and deleted - returns true, false otherwise.
+	 * Returns true if user deleted properly, false otherwise.
 	 */
 	boolean deleteUser(final String username);
 }

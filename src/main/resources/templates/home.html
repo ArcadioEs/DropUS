@@ -2,10 +2,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
     <head>
         <title>Spring Security Example</title>
+        <div th:insert="fragments/bootstrap :: bootstrap"></div>
     </head>
-    <body>
-        <h1 th:text="${welcomeMessage}"></h1>
-        
-        <p>Click <a th:href="@{/hello}">here</a> to see a greeting.</p>
+    <body class="container-fluid text-center">
+        <div th:insert="fragments/header :: header"></div>
+
+        <div class="col-md-12">
+            <h1 th:text="${welcomeMessage}"></h1>
+
+            <div th:if="${#httpServletRequest.remoteUser == null}">
+                <h2>It looks like you are not logged in, go ahead and sign up or log in!</h2>
+            </div>
+
+            <div th:if="${#httpServletRequest.remoteUser != null}">
+                <h2 th:inline="text">Nice to see you again, [[${#httpServletRequest.remoteUser}]]!</h2>
+            </div>
+        </div>
     </body>
 </html>

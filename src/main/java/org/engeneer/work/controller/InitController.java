@@ -9,7 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Created by i332319 on 22/04/17.
+ * Initialization controller to insert admin user if it does not exist.
+ *
+ * TODO: Only for test pusposed, eventually will be removed.
  */
 @Controller
 public class InitController {

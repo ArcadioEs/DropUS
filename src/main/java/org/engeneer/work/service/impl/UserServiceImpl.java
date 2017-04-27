@@ -7,6 +7,7 @@ import org.engeneer.work.repository.UserRepository;
 import org.engeneer.work.repository.UserRoleRepository;
 import org.engeneer.work.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,26 +26,29 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRoleRepository userRoleRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @Override
     public UserEntity getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void saveUser(final String username, final String password, boolean isAdmin) {
-        userRepository.save(new UserEntity(username, password));
-        userRoleRepository.save(new UserRole(username, AuthorityRoles.USER));
-        if (isAdmin) {
-            userRoleRepository.save(new UserRole(username, AuthorityRoles.ADMIN));
+    public boolean saveUser(final String username, final String password, boolean isAdmin) {
+        boolean result = false;
+        if (getUserByUsername(username) == null) {
+            userRepository.save(new UserEntity(username, passwordEncoder.encode(password)));
+
+            userRoleRepository.save(new UserRole(username, AuthorityRoles.USER));
+            if (isAdmin) {
+                userRoleRepository.save(new UserRole(username, AuthorityRoles.ADMIN));
+            }
+            result = true;
         }
+        return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<UserEntity> getAllUsers() {
         final List<UserEntity> list = new ArrayList<>();
@@ -53,9 +57,7 @@ public class UserServiceImpl implements UserService {
         return list;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public boolean deleteUser(final String username) {
         final UserEntity user = userRepository.findByUsername(username);
