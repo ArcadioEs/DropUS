@@ -5,6 +5,7 @@ Application created to help students organize their work, by helping in communic
 **How to use**
 * Make sure *Apache Maven* is installed
 * Fill database connection: ***DropUS**/src/main/resources/application.properties*
+    * By default H2 database connection is provided, so nothing has to be changed. The thing     to remember is, that after every server startup, data will be destroyed. Good for test       purposes and fast enough, since no database schema needs to be provided.
 * Launch terminal
 * Go to root directory of a project
 * Execute command "*mvn clean install*"
