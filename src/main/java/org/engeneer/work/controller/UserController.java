@@ -15,6 +15,8 @@ import java.util.Map;
 
 /**
  * Controller to display specific {@link UserEntity}.
+ *
+ * TODO: Refactor this for purposes related with user management (admin perspective).
  */
 @Controller
 @RequestMapping("/user")

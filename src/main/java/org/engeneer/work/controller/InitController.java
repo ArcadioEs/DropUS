@@ -30,6 +30,6 @@ public class InitController {
 			userService.saveUser("admin", "nimda", true);
 		}
 
-		return "hello";
+		return "home";
 	}
 }

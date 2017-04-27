@@ -5,7 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Created by i332319 on 24/04/17.
+ * Home page controller.
  */
 @Controller
 public class HomeController {
