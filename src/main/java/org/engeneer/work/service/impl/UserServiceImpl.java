@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
     PasswordEncoder passwordEncoder;
 
     @Override
-    public UserEntity getUserByUsername(String username) {
+    public UserEntity getUserByUsername(final String username) {
         return userRepository.findByUsername(username);
     }
 

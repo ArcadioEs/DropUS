@@ -48,11 +48,9 @@ public class UserEntity {
 
 	public String getPassword() {
 		return this.password;
-//		return EncryptUtils.base64decode(this.password);
 	}
 
 	public void setPassword(String password) {
-//		this.password = EncryptUtils.base64encode(password);
 		this.password = password;
 	}
 }

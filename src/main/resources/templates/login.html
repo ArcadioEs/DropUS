@@ -2,23 +2,31 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
     <head>
-        <title>Spring Security Example </title>
+        <title>DropUS Login page</title>
         <div th:insert="fragments/bootstrap :: bootstrap"></div>
     </head>
-    <body class="container-fluid text-center">
+    <body class="container-fluid">
         <div th:insert="fragments/header :: header"></div>
 
         <div class="col-md-12">
-            <div th:if="${param.error}">
-                Invalid username and password.
+            <div class="text-center">
+                <div th:if="${param.error}">
+                    Invalid username and password.
+                </div>
+                <div th:if="${param.logout}">
+                    You have been logged out.
+                </div>
             </div>
-            <div th:if="${param.logout}">
-                You have been logged out.
-            </div>
-            <form th:action="@{/login}" method="post">
-                <div><label> User Name: <input type="text" name="username"/> </label></div>
-                <div><label> Password: <input type="password" name="password"/> </label></div>
-                <div><input type="submit" value="Sign In"/></div>
+            <form class="col-md-2 col-md-offset-5" th:action="@{/login}" method="post">
+                <div class="form-group col-md-12">
+                    <label>Username:</label>
+                    <input type="text" name="username" class="form-control" placeholder="Enter username">
+                </div>
+                <div class="form-group col-md-12">
+                    <label>Username:</label>
+                    <input type="password" name="password" class="form-control" placeholder="Enter password">
+                </div>
+                <div><input class="btn btn-success col-md-6 col-md-offset-3" type="submit" value="Sign In"/></div>
             </form>
         </div>
     </body>
