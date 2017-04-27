@@ -16,7 +16,7 @@ public class UserEntity {
 	@Id
 	@Column(nullable = false, unique = true)
 	private String username;
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition="TEXT")
 	private String password;
 	@Column(nullable = false)
 	private byte enabled;
