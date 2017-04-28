@@ -1,4 +1,4 @@
-package org.engeneer.work;
+package org.engineer.work;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

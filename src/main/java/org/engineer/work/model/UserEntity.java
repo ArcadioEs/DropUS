@@ -1,4 +1,4 @@
-package org.engeneer.work.model;
+package org.engineer.work.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

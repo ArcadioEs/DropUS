@@ -1,13 +1,12 @@
-package org.engeneer.work.controller;
+package org.engineer.work.controller;
 
-import org.engeneer.work.facade.RegisterFacade;
+import org.engineer.work.facade.RegisterFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Register controller.
@@ -17,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 public class RegisterController {
 
 	@Autowired
-	RegisterFacade registerFacade;
+	private RegisterFacade registerFacade;
 
 	@RequestMapping(value = "/page")
 	public String getRegistrationPage() {
@@ -25,12 +24,11 @@ public class RegisterController {
 	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public String registerUser(final HttpServletRequest request, final Model model) {
+	public String registerUser(@RequestParam("username") final String username,
+							   @RequestParam("password") final String password,
+							   @RequestParam("passwordConfirm") final String passwordConfirm,
+							   final Model model) {
 		String returnTemplate = "registration";
-
-		final String username = request.getParameter("username");
-		final String password = request.getParameter("password");
-		final String passwordConfirm = request.getParameter("passwordConfirm");
 
 		if (validateCredentials(model, username, password, passwordConfirm)) {
 			if (registerFacade.registerUser(username, password)) {

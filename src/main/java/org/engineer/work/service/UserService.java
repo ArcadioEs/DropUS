@@ -1,6 +1,6 @@
-package org.engeneer.work.service;
+package org.engineer.work.service;
 
-import org.engeneer.work.model.UserEntity;
+import org.engineer.work.model.UserEntity;
 
 import java.util.List;
 

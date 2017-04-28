@@ -1,6 +1,6 @@
-package org.engeneer.work.model;
+package org.engineer.work.model;
 
-import org.engeneer.work.model.enumeration.AuthorityRoles;
+import org.engineer.work.model.enumeration.AuthorityRoles;
 
 import javax.persistence.*;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package org.engeneer.work.controller;
+package org.engineer.work.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

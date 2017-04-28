@@ -1,7 +1,7 @@
-package org.engeneer.work.controller;
+package org.engineer.work.controller;
 
-import org.engeneer.work.model.UserEntity;
-import org.engeneer.work.service.UserService;
+import org.engineer.work.model.UserEntity;
+import org.engineer.work.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;

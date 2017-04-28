@@ -1,6 +1,6 @@
-package org.engeneer.work.repository;
+package org.engineer.work.repository;
 
-import org.engeneer.work.model.UserRole;
+import org.engineer.work.model.UserRole;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

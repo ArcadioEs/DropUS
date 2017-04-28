@@ -1,4 +1,4 @@
-package org.engeneer.work.facade;
+package org.engineer.work.facade;
 
 /**
  * Facade used to register new users.

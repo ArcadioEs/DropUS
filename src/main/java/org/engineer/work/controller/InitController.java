@@ -1,7 +1,7 @@
-package org.engeneer.work.controller;
+package org.engineer.work.controller;
 
-import org.engeneer.work.repository.UserRepository;
-import org.engeneer.work.service.UserService;
+import org.engineer.work.repository.UserRepository;
+import org.engineer.work.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class InitController {
 
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
 
 	@Autowired
-	UserService userService;
+	private UserService userService;
 
 	@RequestMapping(value = "init")
 	public String hello(@AuthenticationPrincipal User user) {

@@ -1,4 +1,4 @@
-package org.engeneer.work.security;
+package org.engineer.work.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
