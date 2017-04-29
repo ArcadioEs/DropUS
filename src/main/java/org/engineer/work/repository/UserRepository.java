@@ -10,8 +10,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserRepository extends CrudRepository<UserEntity, String> {
-	/**
-	 * Gets specific user for given username.
-	 */
-	UserEntity findByUsername(String username);
+
 }

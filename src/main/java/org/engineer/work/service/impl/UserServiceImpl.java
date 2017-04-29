@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity getUserByUsername(final String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.findOne(username);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
         boolean result = false;
         final String username = userDTO.getUsername();
 
-        if (getUserByUsername(username) == null) {
+        if (! userRepository.exists(username)) {
             userRepository.save(new UserEntity(userDTO));
 
             if (isAdmin) {
@@ -50,6 +50,8 @@ public class UserServiceImpl implements UserService {
         }
         return result;
     }
+
+    // TODO: Update method!!!
 
     @Override
     public List<UserEntity> getAllUsers() {
@@ -63,11 +65,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public boolean deleteUser(final String username) {
-        final UserEntity user = userRepository.findByUsername(username);
         boolean result = false;
 
-        if (user != null) {
-            userRepository.delete(user);
+        if (userRepository.exists(username)) {
+            userRepository.delete(username);
             result = true;
         }
         return result;

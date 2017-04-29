@@ -11,4 +11,6 @@ public interface UserFacade {
 	UserDTO getUserByUsername(final String username);
 
 	List<UserDTO> getAllUsers();
+
+	void updateUserEnabledStatus(final String username, final boolean enabled);
 }
