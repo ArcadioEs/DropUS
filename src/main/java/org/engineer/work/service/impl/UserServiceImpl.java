@@ -1,5 +1,6 @@
 package org.engineer.work.service.impl;
 
+import org.engineer.work.dto.UserDTO;
 import org.engineer.work.model.UserEntity;
 import org.engineer.work.model.UserRole;
 import org.engineer.work.model.enumeration.AuthorityRoles;
@@ -7,7 +8,6 @@ import org.engineer.work.repository.UserRepository;
 import org.engineer.work.repository.UserRoleRepository;
 import org.engineer.work.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,9 +27,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRoleRepository userRoleRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @Override
     public UserEntity getUserByUsername(final String username) {
         return userRepository.findByUsername(username);
@@ -37,10 +34,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public boolean saveUser(final String username, final String password, boolean isAdmin) {
+    public boolean saveUser(final UserDTO userDTO, final boolean isAdmin) {
         boolean result = false;
+        final String username = userDTO.getUsername();
+
         if (getUserByUsername(username) == null) {
-            userRepository.save(new UserEntity(username, passwordEncoder.encode(password)));
+            userRepository.save(new UserEntity(userDTO));
 
             if (isAdmin) {
                 userRoleRepository.save(new UserRole(username, AuthorityRoles.ADMIN));

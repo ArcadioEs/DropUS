@@ -1,7 +1,11 @@
 package org.engineer.work.controller;
 
+import org.engineer.work.dto.UserDTO;
 import org.engineer.work.facade.RegisterFacade;
+import org.engineer.work.service.UserService;
+import org.engineer.work.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +22,9 @@ public class RegisterController {
 	@Autowired
 	private RegisterFacade registerFacade;
 
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
 	@RequestMapping(value = "/page")
 	public String getRegistrationPage() {
 		return "registration";
@@ -31,7 +38,12 @@ public class RegisterController {
 		String returnTemplate = "registration";
 
 		if (validateCredentials(model, username, password, passwordConfirm)) {
-			if (registerFacade.registerUser(username, password)) {
+			final UserDTO userDTO = new UserDTO();
+
+			userDTO.setUsername(username);
+			userDTO.setPassword(passwordEncoder.encode(password));
+
+			if (registerFacade.registerUser(userDTO)) {
 				returnTemplate = "login";
 			} else {
 				model.addAttribute("userExists", "User with this username already exists.");
@@ -41,7 +53,7 @@ public class RegisterController {
 		return returnTemplate;
 	}
 
-	private boolean validateCredentials(Model model, final String username, final String password, final String passwordConfirm) {
+	private boolean validateCredentials(final Model model, final String username, final String password, final String passwordConfirm) {
 		boolean result = true;
 
 		if (username == null || username.isEmpty()) {

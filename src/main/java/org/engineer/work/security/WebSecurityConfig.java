@@ -25,6 +25,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http
 				.authorizeRequests()
 				.antMatchers("/init", "/", "/home", "/registration/page", "/registration/register").permitAll()
+				.antMatchers("/admin/page").access("hasRole('ROLE_ADMIN')")
 				.anyRequest().authenticated()
 				.and()
 				.formLogin()
@@ -33,7 +34,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
 				.logout()
 				.logoutSuccessUrl("/home")
-				.permitAll();
+				.permitAll()
+				.and()
+				.exceptionHandling().accessDeniedPage("/denied");
 	}
 
 	@Autowired

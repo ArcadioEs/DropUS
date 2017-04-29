@@ -25,7 +25,7 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user"></span> Logged as [[${#httpServletRequest.remoteUser}]] <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a class="text-right" href="#">Profile <span class="glyphicon glyphicon-cog"></span></a></li>
-                                <li sec:authorize="hasRole('ROLE_ADMIN')"><a class="text-right" href="#">Admin panel <span class="glyphicon glyphicon-user"></span></a></li>
+                                <li sec:authorize="hasRole('ROLE_ADMIN')"><a class="text-right" th:href="@{/admin/page}">Admin panel <span class="glyphicon glyphicon-user"></span></a></li>
                             </ul>
                         </li>
                         <li><form th:action="@{/logout}" method="post"><input style="margin-right: 8px; margin-left: 8px;" class="btn btn-danger navbar-btn" type="submit" value="Sign Out"/></form></li>

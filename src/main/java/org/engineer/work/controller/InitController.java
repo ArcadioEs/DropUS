@@ -1,10 +1,12 @@
 package org.engineer.work.controller;
 
+import org.engineer.work.dto.UserDTO;
 import org.engineer.work.repository.UserRepository;
 import org.engineer.work.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -22,12 +24,18 @@ public class InitController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
 	@RequestMapping(value = "init")
 	public String hello(@AuthenticationPrincipal User user) {
 
 		/** Adding initial admin user, will be changed later on */
 		if (userRepository.findByUsername("admin") == null) {
-			userService.saveUser("admin", "nimda", true);
+			final UserDTO userDTO = new UserDTO();
+			userDTO.setUsername("admin");
+			userDTO.setPassword(passwordEncoder.encode("nimda"));
+			userService.saveUser(userDTO, true);
 		}
 
 		return "home";

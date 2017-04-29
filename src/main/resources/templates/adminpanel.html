@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Error page</title>
+        <div th:insert="fragments/bootstrap :: bootstrap"></div>
+    </head>
+    <body class="container-fluid">
+        <div th:insert="fragments/header :: header"></div>
+
+        <div class="col-md-12 text-center">
+            <h1 class="text-center">Admin panel at its finest</h1>
+
+            <div th:each="user : ${allusers}">
+                <h3 th:if="${user.enabled == 1}">[[${user.username}]]</h3>
+            </div>
+        </div>
+    </body>
+</html>

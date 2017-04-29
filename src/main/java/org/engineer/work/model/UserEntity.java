@@ -1,5 +1,7 @@
 package org.engineer.work.model;
 
+import org.engineer.work.dto.UserDTO;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -21,9 +23,9 @@ public class UserEntity {
 	@Column(nullable = false)
 	private byte enabled;
 
-	public UserEntity(String username, String password) {
-		setUsername(username);
-		setPassword(password);
+	public UserEntity(final UserDTO userDTO) {
+		setUsername(userDTO.getUsername());
+		setPassword(userDTO.getPassword());
 		this.enabled = 1;
 	}
 
