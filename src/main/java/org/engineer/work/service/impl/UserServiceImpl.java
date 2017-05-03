@@ -2,10 +2,8 @@ package org.engineer.work.service.impl;
 
 import org.engineer.work.dto.UserDTO;
 import org.engineer.work.model.UserEntity;
-import org.engineer.work.model.UserRole;
 import org.engineer.work.model.enumeration.AuthorityRoles;
 import org.engineer.work.repository.UserRepository;
-import org.engineer.work.repository.UserRoleRepository;
 import org.engineer.work.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,9 +22,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private UserRoleRepository userRoleRepository;
-
     @Override
     public UserEntity getUserByUsername(final String username) {
         return userRepository.findOne(username);
@@ -39,19 +34,27 @@ public class UserServiceImpl implements UserService {
         final String username = userDTO.getUsername();
 
         if (! userRepository.exists(username)) {
-            userRepository.save(new UserEntity(userDTO));
-
             if (isAdmin) {
-                userRoleRepository.save(new UserRole(username, AuthorityRoles.ADMIN));
+                userDTO.setEnabled((byte) 1);
+                userDTO.setRole(AuthorityRoles.ADMIN);
             } else {
-                userRoleRepository.save(new UserRole(username, AuthorityRoles.USER));
+                userDTO.setEnabled((byte) 0);
+                userDTO.setRole(AuthorityRoles.USER);
             }
+
+            userRepository.save(new UserEntity(userDTO));
             result = true;
         }
         return result;
     }
 
-    // TODO: Update method!!!
+    @Override
+    @Transactional
+    public void updateUser(final UserEntity userEntity) {
+        if (userRepository.exists(userEntity.getUsername())) {
+            userRepository.save(userEntity);
+        }
+    }
 
     @Override
     public List<UserEntity> getAllUsers() {

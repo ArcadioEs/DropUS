@@ -18,6 +18,8 @@ public interface UserService {
 	 */
 	boolean saveUser(final UserDTO userDTO, final boolean isAdmin);
 
+	void updateUser(final UserEntity userEntity);
+
 	List<UserEntity> getAllUsers();
 
 	/**

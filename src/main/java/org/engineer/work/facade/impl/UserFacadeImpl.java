@@ -3,6 +3,7 @@ package org.engineer.work.facade.impl;
 import org.engineer.work.dto.UserDTO;
 import org.engineer.work.facade.UserFacade;
 import org.engineer.work.model.UserEntity;
+import org.engineer.work.model.enumeration.AuthorityRoles;
 import org.engineer.work.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,18 @@ public class UserFacadeImpl implements UserFacade {
 	private UserService userService;
 
 	@Override
+	public boolean userIsAdmin(final String username) {
+		boolean result = false;
+
+		if (userService.getUserByUsername(username) != null) {
+			if (userService.getUserByUsername(username).getRole().equals(AuthorityRoles.ADMIN)) {
+				result = true;
+			}
+		}
+		return result;
+	}
+
+	@Override
 	public UserDTO getUserByUsername(final String username) {
 		return convertEntityToDTO(userService.getUserByUsername(username));
 	}
@@ -30,12 +43,17 @@ public class UserFacadeImpl implements UserFacade {
 	}
 
 	@Override
+	public List<UserDTO> getRegularUsers() {
+		return getAllUsers().stream().filter(user -> !userIsAdmin(user.getUsername())).collect(Collectors.toList());
+	}
+
+	@Override
 	public void updateUserEnabledStatus(final String username, final boolean enabled) {
 		final UserEntity user = userService.getUserByUsername(username);
 
 		if (user != null) {
 			user.setEnabled(enabled ? (byte) 1 : (byte) 0);
-			userService.saveUser(convertEntityToDTO(user), false);
+			userService.updateUser(user);
 		}
 	}
 

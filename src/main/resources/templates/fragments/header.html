@@ -12,7 +12,7 @@
                         <li th:if="${#httpServletRequest.remoteUser}" class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Groups <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="#">Group list will be here...</a></li>
+                                <li><a th:href="@{/wall}">Wall page</a></li>
                             </ul>
                         </li>
                     </ul>

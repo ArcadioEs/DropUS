@@ -24,8 +24,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 				.authorizeRequests()
-				.antMatchers("/init", "/", "/home", "/registration/page", "/registration/register").permitAll()
-				.antMatchers("/admin/page").access("hasRole('ROLE_ADMIN')")
+				.antMatchers("/init", "/", "/home", "/registration/**").permitAll()
+				.antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
 				.anyRequest().authenticated()
 				.and()
 				.formLogin()
@@ -46,9 +46,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.dataSource(dataSource)
 				.passwordEncoder(passwordEncoder())
 				.usersByUsernameQuery(
-						"select username,password,enabled from users where username=?")
+						"select username, password, enabled from users where username=?")
 				.authoritiesByUsernameQuery(
-						"select username, role from user_roles where username=?");
+						"select username, role from users where username=?");
 	}
 
 	@Bean

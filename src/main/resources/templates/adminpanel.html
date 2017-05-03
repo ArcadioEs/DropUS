@@ -1,18 +1,29 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Error page</title>
+        <title>DropUS Admin panel</title>
         <div th:insert="fragments/bootstrap :: bootstrap"></div>
     </head>
     <body class="container-fluid">
         <div th:insert="fragments/header :: header"></div>
 
         <div class="col-md-12 text-center">
-            <h1 class="text-center">Admin panel at its finest</h1>
+            <h1 class="text-center">Enable or disable users</h1>
 
-            <div th:each="user : ${allusers}">
-                <h3 th:if="${user.enabled == 1}">[[${user.username}]]</h3>
-            </div>
+            <form th:action="@{/admin/update}" method="post">
+                <select name="usernames[]" class="selectpicker" multiple data-live-search="true">
+                    <option th:each="user : ${allusers}"
+                            th:value="${user.username}"
+                            th:data-subtext="${user.enabled == 1 ? 'Enabled' : 'Disabled'}">
+                            [[${user.username}]]
+                    </option>
+                </select>
+                <select name="enabled" class="selectpicker" data-width="fit">
+                    <option th:value="true">Enable</option>
+                    <option th:value="false">Disable</option>
+                </select>
+                <input type="submit" class="btn btn-default" value="Submit" />
+            </form>
         </div>
     </body>
 </html>

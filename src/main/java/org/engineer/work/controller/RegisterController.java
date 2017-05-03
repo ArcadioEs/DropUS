@@ -2,8 +2,6 @@ package org.engineer.work.controller;
 
 import org.engineer.work.dto.UserDTO;
 import org.engineer.work.facade.RegisterFacade;
-import org.engineer.work.service.UserService;
-import org.engineer.work.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;

@@ -22,14 +22,25 @@ public class UserEntity {
 	private String password;
 	@Column(nullable = false)
 	private byte enabled;
+	@Column(nullable = false)
+	private String role;
 
 	public UserEntity(final UserDTO userDTO) {
 		setUsername(userDTO.getUsername());
 		setPassword(userDTO.getPassword());
-		this.enabled = 1;
+		setEnabled(userDTO.getEnabled());
+		setRole(userDTO.getRole());
 	}
 
 	protected UserEntity() {
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	public byte getEnabled() {

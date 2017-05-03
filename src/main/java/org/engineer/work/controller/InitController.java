@@ -17,19 +17,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class InitController {
 
 	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
 	private UserService userService;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	@RequestMapping(value = "init")
+	@RequestMapping(value = "/init")
 	public String hello() {
 
 		/** Adding initial admin user, will be changed later on */
-		if (! userRepository.exists("admin")) {
+		if (userService.getUserByUsername("admin") == null) {
 			final UserDTO userDTO = new UserDTO();
 			userDTO.setUsername("admin");
 			userDTO.setPassword(passwordEncoder.encode("nimda"));
