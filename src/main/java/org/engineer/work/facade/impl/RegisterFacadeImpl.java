@@ -15,6 +15,6 @@ public class RegisterFacadeImpl implements RegisterFacade {
 
 	@Override
 	public boolean registerUser(final UserDTO userDTO) {
-		return userService.saveUser(userDTO, false);
+		return userService.createUser(userDTO, false);
 	}
 }

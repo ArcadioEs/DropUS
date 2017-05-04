@@ -1,5 +1,7 @@
 package org.engineer.work.dto;
 
+import java.util.Set;
+
 /**
  * User data transfer object.
  */
@@ -9,6 +11,15 @@ public class UserDTO {
 	private String password;
 	private byte enabled;
 	private String role;
+	private Set<GroupDTO> groups;
+
+	public Set<GroupDTO> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(Set<GroupDTO> groups) {
+		this.groups = groups;
+	}
 
 	public String getRole() {
 		return role;

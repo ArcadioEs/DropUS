@@ -7,7 +7,7 @@ import java.util.List;
 
 
 /**
- * Service used to add users to the system.
+ * Service managing users in the system.
  */
 public interface UserService {
 
@@ -16,7 +16,7 @@ public interface UserService {
 	/**
 	 * Returns true if user is saved properly, false otherwise.
 	 */
-	boolean saveUser(final UserDTO userDTO, final boolean isAdmin);
+	boolean createUser(final UserDTO userDTO, final boolean isAdmin);
 
 	void updateUser(final UserEntity userEntity);
 

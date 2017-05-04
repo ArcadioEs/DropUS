@@ -30,7 +30,11 @@ public class UserEntity {
 	@Column(nullable = false)
 	private String role;
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "users_groups", joinColumns = @JoinColumn(name = "users_username", referencedColumnName = "username"), inverseJoinColumns = @JoinColumn(name = "groups_name", referencedColumnName = "name"))
+	@JoinTable(
+			name = "users_groups",
+			joinColumns = @JoinColumn(name = "users_username", referencedColumnName = "username"),
+			inverseJoinColumns = @JoinColumn(name = "groups_name", referencedColumnName = "name")
+	)
 	private Set<GroupEntity> groups;
 
 	public UserEntity(final UserDTO userDTO) {

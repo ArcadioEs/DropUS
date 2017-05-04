@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public boolean saveUser(final UserDTO userDTO, final boolean isAdmin) {
+    public boolean createUser(final UserDTO userDTO, final boolean isAdmin) {
         boolean result = false;
         final String username = userDTO.getUsername();
 
