@@ -30,6 +30,7 @@ public class InitController {
 			final UserDTO userDTO = new UserDTO();
 			userDTO.setUsername("admin");
 			userDTO.setPassword(passwordEncoder.encode("nimda"));
+			userDTO.setEnabled((byte) 1);
 			userService.saveUser(userDTO, true);
 		}
 

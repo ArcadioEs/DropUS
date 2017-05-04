@@ -25,7 +25,7 @@ public class UserFacadeImpl implements UserFacade {
 		boolean result = false;
 
 		if (userService.getUserByUsername(username) != null) {
-			if (userService.getUserByUsername(username).getRole().equals(AuthorityRoles.ADMIN)) {
+			if (AuthorityRoles.ADMIN.equals(userService.getUserByUsername(username).getRole())) {
 				result = true;
 			}
 		}
@@ -34,17 +34,17 @@ public class UserFacadeImpl implements UserFacade {
 
 	@Override
 	public UserDTO getUserByUsername(final String username) {
-		return convertEntityToDTO(userService.getUserByUsername(username));
+		return this.convertEntityToDTO(userService.getUserByUsername(username));
 	}
 
 	@Override
 	public List<UserDTO> getAllUsers() {
-		return userService.getAllUsers().stream().map(userEntity -> convertEntityToDTO(userEntity)).collect(Collectors.toList());
+		return userService.getAllUsers().stream().map(userEntity -> this.convertEntityToDTO(userEntity)).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<UserDTO> getRegularUsers() {
-		return getAllUsers().stream().filter(user -> !userIsAdmin(user.getUsername())).collect(Collectors.toList());
+		return this.getAllUsers().stream().filter(user -> !this.userIsAdmin(user.getUsername())).collect(Collectors.toList());
 	}
 
 	@Override

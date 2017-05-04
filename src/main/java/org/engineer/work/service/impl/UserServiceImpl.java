@@ -14,7 +14,7 @@ import java.util.List;
 
 
 /**
- * Default implementation of {@link UserService} interface.
+ * Default implementation of UserService.
  */
 @Service
 public class UserServiceImpl implements UserService {
@@ -35,10 +35,8 @@ public class UserServiceImpl implements UserService {
 
         if (! userRepository.exists(username)) {
             if (isAdmin) {
-                userDTO.setEnabled((byte) 1);
                 userDTO.setRole(AuthorityRoles.ADMIN);
             } else {
-                userDTO.setEnabled((byte) 0);
                 userDTO.setRole(AuthorityRoles.USER);
             }
 

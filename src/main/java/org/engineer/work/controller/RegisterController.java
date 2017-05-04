@@ -35,11 +35,12 @@ public class RegisterController {
 							   final Model model) {
 		String returnTemplate = "registration";
 
-		if (validateCredentials(model, username, password, passwordConfirm)) {
+		if (this.validateCredentials(model, username, password, passwordConfirm)) {
 			final UserDTO userDTO = new UserDTO();
 
 			userDTO.setUsername(username);
 			userDTO.setPassword(passwordEncoder.encode(password));
+			userDTO.setEnabled((byte) 1);
 
 			if (registerFacade.registerUser(userDTO)) {
 				returnTemplate = "login";
@@ -54,7 +55,7 @@ public class RegisterController {
 	private boolean validateCredentials(final Model model, final String username, final String password, final String passwordConfirm) {
 		boolean result = true;
 
-		if (username == null || username.isEmpty()) {
+		if (username == null || username.isEmpty() || username.toLowerCase().contains("admin")) {
 			model.addAttribute("usernameError", "Username cannot be empty!");
 			result = false;
 		}

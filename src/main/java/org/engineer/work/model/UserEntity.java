@@ -26,10 +26,10 @@ public class UserEntity {
 	private String role;
 
 	public UserEntity(final UserDTO userDTO) {
-		setUsername(userDTO.getUsername());
-		setPassword(userDTO.getPassword());
-		setEnabled(userDTO.getEnabled());
-		setRole(userDTO.getRole());
+		this.setUsername(userDTO.getUsername());
+		this.setPassword(userDTO.getPassword());
+		this.setEnabled(userDTO.getEnabled());
+		this.setRole(userDTO.getRole());
 	}
 
 	protected UserEntity() {
