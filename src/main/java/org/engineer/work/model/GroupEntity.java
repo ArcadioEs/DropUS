@@ -4,10 +4,11 @@ import org.engineer.work.dto.GroupDTO;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Entity representing Group in the system.
@@ -21,8 +22,8 @@ public class GroupEntity {
 	private String name;
 	@Column(nullable = false)
 	private String groupOwner;
-	@ManyToMany(mappedBy = "groups")
-	private Set<UserEntity> users;
+	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "groups")
+	private List<UserEntity> users;
 
 	public GroupEntity(final GroupDTO groupDTO) {
 		this.setName(groupDTO.getName());
@@ -32,11 +33,11 @@ public class GroupEntity {
 	protected GroupEntity() {
 	}
 
-	public Set<UserEntity> getUsers() {
+	public List<UserEntity> getUsers() {
 		return users;
 	}
 
-	public void setUsers(Set<UserEntity> users) {
+	public void setUsers(List<UserEntity> users) {
 		this.users = users;
 	}
 
