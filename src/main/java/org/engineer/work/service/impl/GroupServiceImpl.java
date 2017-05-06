@@ -57,7 +57,7 @@ public class GroupServiceImpl implements GroupService {
 		boolean result = false;
 
 		if (groupRepository.exists(name)) {
-			for (final UserEntity userEntity : getGroupByName(name).getUsers()) {
+			for (final UserEntity userEntity : this.getGroupByName(name).getUsers()) {
 				userEntity.getGroups().removeIf(group -> group.getName().equals(name));
 				userService.updateUser(userEntity);
 			}

@@ -16,7 +16,7 @@ public interface UserService {
 	/**
 	 * Returns true if user is saved properly, false otherwise.
 	 */
-	boolean createUser(final UserDTO userDTO, final boolean isAdmin);
+	boolean createUser(final UserDTO userDTO);
 
 	void updateUser(final UserEntity userEntity);
 

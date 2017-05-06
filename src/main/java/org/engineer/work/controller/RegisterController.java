@@ -2,6 +2,7 @@ package org.engineer.work.controller;
 
 import org.engineer.work.dto.UserDTO;
 import org.engineer.work.facade.RegisterFacade;
+import org.engineer.work.model.enumeration.AuthorityRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -40,6 +41,7 @@ public class RegisterController {
 
 			userDTO.setUsername(username);
 			userDTO.setPassword(passwordEncoder.encode(password));
+			userDTO.setRole(AuthorityRoles.USER);
 			userDTO.setEnabled((byte) 1);
 
 			if (registerFacade.registerUser(userDTO)) {

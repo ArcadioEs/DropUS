@@ -42,7 +42,7 @@ public class GroupIntegrationTest {
 		userDTO.setEnabled((byte) 1);
 		userDTO.setRole(AuthorityRoles.USER);
 
-		userService.createUser(userDTO, false);
+		userService.createUser(userDTO);
 		userEntity = userService.getUserByUsername(userDTO.getUsername());
 
 

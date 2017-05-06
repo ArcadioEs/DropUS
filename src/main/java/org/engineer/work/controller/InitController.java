@@ -1,6 +1,7 @@
 package org.engineer.work.controller;
 
 import org.engineer.work.dto.UserDTO;
+import org.engineer.work.model.enumeration.AuthorityRoles;
 import org.engineer.work.repository.UserRepository;
 import org.engineer.work.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,9 @@ public class InitController {
 			final UserDTO userDTO = new UserDTO();
 			userDTO.setUsername("admin");
 			userDTO.setPassword(passwordEncoder.encode("nimda"));
+			userDTO.setRole(AuthorityRoles.ADMIN);
 			userDTO.setEnabled((byte) 1);
-			userService.createUser(userDTO, true);
+			userService.createUser(userDTO);
 		}
 
 		return "home";

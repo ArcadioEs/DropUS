@@ -29,17 +29,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public boolean createUser(final UserDTO userDTO, final boolean isAdmin) {
+    public boolean createUser(final UserDTO userDTO) {
         boolean result = false;
         final String username = userDTO.getUsername();
 
         if (! userRepository.exists(username)) {
-            if (isAdmin) {
-                userDTO.setRole(AuthorityRoles.ADMIN);
-            } else {
-                userDTO.setRole(AuthorityRoles.USER);
-            }
-
             userRepository.save(new UserEntity(userDTO));
             result = true;
         }
