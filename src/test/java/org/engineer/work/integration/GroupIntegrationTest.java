@@ -56,6 +56,7 @@ public class GroupIntegrationTest {
 
 	@After
 	public void cleanUp() {
+		groupService.deleteGroup(groupEntity.getName());
 		userService.deleteUser(userEntity.getUsername());
 	}
 

@@ -2,8 +2,10 @@ package org.engineer.work.service.impl;
 
 import org.engineer.work.dto.GroupDTO;
 import org.engineer.work.model.GroupEntity;
+import org.engineer.work.model.UserEntity;
 import org.engineer.work.repository.GroupRepository;
 import org.engineer.work.service.GroupService;
+import org.engineer.work.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,9 @@ public class GroupServiceImpl implements GroupService {
 
 	@Autowired
 	private GroupRepository groupRepository;
+
+	@Autowired
+	private UserService userService;
 
 	@Override
 	public GroupEntity getGroupByName(final String name) {
@@ -45,5 +50,22 @@ public class GroupServiceImpl implements GroupService {
 		groupRepository.findAll().iterator().forEachRemaining(list::add);
 
 		return list;
+	}
+
+	@Override
+	public boolean deleteGroup(final String name) {
+		boolean result = false;
+
+		if (groupRepository.exists(name)) {
+			for (final UserEntity userEntity : getGroupByName(name).getUsers()) {
+				userEntity.getGroups().removeIf(group -> group.getName().equals(name));
+				userService.updateUser(userEntity);
+			}
+
+			groupRepository.delete(name);
+			result = true;
+		}
+
+		return result;
 	}
 }
