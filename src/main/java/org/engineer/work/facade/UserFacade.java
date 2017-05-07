@@ -1,6 +1,7 @@
 package org.engineer.work.facade;
 
 import org.engineer.work.dto.UserDTO;
+import org.engineer.work.exception.user.UserNotFoundException;
 
 import java.util.List;
 
@@ -26,5 +27,5 @@ public interface UserFacade {
 	 */
 	List<UserDTO> getRegularUsers();
 
-	void updateUserEnabledStatus(final String username, final boolean enabled);
+	void updateUserEnabledStatus(final String username, final boolean enabled) throws UserNotFoundException;
 }

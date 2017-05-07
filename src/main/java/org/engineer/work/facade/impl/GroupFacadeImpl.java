@@ -1,6 +1,7 @@
 package org.engineer.work.facade.impl;
 
 import org.engineer.work.dto.GroupDTO;
+import org.engineer.work.exception.group.GroupExistsException;
 import org.engineer.work.facade.GroupFacade;
 import org.engineer.work.model.GroupEntity;
 import org.engineer.work.service.GroupService;
@@ -25,8 +26,8 @@ public class GroupFacadeImpl implements GroupFacade {
 	}
 
 	@Override
-	public boolean createGroup(final GroupDTO groupDTO) {
-		return groupService.createGroup(groupDTO);
+	public void createGroup(final GroupDTO groupDTO) throws GroupExistsException {
+		groupService.createGroup(groupDTO);
 	}
 
 	@Override

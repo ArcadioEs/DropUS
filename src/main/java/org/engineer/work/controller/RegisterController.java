@@ -1,6 +1,7 @@
 package org.engineer.work.controller;
 
 import org.engineer.work.dto.UserDTO;
+import org.engineer.work.exception.user.UserExistsException;
 import org.engineer.work.facade.RegisterFacade;
 import org.engineer.work.model.enumeration.AuthorityRoles;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +45,11 @@ public class RegisterController {
 			userDTO.setRole(AuthorityRoles.USER);
 			userDTO.setEnabled((byte) 1);
 
-			if (registerFacade.registerUser(userDTO)) {
+			try {
+				registerFacade.registerUser(userDTO);
 				returnTemplate = "login";
-			} else {
-				model.addAttribute("userExists", "User with this username already exists.");
+			} catch (UserExistsException e) {
+				model.addAttribute("userExists", e.getMessage());
 			}
 		}
 
@@ -57,8 +59,13 @@ public class RegisterController {
 	private boolean validateCredentials(final Model model, final String username, final String password, final String passwordConfirm) {
 		boolean result = true;
 
-		if (username == null || username.isEmpty() || username.toLowerCase().contains("admin")) {
+		if (username == null || username.isEmpty()) {
 			model.addAttribute("usernameError", "Username cannot be empty!");
+			result = false;
+		}
+
+		if (username != null && username.toLowerCase().contains("admin")) {
+			model.addAttribute("usernameError", "Username cannot contain \"admin\" keyword!");
 			result = false;
 		}
 

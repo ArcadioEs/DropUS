@@ -1,6 +1,7 @@
 package org.engineer.work.facade.impl;
 
 import org.engineer.work.dto.UserDTO;
+import org.engineer.work.exception.user.UserNotFoundException;
 import org.engineer.work.facade.UserFacade;
 import org.engineer.work.model.UserEntity;
 import org.engineer.work.model.enumeration.AuthorityRoles;
@@ -48,7 +49,7 @@ public class UserFacadeImpl implements UserFacade {
 	}
 
 	@Override
-	public void updateUserEnabledStatus(final String username, final boolean enabled) {
+	public void updateUserEnabledStatus(final String username, final boolean enabled) throws UserNotFoundException {
 		final UserEntity user = userService.getUserByUsername(username);
 
 		if (user != null) {

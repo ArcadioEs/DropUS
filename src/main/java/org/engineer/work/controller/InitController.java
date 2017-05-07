@@ -1,8 +1,8 @@
 package org.engineer.work.controller;
 
 import org.engineer.work.dto.UserDTO;
+import org.engineer.work.exception.user.UserExistsException;
 import org.engineer.work.model.enumeration.AuthorityRoles;
-import org.engineer.work.repository.UserRepository;
 import org.engineer.work.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,7 +33,11 @@ public class InitController {
 			userDTO.setPassword(passwordEncoder.encode("nimda"));
 			userDTO.setRole(AuthorityRoles.ADMIN);
 			userDTO.setEnabled((byte) 1);
-			userService.createUser(userDTO);
+			try {
+				userService.createUser(userDTO);
+			} catch (UserExistsException ignore) {
+				// should never happen
+			}
 		}
 
 		return "home";
