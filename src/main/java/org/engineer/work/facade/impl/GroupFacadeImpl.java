@@ -53,12 +53,16 @@ public class GroupFacadeImpl implements GroupFacade {
 	 * @param groupEntity entity received from service layer
 	 * @return properly prepared DTO
 	 */
-	protected GroupDTO convertEntityToDTO(final GroupEntity groupEntity) {
-		final GroupDTO groupDTO = new GroupDTO();
+	@Override
+	public GroupDTO convertEntityToDTO(final GroupEntity groupEntity) {
+		GroupDTO groupDTO = null;
+		if (groupEntity != null) {
+			groupDTO = new GroupDTO();
 
-		groupDTO.setName(groupEntity.getName());
-		groupDTO.setGroupOwner(groupEntity.getGroupOwner());
-
+			groupDTO.setName(groupEntity.getName());
+			groupDTO.setGroupOwner(groupEntity.getGroupOwner());
+			groupDTO.setUsers(groupEntity.getUsers().stream().map(user -> user.getUsername()).collect(Collectors.toList()));
+		}
 		return groupDTO;
 	}
 }

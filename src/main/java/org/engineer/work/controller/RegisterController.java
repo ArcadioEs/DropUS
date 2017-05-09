@@ -68,7 +68,7 @@ public class RegisterController {
 			result = false;
 		}
 
-		if (username != null && userFacade.userExsits(username)) {
+		if (username != null && userFacade.userExists(username)) {
 			model.addAttribute("usernameError", "Username already in use!");
 			result = false;
 		}

@@ -37,7 +37,7 @@ public class UserFacadeImpl implements UserFacade {
 	}
 
 	@Override
-	public boolean userExsits(final String username) {
+	public boolean userExists(final String username) {
 		boolean result = false;
 		if (username != null && userService.getUserByUsername(username) != null) {
 			result = true;
@@ -72,12 +72,16 @@ public class UserFacadeImpl implements UserFacade {
 	 * @param userEntity entity received from service layer
 	 * @return properly prepared DTO
 	 */
-	protected UserDTO convertEntityToDTO(final UserEntity userEntity) {
-		final UserDTO userDTO = new UserDTO();
+	@Override
+	public UserDTO convertEntityToDTO(final UserEntity userEntity) {
+		UserDTO userDTO = null;
+		if (userEntity != null) {
+			userDTO = new UserDTO();
 
-		userDTO.setUsername(userEntity.getUsername());
-		userDTO.setEnabled(userEntity.getEnabled());
-
+			userDTO.setUsername(userEntity.getUsername());
+			userDTO.setEnabled(userEntity.getEnabled());
+			userDTO.setGroups(userEntity.getGroups().stream().map(group -> group.getName()).collect(Collectors.toList()));
+		}
 		return userDTO;
 	}
 }
