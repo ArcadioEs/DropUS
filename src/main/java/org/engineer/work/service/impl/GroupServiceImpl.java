@@ -6,6 +6,8 @@ import org.engineer.work.model.UserEntity;
 import org.engineer.work.repository.GroupRepository;
 import org.engineer.work.service.GroupService;
 import org.engineer.work.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,8 @@ import java.util.List;
  */
 @Service
 public class GroupServiceImpl implements GroupService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(GroupServiceImpl.class);
 
 	@Autowired
 	private GroupRepository groupRepository;
@@ -37,25 +41,17 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	@Transactional
-	public boolean updateGroupMembers(final String username, final GroupDTO groupDTO) {
+	public boolean updateGroupMembers(final String username, final String groupName) {
 		boolean result = false;
-		if (groupDTO != null
-				&& groupDTO.getName() != null
-				&& username != null) {
+		if (username != null && groupName != null) {
 
 			final UserEntity userEntity = userService.getUserByUsername(username);
+			final GroupEntity groupEntity = this.getGroupByName(groupName);
 
-			if (userEntity != null) {
+			if (userEntity != null && groupEntity != null) {
 				final List<GroupEntity> userGroups = userEntity.getGroups();
-				final String groupName = groupDTO.getName();
 
 				if (!userGroups.contains(this.getGroupByName(groupName))) {
-					GroupEntity groupEntity = this.getGroupByName(groupName);
-					if (groupEntity == null) {
-						groupRepository.save(new GroupEntity(groupDTO));
-						groupEntity = this.getGroupByName(groupName);
-					}
-
 					userGroups.add(groupEntity);
 
 					userEntity.setGroups(userGroups);
@@ -76,7 +72,16 @@ public class GroupServiceImpl implements GroupService {
 				&& groupDTO.getName() != null
 				&& !groupRepository.exists(groupDTO.getName())) {
 
-			result = this.updateGroupMembers(groupDTO.getGroupOwner(), groupDTO);
+			try {
+				groupRepository.save(new GroupEntity(groupDTO));
+				if (this.updateGroupMembers(groupDTO.getGroupOwner(), groupDTO.getName())) {
+					result = true;
+				} else {
+					this.deleteGroup(groupDTO.getName());
+				}
+			} catch (IllegalArgumentException e) {
+				LOG.warn("Creating group with name {} failed", groupDTO.getName(), e);
+			}
 		}
 		return result;
 	}

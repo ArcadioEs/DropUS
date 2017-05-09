@@ -25,7 +25,7 @@ public class GroupEntity {
 	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "groups")
 	private List<UserEntity> users;
 
-	public GroupEntity(final GroupDTO groupDTO) {
+	public GroupEntity(final GroupDTO groupDTO) throws IllegalArgumentException {
 		this.setName(groupDTO.getName());
 		this.setGroupOwner(groupDTO.getGroupOwner());
 	}
@@ -46,7 +46,11 @@ public class GroupEntity {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		if (name != null) {
+			this.name = name;
+		} else {
+			throw new IllegalArgumentException("Group name must not be null");
+		}
 	}
 
 	public String getGroupOwner() {
@@ -54,6 +58,10 @@ public class GroupEntity {
 	}
 
 	public void setGroupOwner(String groupOwner) {
-		this.groupOwner = groupOwner;
+		if (groupOwner != null) {
+			this.groupOwner = groupOwner;
+		} else {
+			throw new IllegalArgumentException("Group owner must not be null");
+		}
 	}
 }
