@@ -4,6 +4,8 @@ import org.engineer.work.dto.UserDTO;
 import org.engineer.work.model.UserEntity;
 import org.engineer.work.repository.UserRepository;
 import org.engineer.work.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,8 @@ import java.util.List;
  */
 @Service
 public class UserServiceImpl implements UserService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -34,9 +38,16 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public boolean createUser(final UserDTO userDTO) {
         boolean result = false;
-        if (userDTO != null && !userRepository.exists(userDTO.getUsername())) {
-            userRepository.save(new UserEntity(userDTO));
-            result = true;
+        if (userDTO != null
+                && userDTO.getUsername() != null
+                && !userRepository.exists(userDTO.getUsername())) {
+
+            try {
+                userRepository.save(new UserEntity(userDTO));
+                result = true;
+            } catch (IllegalArgumentException e) {
+                LOG.warn("Creating user with username {} failed", userDTO.getUsername(), e);
+            }
         }
         return result;
     }
@@ -45,9 +56,16 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public boolean updateUser(final UserEntity userEntity) {
         boolean result = false;
-        if (userEntity != null && userRepository.exists(userEntity.getUsername())) {
-            userRepository.save(userEntity);
-            result = true;
+        if (userEntity != null
+                && userEntity.getUsername() != null
+                && userRepository.exists(userEntity.getUsername())) {
+
+            try {
+                userRepository.save(userEntity);
+                result = true;
+            } catch (IllegalArgumentException e) {
+                LOG.warn("Updating user with username {} failed", userEntity.getUsername(), e);
+            }
         }
         return result;
     }

@@ -38,7 +38,7 @@ public class UserEntity {
 	)
 	private List<GroupEntity> groups;
 
-	public UserEntity(final UserDTO userDTO) {
+	public UserEntity(final UserDTO userDTO) throws IllegalArgumentException {
 		this.setUsername(userDTO.getUsername());
 		this.setPassword(userDTO.getPassword());
 		this.setEnabled(userDTO.getEnabled());
@@ -61,7 +61,11 @@ public class UserEntity {
 	}
 
 	public void setRole(String role) {
-		this.role = role;
+		if (role != null) {
+			this.role = role;
+		} else {
+			throw new IllegalArgumentException("Field role must not be null");
+		}
 	}
 
 	public byte getEnabled() {
@@ -69,7 +73,11 @@ public class UserEntity {
 	}
 
 	public void setEnabled(byte enabled) {
-		this.enabled = enabled;
+		if (enabled == (byte) 0 || enabled == (byte) 1) {
+			this.enabled = enabled;
+		} else {
+			throw new IllegalArgumentException("Enabled has to be 0 or 1");
+		}
 	}
 
 	public String getUsername() {
@@ -77,7 +85,11 @@ public class UserEntity {
 	}
 
 	public void setUsername(String username) {
-		this.username = username;
+		if (username != null) {
+			this.username = username;
+		} else {
+			throw new IllegalArgumentException("Field username must not be null");
+		}
 	}
 
 	public String getPassword() {
@@ -85,6 +97,10 @@ public class UserEntity {
 	}
 
 	public void setPassword(String password) {
-		this.password = password;
+		if (password != null) {
+			this.password = password;
+		} else {
+			throw new IllegalArgumentException("Field password must not be null");
+		}
 	}
 }

@@ -37,32 +37,46 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	@Transactional
-	public void updateGroupMembers(final String user, final String group) {
-		if (user != null && group != null) {
-			final UserEntity userEntity = userService.getUserByUsername(user);
-			final GroupEntity groupEntity = this.getGroupByName(group);
+	public boolean updateGroupMembers(final String username, final GroupDTO groupDTO) {
+		boolean result = false;
+		if (groupDTO != null
+				&& groupDTO.getName() != null
+				&& username != null) {
 
-			if (userEntity != null && groupEntity != null) {
+			final UserEntity userEntity = userService.getUserByUsername(username);
+
+			if (userEntity != null) {
 				final List<GroupEntity> userGroups = userEntity.getGroups();
+				final String groupName = groupDTO.getName();
 
-				if (!userGroups.contains(groupEntity)) {
+				if (!userGroups.contains(this.getGroupByName(groupName))) {
+					GroupEntity groupEntity = this.getGroupByName(groupName);
+					if (groupEntity == null) {
+						groupRepository.save(new GroupEntity(groupDTO));
+						groupEntity = this.getGroupByName(groupName);
+					}
+
 					userGroups.add(groupEntity);
 
 					userEntity.setGroups(userGroups);
 					userService.updateUser(userEntity);
+
+					result = true;
 				}
 			}
 		}
+		return result;
 	}
 
 	@Override
 	@Transactional
 	public boolean createGroup(final GroupDTO groupDTO) {
 		boolean result = false;
-		if (groupDTO != null && !groupRepository.exists(groupDTO.getName())) {
-			groupRepository.save(new GroupEntity(groupDTO));
-			this.updateGroupMembers(groupDTO.getGroupOwner(), groupDTO.getName());
-			result = true;
+		if (groupDTO != null
+				&& groupDTO.getName() != null
+				&& !groupRepository.exists(groupDTO.getName())) {
+
+			result = this.updateGroupMembers(groupDTO.getGroupOwner(), groupDTO);
 		}
 		return result;
 	}

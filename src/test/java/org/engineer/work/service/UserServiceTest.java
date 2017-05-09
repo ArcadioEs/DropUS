@@ -3,6 +3,7 @@ package org.engineer.work.service;
 import com.fasterxml.jackson.databind.util.ArrayIterator;
 import org.engineer.work.dto.UserDTO;
 import org.engineer.work.model.UserEntity;
+import org.engineer.work.model.enumeration.AuthorityRoles;
 import org.engineer.work.repository.UserRepository;
 import org.engineer.work.service.impl.UserServiceImpl;
 import org.junit.Assert;
@@ -31,11 +32,10 @@ public class UserServiceTest {
 
 	@Test
 	public void shouldReturnAllUsersAsAList() {
-		final UserDTO userDTO = new UserDTO();
-		userDTO.setUsername("User0");
+		UserDTO userDTO = getCompleteUserDTO("User0");
 		final UserEntity user0 = new UserEntity(userDTO);
 
-		userDTO.setUsername("User1");
+		userDTO = getCompleteUserDTO("User1");
 		final UserEntity user1 = new UserEntity(userDTO);
 
 		final Iterable<UserEntity> users = new ArrayIterator<>(new UserEntity[] {user0, user1});
@@ -51,8 +51,7 @@ public class UserServiceTest {
 
 	@Test
 	public void shouldCreateUser() {
-		testUser = new UserDTO();
-		testUser.setUsername("User");
+		testUser = getCompleteUserDTO("User");
 
 		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(false);
 
@@ -61,8 +60,7 @@ public class UserServiceTest {
 
 	@Test
 	public void shouldReturnFalseDuringCreation() {
-		testUser = new UserDTO();
-		testUser.setUsername("User");
+		testUser = getCompleteUserDTO("User");
 
 		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(true);
 
@@ -71,8 +69,7 @@ public class UserServiceTest {
 
 	@Test
 	public void shouldDeleteUser() {
-		testUser = new UserDTO();
-		testUser.setUsername("User");
+		testUser = getCompleteUserDTO("User");
 
 		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(true);
 
@@ -81,8 +78,7 @@ public class UserServiceTest {
 
 	@Test
 	public void shouldReturnFalseDuringDeletion() {
-		testUser = new UserDTO();
-		testUser.setUsername("User");
+		testUser = getCompleteUserDTO("User");
 
 		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(false);
 
@@ -91,8 +87,7 @@ public class UserServiceTest {
 
 	@Test
 	public void shouldUpdateUser() {
-		testUser = new UserDTO();
-		testUser.setUsername("User");
+		testUser = getCompleteUserDTO("User");
 
 		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(true);
 
@@ -101,11 +96,21 @@ public class UserServiceTest {
 
 	@Test
 	public void shouldReturnFalseDuringUpdating() {
-		testUser = new UserDTO();
-		testUser.setUsername("User");
+		testUser = getCompleteUserDTO("User");
 
 		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(false);
 
 		Assert.assertFalse(userService.updateUser(new UserEntity(testUser)));
+	}
+
+	private UserDTO getCompleteUserDTO(final String username) {
+		final UserDTO userDTO = new UserDTO();
+
+		userDTO.setUsername(username);
+		userDTO.setPassword("test");
+		userDTO.setEnabled((byte) 0);
+		userDTO.setRole(AuthorityRoles.USER);
+
+		return userDTO;
 	}
 }

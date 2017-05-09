@@ -23,6 +23,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class GroupIntegrationTest {
 
+	private static final String USER_NAME = "User";
+	private static final String GROUP_NAME = "Group";
+
 	@Autowired
 	private UserService userService;
 
@@ -35,14 +38,14 @@ public class GroupIntegrationTest {
 	@Before
 	public void setUp() {
 		final UserDTO userDTO = new UserDTO();
-		userDTO.setUsername("User");
+		userDTO.setUsername(USER_NAME);
 		userDTO.setPassword("test");
 		userDTO.setEnabled((byte) 1);
 		userDTO.setRole(AuthorityRoles.USER);
 
 		final GroupDTO groupDTO = new GroupDTO();
-		groupDTO.setName("Group");
-		groupDTO.setGroupOwner("User");
+		groupDTO.setName(GROUP_NAME);
+		groupDTO.setGroupOwner(USER_NAME);
 
 		userService.createUser(userDTO);
 		groupService.createGroup(groupDTO);
@@ -53,13 +56,13 @@ public class GroupIntegrationTest {
 
 	@After
 	public void cleanUp() {
-		groupService.deleteGroup(groupEntity.getName());
-		userService.deleteUser(userEntity.getUsername());
+		groupService.deleteGroup(GROUP_NAME);
+		userService.deleteUser(USER_NAME);
 	}
 
 	@Test
 	public void shouldAssignGroupToUser() {
-		final GroupEntity userGroupToCheck = userService.getUserByUsername(userEntity.getUsername()).getGroups().get(0);
+		final GroupEntity userGroupToCheck = userService.getUserByUsername(USER_NAME).getGroups().get(0);
 
 		Assert.assertEquals(userGroupToCheck.getName(), groupEntity.getName());
 		Assert.assertEquals(userGroupToCheck.getGroupOwner(), groupEntity.getGroupOwner());

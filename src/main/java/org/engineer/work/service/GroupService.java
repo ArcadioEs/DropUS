@@ -12,7 +12,7 @@ public interface GroupService {
 
 	GroupEntity getGroupByName(final String name);
 
-	void updateGroupMembers(final String user, final String group);
+	boolean updateGroupMembers(final String username, final GroupDTO groupDTO);
 
 	boolean createGroup(final GroupDTO groupDTO);
 
