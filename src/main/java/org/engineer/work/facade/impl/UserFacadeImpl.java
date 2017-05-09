@@ -1,7 +1,6 @@
 package org.engineer.work.facade.impl;
 
 import org.engineer.work.dto.UserDTO;
-import org.engineer.work.exception.user.UserNotFoundException;
 import org.engineer.work.facade.UserFacade;
 import org.engineer.work.model.UserEntity;
 import org.engineer.work.model.enumeration.AuthorityRoles;
@@ -24,8 +23,7 @@ public class UserFacadeImpl implements UserFacade {
 	@Override
 	public boolean userIsAdmin(final String username) {
 		boolean result = false;
-
-		if (userService.getUserByUsername(username) != null) {
+		if (username != null && userService.getUserByUsername(username) != null) {
 			if (AuthorityRoles.ADMIN.equals(userService.getUserByUsername(username).getRole())) {
 				result = true;
 			}
@@ -39,6 +37,15 @@ public class UserFacadeImpl implements UserFacade {
 	}
 
 	@Override
+	public boolean userExsits(final String username) {
+		boolean result = false;
+		if (username != null && userService.getUserByUsername(username) != null) {
+			result = true;
+		}
+		return result;
+	}
+
+	@Override
 	public List<UserDTO> getAllUsers() {
 		return userService.getAllUsers().stream().map(userEntity -> this.convertEntityToDTO(userEntity)).collect(Collectors.toList());
 	}
@@ -49,12 +56,14 @@ public class UserFacadeImpl implements UserFacade {
 	}
 
 	@Override
-	public void updateUserEnabledStatus(final String username, final boolean enabled) throws UserNotFoundException {
-		final UserEntity user = userService.getUserByUsername(username);
+	public void updateUserEnabledStatus(final String username, final boolean enabled) {
+		if (username != null) {
+			final UserEntity user = userService.getUserByUsername(username);
 
-		if (user != null) {
-			user.setEnabled(enabled ? (byte) 1 : (byte) 0);
-			userService.updateUser(user);
+			if (user != null) {
+				user.setEnabled(enabled ? (byte) 1 : (byte) 0);
+				userService.updateUser(user);
+			}
 		}
 	}
 

@@ -2,13 +2,10 @@ package org.engineer.work.service;
 
 import com.fasterxml.jackson.databind.util.ArrayIterator;
 import org.engineer.work.dto.UserDTO;
-import org.engineer.work.exception.user.UserExistsException;
-import org.engineer.work.exception.user.UserNotFoundException;
 import org.engineer.work.model.UserEntity;
 import org.engineer.work.repository.UserRepository;
 import org.engineer.work.service.impl.UserServiceImpl;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -32,11 +29,6 @@ public class UserServiceTest {
 	@Mock
 	private UserRepository userRepository;
 
-	@Before
-	public void setUp() {
-
-	}
-
 	@Test
 	public void shouldReturnAllUsersAsAList() {
 		final UserDTO userDTO = new UserDTO();
@@ -58,65 +50,62 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void shouldCreateUser() throws UserExistsException
-	{
+	public void shouldCreateUser() {
 		testUser = new UserDTO();
 		testUser.setUsername("User");
 
 		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(false);
 
-		userService.createUser(testUser);
-	}
-
-	@Test(expected = UserExistsException.class)
-	public void shouldThrowExceptionDuringCreation() throws UserExistsException
-	{
-		testUser = new UserDTO();
-		testUser.setUsername("User");
-
-		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(true);
-
-		userService.createUser(testUser);
+		Assert.assertTrue(userService.createUser(testUser));
 	}
 
 	@Test
-	public void shouldDeleteUser() throws UserNotFoundException
-	{
+	public void shouldReturnFalseDuringCreation() {
 		testUser = new UserDTO();
 		testUser.setUsername("User");
 
 		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(true);
 
-		userService.deleteUser(testUser.getUsername());
-	}
-
-	@Test(expected = UserNotFoundException.class)
-	public void shouldThrowExceptionDuringDeletion() throws UserNotFoundException {
-		testUser = new UserDTO();
-		testUser.setUsername("User");
-
-		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(false);
-
-		userService.deleteUser(testUser.getUsername());
+		Assert.assertFalse(userService.createUser(testUser));
 	}
 
 	@Test
-	public void shouldUpdateUser() throws UserNotFoundException {
+	public void shouldDeleteUser() {
 		testUser = new UserDTO();
 		testUser.setUsername("User");
 
 		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(true);
 
-		userService.updateUser(new UserEntity(testUser));
+		Assert.assertTrue(userService.deleteUser(testUser.getUsername()));
 	}
 
-	@Test(expected = UserNotFoundException.class)
-	public void shouldThrowExceptionDuringUpdating() throws UserNotFoundException {
+	@Test
+	public void shouldReturnFalseDuringDeletion() {
 		testUser = new UserDTO();
 		testUser.setUsername("User");
 
 		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(false);
 
-		userService.updateUser(new UserEntity(testUser));
+		Assert.assertFalse(userService.deleteUser(testUser.getUsername()));
+	}
+
+	@Test
+	public void shouldUpdateUser() {
+		testUser = new UserDTO();
+		testUser.setUsername("User");
+
+		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(true);
+
+		Assert.assertTrue(userService.updateUser(new UserEntity(testUser)));
+	}
+
+	@Test
+	public void shouldReturnFalseDuringUpdating() {
+		testUser = new UserDTO();
+		testUser.setUsername("User");
+
+		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(false);
+
+		Assert.assertFalse(userService.updateUser(new UserEntity(testUser)));
 	}
 }

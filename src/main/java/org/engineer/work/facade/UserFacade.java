@@ -1,7 +1,6 @@
 package org.engineer.work.facade;
 
 import org.engineer.work.dto.UserDTO;
-import org.engineer.work.exception.user.UserNotFoundException;
 
 import java.util.List;
 
@@ -10,22 +9,15 @@ import java.util.List;
  */
 public interface UserFacade {
 
-	/**
-	 * Returns true if user is an admin, false otherwise.
-	 */
 	boolean userIsAdmin(final String username);
+
+	boolean userExsits(final String username);
 
 	UserDTO getUserByUsername(final String username);
 
-	/**
-	 * Returns list of all users, including admins.
-	 */
 	List<UserDTO> getAllUsers();
 
-	/**
-	 * Returns list of all regular users, excluding admins.
-	 */
 	List<UserDTO> getRegularUsers();
 
-	void updateUserEnabledStatus(final String username, final boolean enabled) throws UserNotFoundException;
+	void updateUserEnabledStatus(final String username, final boolean enabled);
 }

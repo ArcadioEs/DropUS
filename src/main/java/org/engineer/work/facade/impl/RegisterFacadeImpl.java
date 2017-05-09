@@ -1,7 +1,6 @@
 package org.engineer.work.facade.impl;
 
 import org.engineer.work.dto.UserDTO;
-import org.engineer.work.exception.user.UserExistsException;
 import org.engineer.work.facade.RegisterFacade;
 import org.engineer.work.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,7 @@ public class RegisterFacadeImpl implements RegisterFacade {
 	private UserService userService;
 
 	@Override
-	public void registerUser(final UserDTO userDTO) throws UserExistsException {
-		userService.createUser(userDTO);
+	public boolean registerUser(final UserDTO userDTO) {
+		return userService.createUser(userDTO);
 	}
 }

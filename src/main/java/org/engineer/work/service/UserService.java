@@ -1,8 +1,6 @@
 package org.engineer.work.service;
 
 import org.engineer.work.dto.UserDTO;
-import org.engineer.work.exception.user.UserExistsException;
-import org.engineer.work.exception.user.UserNotFoundException;
 import org.engineer.work.model.UserEntity;
 
 import java.util.List;
@@ -15,17 +13,11 @@ public interface UserService {
 
 	UserEntity getUserByUsername(final String username);
 
-	/**
-	 * Creates user if not exist, throw exception otherwise.
-	 */
-	void createUser(final UserDTO userDTO) throws UserExistsException;
+	boolean createUser(final UserDTO userDTO);
 
-	void updateUser(final UserEntity userEntity) throws UserNotFoundException;
+	boolean updateUser(final UserEntity userEntity);
 
 	List<UserEntity> getAllUsers();
 
-	/**
-	 * Deletes user if exist, throw exception otherwise.
-	 */
-	void deleteUser(final String username) throws UserNotFoundException;
+	boolean deleteUser(final String username);
 }

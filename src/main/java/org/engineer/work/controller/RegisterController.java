@@ -1,8 +1,8 @@
 package org.engineer.work.controller;
 
 import org.engineer.work.dto.UserDTO;
-import org.engineer.work.exception.user.UserExistsException;
 import org.engineer.work.facade.RegisterFacade;
+import org.engineer.work.facade.UserFacade;
 import org.engineer.work.model.enumeration.AuthorityRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,6 +11,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.text.MessageFormat;
 
 /**
  * Register controller.
@@ -21,6 +23,9 @@ public class RegisterController {
 
 	@Autowired
 	private RegisterFacade registerFacade;
+
+	@Autowired
+	private UserFacade userFacade;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -45,11 +50,10 @@ public class RegisterController {
 			userDTO.setRole(AuthorityRoles.USER);
 			userDTO.setEnabled((byte) 1);
 
-			try {
-				registerFacade.registerUser(userDTO);
+			if (registerFacade.registerUser(userDTO)) {
 				returnTemplate = "login";
-			} catch (UserExistsException e) {
-				model.addAttribute("userExists", e.getMessage());
+			} else {
+				model.addAttribute("userExists", MessageFormat.format("Username {0} already in use", username));
 			}
 		}
 
@@ -61,6 +65,11 @@ public class RegisterController {
 
 		if (username == null || username.isEmpty()) {
 			model.addAttribute("usernameError", "Username cannot be empty!");
+			result = false;
+		}
+
+		if (username != null && userFacade.userExsits(username)) {
+			model.addAttribute("usernameError", "Username already in use!");
 			result = false;
 		}
 

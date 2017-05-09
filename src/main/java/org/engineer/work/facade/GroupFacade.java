@@ -1,7 +1,6 @@
 package org.engineer.work.facade;
 
 import org.engineer.work.dto.GroupDTO;
-import org.engineer.work.exception.group.GroupExistsException;
 
 import java.util.List;
 
@@ -10,12 +9,13 @@ import java.util.List;
  */
 public interface GroupFacade {
 
+	boolean groupExists(final String name);
+
 	GroupDTO getGroupByName(final String name);
 
-	/**
-	 * Creates group, throws exception if group exists.
-	 */
-	void createGroup(final GroupDTO groupDTO) throws GroupExistsException;
+	boolean createGroup(final GroupDTO groupDTO);
 
 	List<GroupDTO> getAllGroups();
+
+	boolean deleteGroup(final String name);
 }

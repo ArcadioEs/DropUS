@@ -1,7 +1,6 @@
 package org.engineer.work.controller;
 
 import org.engineer.work.dto.UserDTO;
-import org.engineer.work.exception.user.UserExistsException;
 import org.engineer.work.model.enumeration.AuthorityRoles;
 import org.engineer.work.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,18 +26,12 @@ public class InitController {
 	public String hello() {
 
 		/** Adding initial admin user, will be changed later on */
-		if (userService.getUserByUsername("admin") == null) {
-			final UserDTO userDTO = new UserDTO();
-			userDTO.setUsername("admin");
-			userDTO.setPassword(passwordEncoder.encode("nimda"));
-			userDTO.setRole(AuthorityRoles.ADMIN);
-			userDTO.setEnabled((byte) 1);
-			try {
-				userService.createUser(userDTO);
-			} catch (UserExistsException ignore) {
-				// should never happen
-			}
-		}
+		final UserDTO userDTO = new UserDTO();
+		userDTO.setUsername("admin");
+		userDTO.setPassword(passwordEncoder.encode("nimda"));
+		userDTO.setRole(AuthorityRoles.ADMIN);
+		userDTO.setEnabled((byte) 1);
+		userService.createUser(userDTO);
 
 		return "home";
 	}

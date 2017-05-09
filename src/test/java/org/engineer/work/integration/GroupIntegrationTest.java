@@ -2,10 +2,6 @@ package org.engineer.work.integration;
 
 import org.engineer.work.dto.GroupDTO;
 import org.engineer.work.dto.UserDTO;
-import org.engineer.work.exception.group.GroupExistsException;
-import org.engineer.work.exception.group.GroupNotFoundException;
-import org.engineer.work.exception.user.UserExistsException;
-import org.engineer.work.exception.user.UserNotFoundException;
 import org.engineer.work.model.GroupEntity;
 import org.engineer.work.model.UserEntity;
 import org.engineer.work.model.enumeration.AuthorityRoles;
@@ -54,35 +50,22 @@ public class GroupIntegrationTest {
 		groupDTO.setName("Group");
 		groupDTO.setGroupOwner("User");
 
-		userEntity = userService.getUserByUsername(userDTO.getUsername());
-		try {
-			userService.createUser(userDTO);
-			groupService.createGroup(groupDTO);
-		} catch (Exception e) {
-			LOG.warn("Creating user or group during set up failed", e);
-		}
+		userService.createUser(userDTO);
+		groupService.createGroup(groupDTO);
+
 		userEntity = userService.getUserByUsername(userDTO.getUsername());
 		groupEntity = groupService.getGroupByName(groupDTO.getName());
 	}
 
 	@After
 	public void cleanUp() {
-		try {
-			groupService.deleteGroup(groupEntity.getName());
-			userService.deleteUser(userEntity.getUsername());
-		} catch (Exception e) {
-			LOG.warn("Deleting user or group during clean up failed", e);
-		}
+		groupService.deleteGroup(groupEntity.getName());
+		userService.deleteUser(userEntity.getUsername());
 	}
 
 	@Test
 	public void shouldAssignGroupToUser() {
-		userEntity.setGroups(Arrays.asList(groupEntity));
-		try {
-			userService.updateUser(userEntity);
-		} catch (UserNotFoundException e) {
-			LOG.warn("User could not be found", e);
-		}
+		groupService.updateGroupMembers(userEntity.getUsername(), groupEntity.getName());
 
 		final GroupEntity userGroupToCheck = userService.getUserByUsername(userEntity.getUsername()).getGroups().get(0);
 

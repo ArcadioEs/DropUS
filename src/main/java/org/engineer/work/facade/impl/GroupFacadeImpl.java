@@ -1,7 +1,6 @@
 package org.engineer.work.facade.impl;
 
 import org.engineer.work.dto.GroupDTO;
-import org.engineer.work.exception.group.GroupExistsException;
 import org.engineer.work.facade.GroupFacade;
 import org.engineer.work.model.GroupEntity;
 import org.engineer.work.service.GroupService;
@@ -26,13 +25,27 @@ public class GroupFacadeImpl implements GroupFacade {
 	}
 
 	@Override
-	public void createGroup(final GroupDTO groupDTO) throws GroupExistsException {
-		groupService.createGroup(groupDTO);
+	public boolean groupExists(final String name) {
+		boolean result = false;
+		if (name != null && groupService.getGroupByName(name) != null) {
+			result = true;
+		}
+		return result;
+	}
+
+	@Override
+	public boolean createGroup(final GroupDTO groupDTO) {
+		return groupService.createGroup(groupDTO);
 	}
 
 	@Override
 	public List<GroupDTO> getAllGroups() {
 		return groupService.getAllGroups().stream().map(group -> convertEntityToDTO(group)).collect(Collectors.toList());
+	}
+
+	@Override
+	public boolean deleteGroup(final String name) {
+		return groupService.deleteGroup(name);
 	}
 
 	/**
