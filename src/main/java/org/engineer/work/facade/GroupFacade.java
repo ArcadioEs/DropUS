@@ -10,15 +10,15 @@ import java.util.List;
  */
 public interface GroupFacade {
 
-	boolean groupExists(final String name);
+    boolean groupExists(final String name);
 
-	GroupDTO getGroupByName(final String name);
+    GroupDTO getGroupByName(final String name);
 
-	boolean createGroup(final GroupDTO groupDTO);
+    boolean createGroup(final GroupDTO groupDTO);
 
-	List<GroupDTO> getAllGroups();
+    List<GroupDTO> getAllGroups();
 
-	boolean deleteGroup(final String name);
+    boolean deleteGroup(final String name);
 
-	GroupDTO convertEntityToDTO(final GroupEntity groupEntity);
+    GroupDTO convertEntityToDTO(final GroupEntity groupEntity);
 }

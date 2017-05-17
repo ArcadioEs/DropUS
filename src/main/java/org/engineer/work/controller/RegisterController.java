@@ -21,73 +21,73 @@ import java.text.MessageFormat;
 @RequestMapping(value = "/registration")
 public class RegisterController {
 
-	@Autowired
-	private RegisterFacade registerFacade;
+    @Autowired
+    private RegisterFacade registerFacade;
 
-	@Autowired
-	private UserFacade userFacade;
+    @Autowired
+    private UserFacade userFacade;
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-	@RequestMapping(value = "/page")
-	public String getRegistrationPage() {
-		return "registration";
-	}
+    @RequestMapping(value = "/page")
+    public String getRegistrationPage() {
+        return "registration";
+    }
 
-	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public String registerUser(@RequestParam("username") final String username,
-							   @RequestParam("password") final String password,
-							   @RequestParam("passwordConfirm") final String passwordConfirm,
-							   final Model model) {
-		String returnTemplate = "registration";
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public String registerUser(@RequestParam("username") final String username,
+                               @RequestParam("password") final String password,
+                               @RequestParam("passwordConfirm") final String passwordConfirm,
+                               final Model model) {
+        String returnTemplate = "registration";
 
-		if (this.validateCredentials(model, username, password, passwordConfirm)) {
-			final UserDTO userDTO = new UserDTO();
+        if (this.validateCredentials(model, username, password, passwordConfirm)) {
+            final UserDTO userDTO = new UserDTO();
 
-			userDTO.setUsername(username);
-			userDTO.setPassword(passwordEncoder.encode(password));
-			userDTO.setRole(AuthorityRoles.USER);
-			userDTO.setEnabled((byte) 1);
+            userDTO.setUsername(username);
+            userDTO.setPassword(passwordEncoder.encode(password));
+            userDTO.setRole(AuthorityRoles.USER);
+            userDTO.setEnabled((byte) 1);
 
-			if (registerFacade.registerUser(userDTO)) {
-				returnTemplate = "login";
-			} else {
-				model.addAttribute("userExists", MessageFormat.format("Username {0} already in use", username));
-			}
-		}
+            if (registerFacade.registerUser(userDTO)) {
+                returnTemplate = "login";
+            } else {
+                model.addAttribute("userExists", MessageFormat.format("Username {0} already in use", username));
+            }
+        }
 
-		return returnTemplate;
-	}
+        return returnTemplate;
+    }
 
-	private boolean validateCredentials(final Model model, final String username, final String password, final String passwordConfirm) {
-		boolean result = true;
+    private boolean validateCredentials(final Model model, final String username, final String password, final String passwordConfirm) {
+        boolean result = true;
 
-		if (username == null || username.isEmpty()) {
-			model.addAttribute("usernameError", "Username cannot be empty!");
-			result = false;
-		}
+        if (username == null || username.isEmpty()) {
+            model.addAttribute("usernameError", "Username cannot be empty!");
+            result = false;
+        }
 
-		if (username != null && userFacade.userExists(username)) {
-			model.addAttribute("usernameError", "Username already in use!");
-			result = false;
-		}
+        if (username != null && userFacade.userExists(username)) {
+            model.addAttribute("usernameError", "Username already in use!");
+            result = false;
+        }
 
-		if (username != null && username.toLowerCase().contains("admin")) {
-			model.addAttribute("usernameError", "Username cannot contain \"admin\" keyword!");
-			result = false;
-		}
+        if (username != null && username.toLowerCase().contains("admin")) {
+            model.addAttribute("usernameError", "Username cannot contain \"admin\" keyword!");
+            result = false;
+        }
 
-		if (password == null || password.isEmpty()) {
-			model.addAttribute("passwordError", "Password cannot be empty!");
-			result = false;
-		}
+        if (password == null || password.isEmpty()) {
+            model.addAttribute("passwordError", "Password cannot be empty!");
+            result = false;
+        }
 
-		if (passwordConfirm == null || !passwordConfirm.equals(password)) {
-			model.addAttribute("confirmError", "Password should be identical!");
-			result = false;
-		}
+        if (passwordConfirm == null || !passwordConfirm.equals(password)) {
+            model.addAttribute("confirmError", "Password should be identical!");
+            result = false;
+        }
 
-		return result;
-	}
+        return result;
+    }
 }

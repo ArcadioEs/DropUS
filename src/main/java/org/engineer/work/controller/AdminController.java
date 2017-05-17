@@ -14,27 +14,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping(value = "/admin")
 public class AdminController {
 
-	@Autowired
-	private UserFacade userFacade;
+    @Autowired
+    private UserFacade userFacade;
 
-	@RequestMapping(value = "/page")
-	public String getAdminView(final Model model) {
-		model.addAttribute("allusers", userFacade.getRegularUsers());
+    @RequestMapping(value = "/page")
+    public String getAdminView(final Model model) {
+        model.addAttribute("allusers", userFacade.getRegularUsers());
 
-		return "adminpanel";
-	}
+        return "adminpanel";
+    }
 
-	@RequestMapping(value = "/update")
-	public String updateUser(@RequestParam("enabled") final boolean enabled,
-							 @RequestParam(required = false, value = "usernames[]") final String[] usernames,
-							 final Model model) {
-		if (usernames != null) {
-			for (final String username : usernames) {
-				userFacade.updateUserEnabledStatus(username, enabled);
-			}
-		}
-		model.addAttribute("allusers", userFacade.getRegularUsers());
+    @RequestMapping(value = "/update")
+    public String updateUser(@RequestParam("enabled") final boolean enabled,
+                             @RequestParam(required = false, value = "usernames[]") final String[] usernames,
+                             final Model model) {
+        if (usernames != null) {
+            for (final String username : usernames) {
+                userFacade.updateUserEnabledStatus(username, enabled);
+            }
+        }
+        model.addAttribute("allusers", userFacade.getRegularUsers());
 
-		return "adminpanel";
-	}
+        return "adminpanel";
+    }
 }

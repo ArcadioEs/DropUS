@@ -16,53 +16,54 @@ import java.util.stream.Collectors;
 @Service
 public class GroupFacadeImpl implements GroupFacade {
 
-	@Autowired
-	private GroupService groupService;
+    @Autowired
+    private GroupService groupService;
 
-	@Override
-	public GroupDTO getGroupByName(final String name) {
-		return convertEntityToDTO(groupService.getGroupByName(name));
-	}
+    @Override
+    public GroupDTO getGroupByName(final String name) {
+        return convertEntityToDTO(groupService.getGroupByName(name));
+    }
 
-	@Override
-	public boolean groupExists(final String name) {
-		boolean result = false;
-		if (name != null && groupService.getGroupByName(name) != null) {
-			result = true;
-		}
-		return result;
-	}
+    @Override
+    public boolean groupExists(final String name) {
+        boolean result = false;
+        if (name != null && groupService.getGroupByName(name) != null) {
+            result = true;
+        }
+        return result;
+    }
 
-	@Override
-	public boolean createGroup(final GroupDTO groupDTO) {
-		return groupService.createGroup(groupDTO);
-	}
+    @Override
+    public boolean createGroup(final GroupDTO groupDTO) {
+        return groupService.createGroup(groupDTO);
+    }
 
-	@Override
-	public List<GroupDTO> getAllGroups() {
-		return groupService.getAllGroups().stream().map(group -> convertEntityToDTO(group)).collect(Collectors.toList());
-	}
+    @Override
+    public List<GroupDTO> getAllGroups() {
+        return groupService.getAllGroups().stream().map(group -> convertEntityToDTO(group)).collect(Collectors.toList());
+    }
 
-	@Override
-	public boolean deleteGroup(final String name) {
-		return groupService.deleteGroup(name);
-	}
+    @Override
+    public boolean deleteGroup(final String name) {
+        return groupService.deleteGroup(name);
+    }
 
-	/**
-	 * Converts given entity into DTO.
-	 * @param groupEntity entity received from service layer
-	 * @return properly prepared DTO
-	 */
-	@Override
-	public GroupDTO convertEntityToDTO(final GroupEntity groupEntity) {
-		GroupDTO groupDTO = null;
-		if (groupEntity != null) {
-			groupDTO = new GroupDTO();
+    /**
+     * Converts given entity into DTO.
+     *
+     * @param groupEntity entity received from service layer
+     * @return properly prepared DTO
+     */
+    @Override
+    public GroupDTO convertEntityToDTO(final GroupEntity groupEntity) {
+        GroupDTO groupDTO = null;
+        if (groupEntity != null) {
+            groupDTO = new GroupDTO();
 
-			groupDTO.setName(groupEntity.getName());
-			groupDTO.setGroupOwner(groupEntity.getGroupOwner());
-			groupDTO.setUsers(groupEntity.getUsers().stream().map(user -> user.getUsername()).collect(Collectors.toList()));
-		}
-		return groupDTO;
-	}
+            groupDTO.setName(groupEntity.getName());
+            groupDTO.setGroupOwner(groupEntity.getGroupOwner());
+            groupDTO.setUsers(groupEntity.getUsers().stream().map(user -> user.getUsername()).collect(Collectors.toList()));
+        }
+        return groupDTO;
+    }
 }

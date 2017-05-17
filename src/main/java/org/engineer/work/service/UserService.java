@@ -5,19 +5,18 @@ import org.engineer.work.model.UserEntity;
 
 import java.util.List;
 
-
 /**
  * Service managing users in the system.
  */
 public interface UserService {
 
-	UserEntity getUserByUsername(final String username);
+    UserEntity getUserByUsername(final String username);
 
-	boolean createUser(final UserDTO userDTO);
+    boolean createUser(final UserDTO userDTO);
 
-	boolean updateUser(final UserEntity userEntity);
+    boolean updateUser(final UserEntity userEntity);
 
-	List<UserEntity> getAllUsers();
+    List<UserEntity> getAllUsers();
 
-	boolean deleteUser(final String username);
+    boolean deleteUser(final String username);
 }

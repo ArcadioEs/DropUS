@@ -13,7 +13,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.util.List;
 
-
 /**
  * Entity representing User in the system.
  */
@@ -21,86 +20,86 @@ import java.util.List;
 @Table(name = "users")
 public class UserEntity {
 
-	@Id
-	@Column(nullable = false, unique = true)
-	private String username;
-	@Column(nullable = false, columnDefinition="TEXT")
-	private String password;
-	@Column(nullable = false)
-	private byte enabled;
-	@Column(nullable = false)
-	private String role;
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinTable(
-			name = "users_groups",
-			joinColumns = @JoinColumn(name = "users_username", referencedColumnName = "username"),
-			inverseJoinColumns = @JoinColumn(name = "groups_name", referencedColumnName = "name")
-	)
-	private List<GroupEntity> groups;
+    @Id
+    @Column(nullable = false, unique = true)
+    private String username;
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String password;
+    @Column(nullable = false)
+    private byte enabled;
+    @Column(nullable = false)
+    private String role;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "users_groups",
+            joinColumns = @JoinColumn(name = "users_username", referencedColumnName = "username"),
+            inverseJoinColumns = @JoinColumn(name = "groups_name", referencedColumnName = "name")
+    )
+    private List<GroupEntity> groups;
 
-	public UserEntity(final UserDTO userDTO) throws IllegalArgumentException {
-		this.setUsername(userDTO.getUsername());
-		this.setPassword(userDTO.getPassword());
-		this.setEnabled(userDTO.getEnabled());
-		this.setRole(userDTO.getRole());
-	}
+    public UserEntity(final UserDTO userDTO) throws IllegalArgumentException {
+        this.setUsername(userDTO.getUsername());
+        this.setPassword(userDTO.getPassword());
+        this.setEnabled(userDTO.getEnabled());
+        this.setRole(userDTO.getRole());
+    }
 
-	protected UserEntity() {
-	}
+    protected UserEntity() {
+    }
 
-	public List<GroupEntity> getGroups() {
-		return groups;
-	}
+    public List<GroupEntity> getGroups() {
+        return groups;
+    }
 
-	public void setGroups(List<GroupEntity> groups) {
-		this.groups = groups;
-	}
+    public void setGroups(List<GroupEntity> groups) {
+        this.groups = groups;
+    }
 
-	public String getRole() {
-		return role;
-	}
+    public String getRole() {
+        return role;
+    }
 
-	public void setRole(String role) {
-		if (role != null) {
-			this.role = role;
-		} else {
-			throw new IllegalArgumentException("Field role must not be null");
-		}
-	}
+    public void setRole(String role) {
+        if (role != null) {
+            this.role = role;
+        } else {
+            throw new IllegalArgumentException("Field role must not be null");
+        }
+    }
 
-	public byte getEnabled() {
-		return enabled;
-	}
+    public byte getEnabled() {
+        return enabled;
+    }
 
-	public void setEnabled(byte enabled) {
-		if (enabled == (byte) 0 || enabled == (byte) 1) {
-			this.enabled = enabled;
-		} else {
-			throw new IllegalArgumentException("Enabled has to be 0 or 1");
-		}
-	}
+    public void setEnabled(byte enabled) {
+        if (enabled == (byte) 0 || enabled == (byte) 1) {
+            this.enabled = enabled;
+        } else {
+            throw new IllegalArgumentException("Enabled has to be 0 or 1");
+        }
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public void setUsername(String username) {
-		if (username != null) {
-			this.username = username;
-		} else {
-			throw new IllegalArgumentException("Field username must not be null");
-		}
-	}
+    public void setUsername(String username) {
+        if (username != null) {
+            this.username = username;
+        } else {
+            throw new IllegalArgumentException("Field username must not be null");
+        }
+    }
 
-	public String getPassword() {
-		return this.password;
-	}
+    public String getPassword() {
+        return this.password;
+    }
 
-	public void setPassword(String password) {
-		if (password != null) {
-			this.password = password;
-		} else {
-			throw new IllegalArgumentException("Field password must not be null");
-		}
-	}
+    public void setPassword(String password) {
+        if (password != null) {
+            this.password = password;
+        } else {
+            throw new IllegalArgumentException("Field password must not be null");
+        }
+    }
 }

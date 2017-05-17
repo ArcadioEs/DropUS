@@ -7,49 +7,49 @@ import java.util.List;
  */
 public class UserDTO {
 
-	private String username;
-	private String password;
-	private byte enabled;
-	private String role;
-	private List<String> groups;
+    private String username;
+    private String password;
+    private byte enabled;
+    private String role;
+    private List<String> groups;
 
-	public List<String> getGroups() {
-		return groups;
-	}
+    public List<String> getGroups() {
+        return groups;
+    }
 
-	public void setGroups(List<String> groups) {
-		this.groups = groups;
-	}
+    public void setGroups(List<String> groups) {
+        this.groups = groups;
+    }
 
-	public String getRole() {
-		return role;
-	}
+    public String getRole() {
+        return role;
+    }
 
-	public void setRole(String role) {
-		this.role = role;
-	}
+    public void setRole(String role) {
+        this.role = role;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public byte getEnabled() {
-		return enabled;
-	}
+    public byte getEnabled() {
+        return enabled;
+    }
 
-	public void setEnabled(byte enabled) {
-		this.enabled = enabled;
-	}
+    public void setEnabled(byte enabled) {
+        this.enabled = enabled;
+    }
 }

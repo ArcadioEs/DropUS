@@ -16,101 +16,100 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
-
 /**
  * Test of {@link UserService} implementation.
  */
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
 
-	@InjectMocks
-	private UserService userService = new UserServiceImpl();
-	private UserDTO testUser;
+    @InjectMocks
+    private final UserService userService = new UserServiceImpl();
+    private UserDTO testUser;
 
-	@Mock
-	private UserRepository userRepository;
+    @Mock
+    private UserRepository userRepository;
 
-	@Test
-	public void shouldReturnAllUsersAsAList() {
-		UserDTO userDTO = getCompleteUserDTO("User0");
-		final UserEntity user0 = new UserEntity(userDTO);
+    @Test
+    public void shouldReturnAllUsersAsAList() {
+        UserDTO userDTO = getCompleteUserDTO("User0");
+        final UserEntity user0 = new UserEntity(userDTO);
 
-		userDTO = getCompleteUserDTO("User1");
-		final UserEntity user1 = new UserEntity(userDTO);
+        userDTO = getCompleteUserDTO("User1");
+        final UserEntity user1 = new UserEntity(userDTO);
 
-		final Iterable<UserEntity> users = new ArrayIterator<>(new UserEntity[] {user0, user1});
+        final Iterable<UserEntity> users = new ArrayIterator<>(new UserEntity[]{user0, user1});
 
-		Mockito.when(userRepository.findAll()).thenReturn(users);
+        Mockito.when(userRepository.findAll()).thenReturn(users);
 
-		final List<UserEntity> userList = userService.getAllUsers();
+        final List<UserEntity> userList = userService.getAllUsers();
 
-		Assert.assertEquals(userList.size(), 2);
-		Assert.assertTrue(userList.contains(user0));
-		Assert.assertTrue(userList.contains(user1));
-	}
+        Assert.assertEquals(2, userList.size());
+        Assert.assertTrue(userList.contains(user0));
+        Assert.assertTrue(userList.contains(user1));
+    }
 
-	@Test
-	public void shouldCreateUser() {
-		testUser = getCompleteUserDTO("User");
+    @Test
+    public void shouldCreateUser() {
+        testUser = getCompleteUserDTO("User");
 
-		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(false);
+        Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(false);
 
-		Assert.assertTrue(userService.createUser(testUser));
-	}
+        Assert.assertTrue(userService.createUser(testUser));
+    }
 
-	@Test
-	public void shouldReturnFalseDuringCreation() {
-		testUser = getCompleteUserDTO("User");
+    @Test
+    public void shouldReturnFalseDuringCreation() {
+        testUser = getCompleteUserDTO("User");
 
-		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(true);
+        Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(true);
 
-		Assert.assertFalse(userService.createUser(testUser));
-	}
+        Assert.assertFalse(userService.createUser(testUser));
+    }
 
-	@Test
-	public void shouldDeleteUser() {
-		testUser = getCompleteUserDTO("User");
+    @Test
+    public void shouldDeleteUser() {
+        testUser = getCompleteUserDTO("User");
 
-		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(true);
+        Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(true);
 
-		Assert.assertTrue(userService.deleteUser(testUser.getUsername()));
-	}
+        Assert.assertTrue(userService.deleteUser(testUser.getUsername()));
+    }
 
-	@Test
-	public void shouldReturnFalseDuringDeletion() {
-		testUser = getCompleteUserDTO("User");
+    @Test
+    public void shouldReturnFalseDuringDeletion() {
+        testUser = getCompleteUserDTO("User");
 
-		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(false);
+        Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(false);
 
-		Assert.assertFalse(userService.deleteUser(testUser.getUsername()));
-	}
+        Assert.assertFalse(userService.deleteUser(testUser.getUsername()));
+    }
 
-	@Test
-	public void shouldUpdateUser() {
-		testUser = getCompleteUserDTO("User");
+    @Test
+    public void shouldUpdateUser() {
+        testUser = getCompleteUserDTO("User");
 
-		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(true);
+        Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(true);
 
-		Assert.assertTrue(userService.updateUser(new UserEntity(testUser)));
-	}
+        Assert.assertTrue(userService.updateUser(new UserEntity(testUser)));
+    }
 
-	@Test
-	public void shouldReturnFalseDuringUpdating() {
-		testUser = getCompleteUserDTO("User");
+    @Test
+    public void shouldReturnFalseDuringUpdating() {
+        testUser = getCompleteUserDTO("User");
 
-		Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(false);
+        Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(false);
 
-		Assert.assertFalse(userService.updateUser(new UserEntity(testUser)));
-	}
+        Assert.assertFalse(userService.updateUser(new UserEntity(testUser)));
+    }
 
-	private UserDTO getCompleteUserDTO(final String username) {
-		final UserDTO userDTO = new UserDTO();
+    private UserDTO getCompleteUserDTO(final String username) {
+        final UserDTO userDTO = new UserDTO();
 
-		userDTO.setUsername(username);
-		userDTO.setPassword("test");
-		userDTO.setEnabled((byte) 0);
-		userDTO.setRole(AuthorityRoles.USER);
+        userDTO.setUsername(username);
+        userDTO.setPassword("test");
+        userDTO.setEnabled((byte) 0);
+        userDTO.setRole(AuthorityRoles.USER);
 
-		return userDTO;
-	}
+        return userDTO;
+    }
 }

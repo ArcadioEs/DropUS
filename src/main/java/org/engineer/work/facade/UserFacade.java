@@ -10,17 +10,17 @@ import java.util.List;
  */
 public interface UserFacade {
 
-	boolean userIsAdmin(final String username);
+    boolean userIsAdmin(final String username);
 
-	boolean userExists(final String username);
+    boolean userExists(final String username);
 
-	UserDTO getUserByUsername(final String username);
+    UserDTO getUserByUsername(final String username);
 
-	List<UserDTO> getAllUsers();
+    List<UserDTO> getAllUsers();
 
-	List<UserDTO> getRegularUsers();
+    List<UserDTO> getRegularUsers();
 
-	void updateUserEnabledStatus(final String username, final boolean enabled);
+    void updateUserEnabledStatus(final String username, final boolean enabled);
 
-	UserDTO convertEntityToDTO(final UserEntity userEntity);
+    UserDTO convertEntityToDTO(final UserEntity userEntity);
 }

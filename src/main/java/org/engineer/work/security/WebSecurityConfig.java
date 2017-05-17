@@ -12,47 +12,46 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.sql.DataSource;
 
-
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	private DataSource dataSource;
+    @Autowired
+    private DataSource dataSource;
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http
-				.authorizeRequests()
-				.antMatchers("/init", "/", "/home", "/registration/**").permitAll()
-				.antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
-				.anyRequest().authenticated()
-				.and()
-				.formLogin()
-				.loginPage("/login")
-				.permitAll()
-				.and()
-				.logout()
-				.logoutSuccessUrl("/home")
-				.permitAll()
-				.and()
-				.exceptionHandling().accessDeniedPage("/denied");
-	}
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests()
+                .antMatchers("/init", "/", "/home", "/registration/**").permitAll()
+                .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
+                .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .loginPage("/login")
+                .permitAll()
+                .and()
+                .logout()
+                .logoutSuccessUrl("/home")
+                .permitAll()
+                .and()
+                .exceptionHandling().accessDeniedPage("/denied");
+    }
 
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth
-				.jdbcAuthentication()
-				.dataSource(dataSource)
-				.passwordEncoder(passwordEncoder())
-				.usersByUsernameQuery(
-						"select username, password, enabled from users where username=?")
-				.authoritiesByUsernameQuery(
-						"select username, role from users where username=?");
-	}
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+                .jdbcAuthentication()
+                .dataSource(dataSource)
+                .passwordEncoder(passwordEncoder())
+                .usersByUsernameQuery(
+                        "select username, password, enabled from users where username=?")
+                .authoritiesByUsernameQuery(
+                        "select username, role from users where username=?");
+    }
 
-	@Bean
-	public PasswordEncoder passwordEncoder(){
-		return new BCryptPasswordEncoder();
-	}
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

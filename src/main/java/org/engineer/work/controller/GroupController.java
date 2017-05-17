@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.text.MessageFormat;
-
 /**
  * Controller for wall page.
  */
@@ -20,50 +18,50 @@ import java.text.MessageFormat;
 @RequestMapping("/group")
 public class GroupController {
 
-	@Autowired
-	private GroupFacade groupFacade;
+    @Autowired
+    private GroupFacade groupFacade;
 
-	@RequestMapping("/page")
-	public String getGroupPage() {
-		return "groups";
-	}
+    @RequestMapping("/page")
+    public String getGroupPage() {
+        return "groups";
+    }
 
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public String createGroup(@RequestParam(value = "name") final String name,
-							  @RequestParam(value = "description") final String description,
-							  @AuthenticationPrincipal User user,
-							  final Model model) {
-		if(user != null && validate(model, name, description)) {
-			GroupDTO groupDTO = new GroupDTO();
-			groupDTO.setName(name);
-			groupDTO.setGroupOwner(user.getUsername());
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public String createGroup(@RequestParam(value = "name") final String name,
+                              @RequestParam(value = "description") final String description,
+                              @AuthenticationPrincipal User user,
+                              final Model model) {
+        if (user != null && validate(model, name, description)) {
+            GroupDTO groupDTO = new GroupDTO();
+            groupDTO.setName(name);
+            groupDTO.setGroupOwner(user.getUsername());
 
-			if (!groupFacade.createGroup(groupDTO)) {
-				model.addAttribute("groupCreationFailed", "Creating group failed for some reason, please try later");
-			}
-		}
+            if (!groupFacade.createGroup(groupDTO)) {
+                model.addAttribute("groupCreationFailed", "Creating group failed for some reason, please try later");
+            }
+        }
 
-		return "groups";
-	}
+        return "groups";
+    }
 
-	private boolean validate(final Model model, final String name, final String description) {
-		boolean result = true;
+    private boolean validate(final Model model, final String name, final String description) {
+        boolean result = true;
 
-		if (name == null || name.isEmpty()) {
-			model.addAttribute("nameError", "Group name cannot be empty!");
-			result = false;
-		}
+        if (name == null || name.isEmpty()) {
+            model.addAttribute("nameError", "Group name cannot be empty!");
+            result = false;
+        }
 
-		if (name != null && groupFacade.groupExists(name)) {
-			model.addAttribute("nameError", "Group with this name already exists!");
-			result = false;
-		}
+        if (name != null && groupFacade.groupExists(name)) {
+            model.addAttribute("nameError", "Group with this name already exists!");
+            result = false;
+        }
 
-		if (description == null || description.isEmpty()) {
-			model.addAttribute("descriptionError", "Description cannot be empty!");
-			result = false;
-		}
+        if (description == null || description.isEmpty()) {
+            model.addAttribute("descriptionError", "Description cannot be empty!");
+            result = false;
+        }
 
-		return result;
-	}
+        return result;
+    }
 }

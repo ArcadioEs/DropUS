@@ -7,31 +7,31 @@ import java.util.List;
  */
 public class GroupDTO {
 
-	private String name;
-	private String groupOwner;
-	private List<String> users;
+    private String name;
+    private String groupOwner;
+    private List<String> users;
 
-	public List<String> getUsers() {
-		return users;
-	}
+    public List<String> getUsers() {
+        return users;
+    }
 
-	public void setUsers(List<String> users) {
-		this.users = users;
-	}
+    public void setUsers(List<String> users) {
+        this.users = users;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getGroupOwner() {
-		return groupOwner;
-	}
+    public String getGroupOwner() {
+        return groupOwner;
+    }
 
-	public void setGroupOwner(String groupOwner) {
-		this.groupOwner = groupOwner;
-	}
+    public void setGroupOwner(String groupOwner) {
+        this.groupOwner = groupOwner;
+    }
 }

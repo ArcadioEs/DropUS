@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class ErrorController {
 
-	@RequestMapping(value = "/denied")
-	public String getErrorPage() {
-		return "fragments/error";
-	}
+    @RequestMapping(value = "/denied")
+    public String getErrorPage() {
+        return "fragments/error";
+    }
 }

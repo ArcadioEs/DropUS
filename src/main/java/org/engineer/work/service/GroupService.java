@@ -10,13 +10,13 @@ import java.util.List;
  */
 public interface GroupService {
 
-	GroupEntity getGroupByName(final String name);
+    GroupEntity getGroupByName(final String name);
 
-	boolean updateGroupMembers(final String username, final String groupName);
+    boolean updateGroupMembers(final String username, final String groupName);
 
-	boolean createGroup(final GroupDTO groupDTO);
+    boolean createGroup(final GroupDTO groupDTO);
 
-	List<GroupEntity> getAllGroups();
+    List<GroupEntity> getAllGroups();
 
-	boolean deleteGroup(final String name);
+    boolean deleteGroup(final String name);
 }
