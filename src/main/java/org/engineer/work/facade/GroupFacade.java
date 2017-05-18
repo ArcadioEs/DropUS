@@ -1,7 +1,6 @@
 package org.engineer.work.facade;
 
 import org.engineer.work.dto.GroupDTO;
-import org.engineer.work.model.GroupEntity;
 
 import java.util.List;
 
@@ -19,6 +18,4 @@ public interface GroupFacade {
     List<GroupDTO> getAllGroups();
 
     boolean deleteGroup(final String name);
-
-    GroupDTO convertEntityToDTO(final GroupEntity groupEntity);
 }

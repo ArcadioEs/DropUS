@@ -73,7 +73,6 @@ public class UserFacadeImpl implements UserFacade {
      * @param userEntity entity received from service layer
      * @return properly prepared DTO
      */
-    @Override
     public UserDTO convertEntityToDTO(final UserEntity userEntity) {
         UserDTO userDTO = null;
         if (userEntity != null) {

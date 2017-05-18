@@ -6,6 +6,7 @@ import org.engineer.work.model.GroupEntity;
 import org.engineer.work.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,7 +55,6 @@ public class GroupFacadeImpl implements GroupFacade {
      * @param groupEntity entity received from service layer
      * @return properly prepared DTO
      */
-    @Override
     public GroupDTO convertEntityToDTO(final GroupEntity groupEntity) {
         GroupDTO groupDTO = null;
         if (groupEntity != null) {

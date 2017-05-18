@@ -22,7 +22,10 @@ public class GroupController {
     private GroupFacade groupFacade;
 
     @RequestMapping("/page")
-    public String getGroupPage() {
+    public String getGroupPage(final Model model) {
+        model.addAttribute("created", false);
+        model.addAttribute("allgroups", groupFacade.getAllGroups());
+
         return "groups";
     }
 
@@ -36,11 +39,12 @@ public class GroupController {
             groupDTO.setName(name);
             groupDTO.setGroupOwner(user.getUsername());
 
-            if (!groupFacade.createGroup(groupDTO)) {
+            if (groupFacade.createGroup(groupDTO)) {
+                model.addAttribute("created", true);
+            } else {
                 model.addAttribute("groupCreationFailed", "Creating group failed for some reason, please try later");
             }
         }
-
         return "groups";
     }
 

@@ -1,7 +1,6 @@
 package org.engineer.work.facade;
 
 import org.engineer.work.dto.UserDTO;
-import org.engineer.work.model.UserEntity;
 
 import java.util.List;
 
@@ -21,6 +20,4 @@ public interface UserFacade {
     List<UserDTO> getRegularUsers();
 
     void updateUserEnabledStatus(final String username, final boolean enabled);
-
-    UserDTO convertEntityToDTO(final UserEntity userEntity);
 }
