@@ -9,13 +9,7 @@
                     </div>
                     <ul class="nav navbar-nav">
                         <li class="active"><a th:href="@{/home}">Home</a></li>
-                        <li><a th:href="@{/group/page}">All groups</a></li>
-                        <li th:if="${#httpServletRequest.remoteUser}" class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Your groups <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Your groups here in the future...</a></li>
-                            </ul>
-                        </li>
+                        <li th:if="${#httpServletRequest.remoteUser}"><a th:href="@{/group/page}">Groups</a></li>
                     </ul>
                     <ul th:if="${#httpServletRequest.remoteUser == null}" class="nav navbar-nav navbar-right">
                         <li><a th:href="@{/registration/page}"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>

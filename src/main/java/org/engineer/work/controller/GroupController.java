@@ -22,10 +22,12 @@ public class GroupController {
     private GroupFacade groupFacade;
 
     @RequestMapping("/page")
-    public String getGroupPage(final Model model) {
-        model.addAttribute("created", false);
+    public String getGroupPage(@AuthenticationPrincipal User user,
+                               final Model model) {
         model.addAttribute("allgroups", groupFacade.getAllGroups());
-
+        if (user != null) {
+            model.addAttribute("usergroups", groupFacade.getUserGroups(user.getUsername()));
+        }
         return "groups";
     }
 
@@ -34,15 +36,31 @@ public class GroupController {
                               @RequestParam(value = "description") final String description,
                               @AuthenticationPrincipal User user,
                               final Model model) {
+        String returnTemplate = "groups";
+
         if (user != null && validate(model, name, description)) {
             GroupDTO groupDTO = new GroupDTO();
             groupDTO.setName(name);
             groupDTO.setGroupOwner(user.getUsername());
 
             if (groupFacade.createGroup(groupDTO)) {
-                model.addAttribute("created", true);
+                returnTemplate = "specificgroup";
             } else {
                 model.addAttribute("groupCreationFailed", "Creating group failed for some reason, please try later");
+            }
+        }
+        return returnTemplate;
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    public String deleteGroup(@RequestParam(value = "groupName") final String groupName,
+                              @AuthenticationPrincipal User user,
+                              final Model model) {
+        if (groupFacade.getGroupByName(groupName) != null && groupFacade.getGroupByName(groupName).getGroupOwner().equals(user.getUsername())) {
+            if (groupFacade.deleteGroup(groupName)) {
+                model.addAttribute("groupdeletion", "Group deleted successfully");
+            } else {
+                model.addAttribute("groupdeletion", "Group couldn't be deleted");
             }
         }
         return "groups";
@@ -64,6 +82,10 @@ public class GroupController {
         if (description == null || description.isEmpty()) {
             model.addAttribute("descriptionError", "Description cannot be empty!");
             result = false;
+        }
+
+        if (!result) {
+            model.addAttribute("allgroups", groupFacade.getAllGroups());
         }
 
         return result;

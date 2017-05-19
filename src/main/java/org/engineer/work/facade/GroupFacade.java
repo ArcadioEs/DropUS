@@ -17,5 +17,7 @@ public interface GroupFacade {
 
     List<GroupDTO> getAllGroups();
 
+    List<GroupDTO> getUserGroups(final String username);
+
     boolean deleteGroup(final String name);
 }

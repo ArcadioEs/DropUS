@@ -23,41 +23,68 @@
                             <label>Description</label>
                             <input type="text" name="description" class="form-control" placeholder="Write few words about this group...">
                         </div>
-                        <input type="submit" class="btn btn-success col-md-6 col-md-offset-3" value="Create" />
+                        <input type="submit" style="margin-bottom: 2em" class="btn btn-success col-md-6 col-md-offset-3" value="Create" />
                     </div>
                 </form>
             </div>
             <label class="text-danger text-center col-md-12" th:text="${nameError}"></label>
             <label class="text-danger text-center col-md-12" th:text="${descriptionError}"></label>
 
-            <div th:if="${created == false}" class="col-md-8 col-md-offset-2">
-                <div class="panel panel-default">
-                    <div class="panel-heading">All groups</div>
-                    <div class="panel-body">
-                        <p>Here you can find all existing groups</p>
-                    </div>
+            <div class="col-md-12">
+                <div class="col-md-5 col-md-offset-1">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">All groups</div>
+                        <div class="panel-body">
+                            <p>Here you can find all existing groups</p>
+                        </div>
 
-                    <table class="table table-striped">
-                        <thead>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Group name</th>
+                                    <th>Group owner</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="group : ${allgroups}">
+                                    <td th:text="${group.name}"></td>
+                                    <td th:text="${group.groupOwner}"></td>
+                                    <td>TBD</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">All groups</div>
+                        <div class="panel-body">
+                            <p>Here you can find all existing groups</p>
+                        </div>
+
+                        <table class="table table-striped">
+                            <thead>
                             <tr>
                                 <th>Group name</th>
                                 <th>Group owner</th>
                                 <th>Actions</th>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="group : ${allgroups}">
+                            </thead>
+                            <tbody>
+                            <tr th:each="group : ${usergroups}">
                                 <td th:text="${group.name}"></td>
                                 <td th:text="${group.groupOwner}"></td>
-                                <td>TBD</td>
+                                <td>
+                                    <form th:action="@{/group/delete}" method="post">
+                                        <input name="groupName" th:value="${group.name}" type="submit" class="btn btn-danger" value="Delete" />
+                                    </form>
+                                </td>
                             </tr>
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-
-            <div th:if="${created == true}" class="col-md-12 text-center">
-                <p class="text-success">Group created successfully!</p>
             </div>
         </div>
     </body>

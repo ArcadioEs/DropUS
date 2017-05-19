@@ -40,7 +40,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public boolean updateGroupMembers(final String username, final String groupName) {
+    public boolean addMemberToGroup(final String username, final String groupName) {
         boolean result = false;
         if (username != null && groupName != null) {
 
@@ -73,7 +73,7 @@ public class GroupServiceImpl implements GroupService {
 
             try {
                 groupRepository.save(new GroupEntity(groupDTO));
-                if (this.updateGroupMembers(groupDTO.getGroupOwner(), groupDTO.getName())) {
+                if (this.addMemberToGroup(groupDTO.getGroupOwner(), groupDTO.getName())) {
                     result = true;
                 } else {
                     this.deleteGroup(groupDTO.getName());

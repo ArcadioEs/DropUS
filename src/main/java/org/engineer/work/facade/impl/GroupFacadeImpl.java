@@ -3,10 +3,11 @@ package org.engineer.work.facade.impl;
 import org.engineer.work.dto.GroupDTO;
 import org.engineer.work.facade.GroupFacade;
 import org.engineer.work.model.GroupEntity;
+import org.engineer.work.model.UserEntity;
 import org.engineer.work.service.GroupService;
+import org.engineer.work.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +20,9 @@ public class GroupFacadeImpl implements GroupFacade {
 
     @Autowired
     private GroupService groupService;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public GroupDTO getGroupByName(final String name) {
@@ -42,6 +46,18 @@ public class GroupFacadeImpl implements GroupFacade {
     @Override
     public List<GroupDTO> getAllGroups() {
         return groupService.getAllGroups().stream().map(group -> convertEntityToDTO(group)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GroupDTO> getUserGroups(final String username) {
+        List<GroupDTO> userGroups = null;
+        if (username != null) {
+            final UserEntity user = userService.getUserByUsername(username);
+            if (user != null) {
+                userGroups = user.getGroups().stream().map(group -> convertEntityToDTO(group)).collect(Collectors.toList());
+            }
+        }
+        return userGroups;
     }
 
     @Override
