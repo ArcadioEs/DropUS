@@ -28,19 +28,29 @@ public class GroupController extends AbstractController {
         return TEMPLATE_GROUPS;
     }
 
+    @RequestMapping("/display")
+    public String getSpecificGroup(@RequestParam(value = "groupName") final String groupName,
+                                   final Model model) {
+        this.loadDataForSpecificGroup(groupName, model);
+
+        return TEMPLATE_SPECIFIC_GROUP;
+    }
+
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String createGroup(@RequestParam(value = "name") final String name,
+    public String createGroup(@RequestParam(value = "groupName") final String groupName,
                               @RequestParam(value = "description") final String description,
                               @AuthenticationPrincipal User user,
                               final Model model) {
         String returnTemplate = TEMPLATE_GROUPS;
 
-        if (user != null && this.validate(user, model, name, description)) {
+        if (user != null && this.validate(user, model, groupName, description)) {
             GroupDTO groupDTO = new GroupDTO();
-            groupDTO.setName(name);
+            groupDTO.setName(groupName);
             groupDTO.setGroupOwner(user.getUsername());
+            groupDTO.setDescription(description);
 
             if (getGroupFacade().createGroup(groupDTO)) {
+                this.loadDataForSpecificGroup(groupName, model);
                 returnTemplate = TEMPLATE_SPECIFIC_GROUP;
             } else {
                 model.addAttribute("groupCreationFailed", "Creating group failed for some reason, please try later");
@@ -55,9 +65,9 @@ public class GroupController extends AbstractController {
                               final Model model) {
         if (getGroupFacade().getGroupByName(groupName) != null && getGroupFacade().getGroupByName(groupName).getGroupOwner().equals(user.getUsername())) {
             if (getGroupFacade().deleteGroup(groupName)) {
-                model.addAttribute("groupdeletion", "Group deleted successfully");
+                model.addAttribute("groupDeletion", "Group deleted successfully");
             } else {
-                model.addAttribute("groupdeletion", "Group couldn't be deleted");
+                model.addAttribute("groupDeletion", "Group couldn't be deleted");
             }
         }
         this.loadGroupLists(user, model);
@@ -83,6 +93,11 @@ public class GroupController extends AbstractController {
             result = false;
         }
 
+        if (description != null && description.length() > 255) {
+            model.addAttribute("descriptionError", "Description must not be bigger than 255 digits");
+            result = false;
+        }
+
         if (!result) {
             this.loadGroupLists(user, model);
         }
@@ -91,9 +106,21 @@ public class GroupController extends AbstractController {
     }
 
     private void loadGroupLists(final User user, final Model model) {
-        model.addAttribute("allgroups", getGroupFacade().getAllGroups());
+        model.addAttribute("allGroups", getGroupFacade().getAllGroups());
         if (user != null) {
-            model.addAttribute("usergroups", getGroupFacade().getUserGroups(user.getUsername()));
+            model.addAttribute("userGroups", getGroupFacade().getUserGroups(user.getUsername()));
+        }
+    }
+
+    private void loadDataForSpecificGroup(final String groupName, final Model model) {
+        if (groupName != null) {
+            final GroupDTO group = getGroupFacade().getGroupByName(groupName);
+            if (group != null) {
+                model.addAttribute("groupAdmin", group.getGroupOwner());
+                model.addAttribute("groupUsers", group.getUsers());
+                model.addAttribute("groupName", group.getName());
+                model.addAttribute("groupDescription", group.getDescription());
+            }
         }
     }
 }

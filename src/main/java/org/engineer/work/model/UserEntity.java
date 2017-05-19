@@ -51,7 +51,7 @@ public class UserEntity {
         return groups;
     }
 
-    public void setGroups(List<GroupEntity> groups) {
+    public void setGroups(final List<GroupEntity> groups) {
         this.groups = groups;
     }
 
@@ -59,7 +59,7 @@ public class UserEntity {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(final String role) {
         if (role != null) {
             this.role = role;
         } else {
@@ -71,7 +71,7 @@ public class UserEntity {
         return enabled;
     }
 
-    public void setEnabled(byte enabled) {
+    public void setEnabled(final byte enabled) {
         if (enabled == (byte) 0 || enabled == (byte) 1) {
             this.enabled = enabled;
         } else {
@@ -83,7 +83,7 @@ public class UserEntity {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         if (username != null) {
             this.username = username;
         } else {
@@ -95,7 +95,7 @@ public class UserEntity {
         return this.password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         if (password != null) {
             this.password = password;
         } else {

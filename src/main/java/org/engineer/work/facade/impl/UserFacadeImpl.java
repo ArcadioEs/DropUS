@@ -80,7 +80,9 @@ public class UserFacadeImpl implements UserFacade {
 
             userDTO.setUsername(userEntity.getUsername());
             userDTO.setEnabled(userEntity.getEnabled());
-            userDTO.setGroups(userEntity.getGroups().stream().map(group -> group.getName()).collect(Collectors.toList()));
+            if (userEntity.getGroups() != null) {
+                userDTO.setGroups(userEntity.getGroups().stream().map(group -> group.getName()).collect(Collectors.toList()));
+            }
         }
         return userDTO;
     }

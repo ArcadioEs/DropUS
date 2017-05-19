@@ -8,6 +8,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
@@ -22,12 +23,16 @@ public class GroupEntity {
     private String name;
     @Column(nullable = false)
     private String groupOwner;
+    @Column(nullable = false, columnDefinition = "TEXT")
+    @Size(max = 255)
+    private String description;
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "groups")
     private List<UserEntity> users;
 
     public GroupEntity(final GroupDTO groupDTO) throws IllegalArgumentException {
         this.setName(groupDTO.getName());
         this.setGroupOwner(groupDTO.getGroupOwner());
+        this.setDescription(groupDTO.getDescription());
     }
 
     protected GroupEntity() {
@@ -37,7 +42,7 @@ public class GroupEntity {
         return users;
     }
 
-    public void setUsers(List<UserEntity> users) {
+    public void setUsers(final List<UserEntity> users) {
         this.users = users;
     }
 
@@ -57,11 +62,23 @@ public class GroupEntity {
         return groupOwner;
     }
 
-    public void setGroupOwner(String groupOwner) {
+    public void setGroupOwner(final String groupOwner) {
         if (groupOwner != null) {
             this.groupOwner = groupOwner;
         } else {
             throw new IllegalArgumentException("Group owner must not be null");
+        }
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(final String description) {
+        if (description != null) {
+            this.description = description;
+        } else {
+            throw new IllegalArgumentException("Description must not be null nor empty");
         }
     }
 }

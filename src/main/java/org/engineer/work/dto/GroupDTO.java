@@ -9,6 +9,7 @@ public class GroupDTO {
 
     private String name;
     private String groupOwner;
+    private String description;
     private List<String> users;
 
     public List<String> getUsers() {
@@ -33,5 +34,13 @@ public class GroupDTO {
 
     public void setGroupOwner(String groupOwner) {
         this.groupOwner = groupOwner;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

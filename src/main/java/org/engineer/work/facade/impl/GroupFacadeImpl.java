@@ -78,7 +78,10 @@ public class GroupFacadeImpl implements GroupFacade {
 
             groupDTO.setName(groupEntity.getName());
             groupDTO.setGroupOwner(groupEntity.getGroupOwner());
-            groupDTO.setUsers(groupEntity.getUsers().stream().map(user -> user.getUsername()).collect(Collectors.toList()));
+            groupDTO.setDescription(groupEntity.getDescription());
+            if (groupEntity.getUsers() != null) {
+                groupDTO.setUsers(groupEntity.getUsers().stream().map(user -> user.getUsername()).collect(Collectors.toList()));
+            }
         }
         return groupDTO;
     }
