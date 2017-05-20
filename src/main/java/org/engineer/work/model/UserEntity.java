@@ -29,13 +29,22 @@ public class UserEntity {
     private byte enabled;
     @Column(nullable = false)
     private String role;
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "users_groups",
             joinColumns = @JoinColumn(name = "users_username", referencedColumnName = "username"),
             inverseJoinColumns = @JoinColumn(name = "groups_name", referencedColumnName = "name")
     )
     private List<GroupEntity> groups;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name = "pendings",
+            joinColumns = @JoinColumn(name = "users_username", referencedColumnName = "username"),
+            inverseJoinColumns = @JoinColumn(name = "groups_name", referencedColumnName = "name")
+    )
+    private List<GroupEntity> groupsPending;
 
     public UserEntity(final UserDTO userDTO) throws IllegalArgumentException {
         this.setUsername(userDTO.getUsername());
@@ -45,6 +54,14 @@ public class UserEntity {
     }
 
     protected UserEntity() {
+    }
+
+    public List<GroupEntity> getGroupsPending() {
+        return groupsPending;
+    }
+
+    public void setGroupsPending(final List<GroupEntity> groupsPending) {
+        this.groupsPending = groupsPending;
     }
 
     public List<GroupEntity> getGroups() {

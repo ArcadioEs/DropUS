@@ -3,7 +3,6 @@ package org.engineer.work.controller.abstractcontroller;
 import org.engineer.work.facade.GroupFacade;
 import org.engineer.work.facade.RegisterFacade;
 import org.engineer.work.facade.UserFacade;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 

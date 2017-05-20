@@ -102,6 +102,10 @@ public class GroupServiceImpl implements GroupService {
                 userEntity.getGroups().removeIf(group -> group.getName().equals(name));
                 userService.updateUser(userEntity);
             }
+            for (final UserEntity userEntity : this.getGroupByName(name).getUsersPending()) {
+                userEntity.getGroupsPending().removeIf(group -> group.getName().equals(name));
+                userService.updateUser(userEntity);
+            }
             groupRepository.delete(name);
             result = true;
         }

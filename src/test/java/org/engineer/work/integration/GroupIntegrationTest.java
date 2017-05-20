@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Arrays;
+
 /**
  * Integration test for group management feature.
  */
@@ -25,6 +27,8 @@ public class GroupIntegrationTest {
 
     private static final String USER_NAME = "User";
     private static final String GROUP_NAME = "Group";
+    private static final String DESCRIPTION = "Description";
+    private static final String PASSWORD = "Password";
 
     @Autowired
     private UserService userService;
@@ -32,39 +36,56 @@ public class GroupIntegrationTest {
     @Autowired
     private GroupService groupService;
 
-    private UserEntity userEntity;
-    private GroupEntity groupEntity;
+    private UserDTO userDTO;
+    private GroupDTO groupDTO;
 
     @Before
     public void setUp() {
-        final UserDTO userDTO = new UserDTO();
+        userDTO = new UserDTO();
         userDTO.setUsername(USER_NAME);
-        userDTO.setPassword("test");
+        userDTO.setPassword(PASSWORD);
         userDTO.setEnabled((byte) 1);
         userDTO.setRole(AuthorityRoles.USER);
 
-        final GroupDTO groupDTO = new GroupDTO();
+        groupDTO = new GroupDTO();
         groupDTO.setName(GROUP_NAME);
         groupDTO.setGroupOwner(USER_NAME);
+        groupDTO.setDescription(DESCRIPTION);
+    }
 
+    @Test
+    public void shouldAssignUserToPendingTable() {
         userService.createUser(userDTO);
         groupService.createGroup(groupDTO);
 
-        userEntity = userService.getUserByUsername(userDTO.getUsername());
-        groupEntity = groupService.getGroupByName(groupDTO.getName());
-    }
+        final UserEntity userEntity = userService.getUserByUsername(USER_NAME);
+        userEntity.setGroupsPending(Arrays.asList(groupService.getGroupByName(GROUP_NAME)));
+        userService.updateUser(userEntity);
 
-    @After
-    public void cleanUp() {
+        Assert.assertEquals(userService.getUserByUsername(USER_NAME).getGroupsPending().get(0).getName(), GROUP_NAME);
+        Assert.assertEquals(groupService.getGroupByName(GROUP_NAME).getUsersPending().get(0).getUsername(), USER_NAME);
+
         groupService.deleteGroup(GROUP_NAME);
         userService.deleteUser(USER_NAME);
+
+        Assert.assertTrue(groupService.getGroupByName(GROUP_NAME) == null);
+        Assert.assertTrue(userService.getUserByUsername(USER_NAME) == null);
     }
 
     @Test
     public void shouldAssignGroupToUser() {
+        userService.createUser(userDTO);
+        groupService.createGroup(groupDTO);
+
         final GroupEntity userGroupToCheck = userService.getUserByUsername(USER_NAME).getGroups().get(0);
 
-        Assert.assertEquals(userGroupToCheck.getName(), groupEntity.getName());
-        Assert.assertEquals(userGroupToCheck.getGroupOwner(), groupEntity.getGroupOwner());
+        Assert.assertEquals(userGroupToCheck.getName(), groupService.getGroupByName(GROUP_NAME).getName());
+        Assert.assertEquals(userGroupToCheck.getGroupOwner(), groupService.getGroupByName(GROUP_NAME).getGroupOwner());
+
+        groupService.deleteGroup(GROUP_NAME);
+        userService.deleteUser(USER_NAME);
+
+        Assert.assertTrue(userService.getUserByUsername(USER_NAME) == null);
+        Assert.assertTrue(groupService.getGroupByName(GROUP_NAME) == null);
     }
 }
