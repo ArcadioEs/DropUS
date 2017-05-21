@@ -19,5 +19,11 @@ public interface GroupFacade {
 
     List<GroupDTO> getUserGroups(final String username);
 
+    /**
+     * If 'add' is true - method adds group to pending list.
+     * If false - method removes group from pending list.
+     */
+    boolean updatePendingUsers(final String username, final String groupName, final boolean add);
+
     boolean deleteGroup(final String name);
 }

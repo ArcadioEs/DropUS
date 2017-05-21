@@ -1,6 +1,7 @@
 package org.engineer.work.facade.impl;
 
 import org.engineer.work.dto.GroupDTO;
+import org.engineer.work.dto.UserDTO;
 import org.engineer.work.facade.GroupFacade;
 import org.engineer.work.model.GroupEntity;
 import org.engineer.work.model.UserEntity;
@@ -53,11 +54,37 @@ public class GroupFacadeImpl implements GroupFacade {
         List<GroupDTO> userGroups = null;
         if (username != null) {
             final UserEntity user = userService.getUserByUsername(username);
-            if (user != null) {
+            if (user != null && user.getGroups() != null) {
                 userGroups = user.getGroups().stream().map(group -> convertEntityToDTO(group)).collect(Collectors.toList());
             }
         }
         return userGroups;
+    }
+
+    @Override
+    public boolean updatePendingUsers(final String username, final String groupName, final boolean add) {
+        boolean result = false;
+        if (username != null && groupName != null) {
+            final UserEntity user = userService.getUserByUsername(username);
+            final GroupEntity group = groupService.getGroupByName(groupName);
+
+            if (user != null
+                    && user.getGroupsPending() != null
+                    && group != null) {
+                final List<GroupEntity> groupsPending = user.getGroupsPending();
+                if (add && !user.getGroupsPending().contains(group)) {
+                    groupsPending.add(group);
+                    userService.updateUser(user);
+                    result = true;
+                }
+                if (!add && user.getGroupsPending().contains(group)) {
+                    groupsPending.remove(group);
+                    userService.updateUser(user);
+                    result = true;
+                }
+            }
+        }
+        return result;
     }
 
     @Override
@@ -81,6 +108,9 @@ public class GroupFacadeImpl implements GroupFacade {
             groupDTO.setDescription(groupEntity.getDescription());
             if (groupEntity.getUsers() != null) {
                 groupDTO.setUsers(groupEntity.getUsers().stream().map(user -> user.getUsername()).collect(Collectors.toList()));
+            }
+            if (groupEntity.getUsersPending() != null) {
+                groupDTO.setPendings(groupEntity.getUsersPending().stream().map(user -> user.getUsername()).collect(Collectors.toList()));
             }
         }
         return groupDTO;

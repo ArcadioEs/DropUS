@@ -71,7 +71,6 @@
                                 <tr>
                                     <th>Group name</th>
                                     <th>Group owner</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -82,11 +81,6 @@
                                         </form>
                                     </td>
                                     <td style="padding: 1em" th:text="${group.groupOwner}"></td>
-                                    <td>
-                                        <form th:action="@{/group/delete}" method="post">
-                                            <button name="groupName" th:value="${group.name}" type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> Delete</button>
-                                        </form>
-                                    </td>
                                 </tr>
                             </tbody>
                         </table>

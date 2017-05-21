@@ -2,6 +2,7 @@ package org.engineer.work.controller;
 
 import org.engineer.work.controller.abstractcontroller.AbstractController;
 import org.engineer.work.dto.GroupDTO;
+import org.engineer.work.dto.UserDTO;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -9,6 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.TEMPLATE_GROUPS;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.TEMPLATE_SPECIFIC_GROUP;
@@ -20,26 +23,43 @@ import static org.engineer.work.controller.abstractcontroller.AbstractController
 @RequestMapping("/group")
 public class GroupController extends AbstractController {
 
-    @RequestMapping("/page")
-    public String getGroupPage(@AuthenticationPrincipal User user,
+    @RequestMapping(value = "/page", method = RequestMethod.GET)
+    public String getGroupPage(@AuthenticationPrincipal final User user,
                                final Model model) {
         this.loadGroupLists(user, model);
 
         return TEMPLATE_GROUPS;
     }
 
-    @RequestMapping("/display")
+    @RequestMapping(value = "/display", method = RequestMethod.POST)
     public String getSpecificGroup(@RequestParam(value = "groupName") final String groupName,
+                                   @AuthenticationPrincipal final User user,
                                    final Model model) {
+        if (user != null) {
+            this.determineUserRoleInGroup(user.getUsername(), groupName, model);
+        }
         this.loadDataForSpecificGroup(groupName, model);
+        return TEMPLATE_SPECIFIC_GROUP;
+    }
 
+    @RequestMapping(value = "/join", method = RequestMethod.POST)
+    public String joinGroup(@RequestParam(value = "groupName") final String groupName,
+                            @RequestParam(value = "add") final String decision,
+                            @AuthenticationPrincipal final User user,
+                            final Model model) {
+        if (user != null && groupName != null) {
+            final boolean add = Boolean.parseBoolean(decision);
+            getGroupFacade().updatePendingUsers(user.getUsername(), groupName, add);
+            this.determineUserRoleInGroup(user.getUsername(), groupName, model);
+        }
+        this.loadDataForSpecificGroup(groupName, model);
         return TEMPLATE_SPECIFIC_GROUP;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String createGroup(@RequestParam(value = "groupName") final String groupName,
                               @RequestParam(value = "description") final String description,
-                              @AuthenticationPrincipal User user,
+                              @AuthenticationPrincipal final User user,
                               final Model model) {
         String returnTemplate = TEMPLATE_GROUPS;
 
@@ -51,6 +71,7 @@ public class GroupController extends AbstractController {
 
             if (getGroupFacade().createGroup(groupDTO)) {
                 this.loadDataForSpecificGroup(groupName, model);
+                this.determineUserRoleInGroup(user.getUsername(), groupDTO.getName(), model);
                 returnTemplate = TEMPLATE_SPECIFIC_GROUP;
             } else {
                 model.addAttribute("groupCreationFailed", "Creating group failed for some reason, please try later");
@@ -61,9 +82,10 @@ public class GroupController extends AbstractController {
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public String deleteGroup(@RequestParam(value = "groupName") final String groupName,
-                              @AuthenticationPrincipal User user,
+                              @AuthenticationPrincipal final User user,
                               final Model model) {
-        if (getGroupFacade().getGroupByName(groupName) != null && getGroupFacade().getGroupByName(groupName).getGroupOwner().equals(user.getUsername())) {
+        final GroupDTO group = getGroupFacade().getGroupByName(groupName);
+        if (group != null && group.getGroupOwner().equals(user.getUsername())) {
             if (getGroupFacade().deleteGroup(groupName)) {
                 model.addAttribute("groupDeletion", "Group deleted successfully");
             } else {
@@ -80,6 +102,11 @@ public class GroupController extends AbstractController {
 
         if (name == null || name.isEmpty()) {
             model.addAttribute("nameError", "Group name cannot be empty!");
+            result = false;
+        }
+
+        if (name != null && name.length() > 20) {
+            model.addAttribute("nameError", "Group must not be bigger than 20 digits");
             result = false;
         }
 
@@ -106,10 +133,15 @@ public class GroupController extends AbstractController {
     }
 
     private void loadGroupLists(final User user, final Model model) {
-        model.addAttribute("allGroups", getGroupFacade().getAllGroups());
+        final List<GroupDTO> allGroups = getGroupFacade().getAllGroups();
         if (user != null) {
-            model.addAttribute("userGroups", getGroupFacade().getUserGroups(user.getUsername()));
+            final List<GroupDTO> userGroups = getGroupFacade().getUserGroups(user.getUsername());
+            if (userGroups != null) {
+                allGroups.removeIf(group -> group.getGroupOwner().equals(user.getUsername()));
+            }
+            model.addAttribute("userGroups", userGroups);
         }
+        model.addAttribute("allGroups", allGroups);
     }
 
     private void loadDataForSpecificGroup(final String groupName, final Model model) {
@@ -117,9 +149,35 @@ public class GroupController extends AbstractController {
             final GroupDTO group = getGroupFacade().getGroupByName(groupName);
             if (group != null) {
                 model.addAttribute("groupAdmin", group.getGroupOwner());
+                if (group.getUsers() != null) {
+                    group.getUsers().removeIf(user -> user.equals(group.getGroupOwner()));
+                }
                 model.addAttribute("groupUsers", group.getUsers());
                 model.addAttribute("groupName", group.getName());
                 model.addAttribute("groupDescription", group.getDescription());
+            }
+        }
+    }
+
+    private void determineUserRoleInGroup(final String username, final String groupName, final Model model) {
+        if (username != null && groupName != null) {
+            final UserDTO userDTO = getUserFacade().getUserByUsername(username);
+            final GroupDTO groupDTO = getGroupFacade().getGroupByName(groupName);
+
+            if (userDTO != null && groupDTO != null) {
+                if (userDTO.getUsername().equals(groupDTO.getGroupOwner())) {
+                    model.addAttribute("isAdmin", true);
+                } else {
+                    if (userDTO.getGroups().contains(groupDTO.getName())) {
+                        model.addAttribute("isMember", true);
+                    } else {
+                        if (userDTO.getPendings().contains(groupDTO.getName())) {
+                            model.addAttribute("isPending", true);
+                        } else {
+                            model.addAttribute("isNotPending", true);
+                        }
+                    }
+                }
             }
         }
     }

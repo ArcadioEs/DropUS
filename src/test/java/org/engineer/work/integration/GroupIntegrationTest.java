@@ -7,8 +7,6 @@ import org.engineer.work.model.UserEntity;
 import org.engineer.work.model.enumeration.AuthorityRoles;
 import org.engineer.work.service.GroupService;
 import org.engineer.work.service.UserService;
-import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +15,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Integration test for group management feature.
@@ -62,14 +63,14 @@ public class GroupIntegrationTest {
         userEntity.setGroupsPending(Arrays.asList(groupService.getGroupByName(GROUP_NAME)));
         userService.updateUser(userEntity);
 
-        Assert.assertEquals(userService.getUserByUsername(USER_NAME).getGroupsPending().get(0).getName(), GROUP_NAME);
-        Assert.assertEquals(groupService.getGroupByName(GROUP_NAME).getUsersPending().get(0).getUsername(), USER_NAME);
+        assertEquals(userService.getUserByUsername(USER_NAME).getGroupsPending().get(0).getName(), GROUP_NAME);
+        assertEquals(groupService.getGroupByName(GROUP_NAME).getUsersPending().get(0).getUsername(), USER_NAME);
 
         groupService.deleteGroup(GROUP_NAME);
         userService.deleteUser(USER_NAME);
 
-        Assert.assertTrue(groupService.getGroupByName(GROUP_NAME) == null);
-        Assert.assertTrue(userService.getUserByUsername(USER_NAME) == null);
+        assertTrue(groupService.getGroupByName(GROUP_NAME) == null);
+        assertTrue(userService.getUserByUsername(USER_NAME) == null);
     }
 
     @Test
@@ -79,13 +80,13 @@ public class GroupIntegrationTest {
 
         final GroupEntity userGroupToCheck = userService.getUserByUsername(USER_NAME).getGroups().get(0);
 
-        Assert.assertEquals(userGroupToCheck.getName(), groupService.getGroupByName(GROUP_NAME).getName());
-        Assert.assertEquals(userGroupToCheck.getGroupOwner(), groupService.getGroupByName(GROUP_NAME).getGroupOwner());
+        assertEquals(userGroupToCheck.getName(), groupService.getGroupByName(GROUP_NAME).getName());
+        assertEquals(userGroupToCheck.getGroupOwner(), groupService.getGroupByName(GROUP_NAME).getGroupOwner());
 
         groupService.deleteGroup(GROUP_NAME);
         userService.deleteUser(USER_NAME);
 
-        Assert.assertTrue(userService.getUserByUsername(USER_NAME) == null);
-        Assert.assertTrue(groupService.getGroupByName(GROUP_NAME) == null);
+        assertTrue(userService.getUserByUsername(USER_NAME) == null);
+        assertTrue(groupService.getGroupByName(GROUP_NAME) == null);
     }
 }

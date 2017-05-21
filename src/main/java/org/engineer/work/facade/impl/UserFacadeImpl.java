@@ -83,6 +83,9 @@ public class UserFacadeImpl implements UserFacade {
             if (userEntity.getGroups() != null) {
                 userDTO.setGroups(userEntity.getGroups().stream().map(group -> group.getName()).collect(Collectors.toList()));
             }
+            if (userEntity.getGroupsPending() != null) {
+                userDTO.setPendings(userEntity.getGroupsPending().stream().map(group -> group.getName()).collect(Collectors.toList()));
+            }
         }
         return userDTO;
     }

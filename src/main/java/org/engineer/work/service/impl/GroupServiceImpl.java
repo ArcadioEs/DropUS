@@ -43,17 +43,18 @@ public class GroupServiceImpl implements GroupService {
     public boolean addMemberToGroup(final String username, final String groupName) {
         boolean result = false;
         if (username != null && groupName != null) {
-
             final UserEntity userEntity = userService.getUserByUsername(username);
             final GroupEntity groupEntity = this.getGroupByName(groupName);
 
             if (userEntity != null && groupEntity != null) {
                 final List<GroupEntity> userGroups = userEntity.getGroups();
+                final List<GroupEntity> groupsPending = userEntity.getGroupsPending();
+                final GroupEntity groupToAdd = this.getGroupByName(groupName);
 
-                if (!userGroups.contains(this.getGroupByName(groupName))) {
-                    userGroups.add(groupEntity);
+                if (groupsPending.contains(groupToAdd) && !userGroups.contains(groupToAdd)) {
+                    groupsPending.remove(groupToAdd);
+                    userGroups.add(groupToAdd);
 
-                    userEntity.setGroups(userGroups);
                     userService.updateUser(userEntity);
 
                     result = true;
@@ -73,6 +74,12 @@ public class GroupServiceImpl implements GroupService {
 
             try {
                 groupRepository.save(new GroupEntity(groupDTO));
+
+                final UserEntity userEntity = userService.getUserByUsername(groupDTO.getGroupOwner());
+                final List<GroupEntity> groupsPending = userEntity.getGroupsPending();
+                groupsPending.add(this.getGroupByName(groupDTO.getName()));
+                userService.updateUser(userEntity);
+
                 if (this.addMemberToGroup(groupDTO.getGroupOwner(), groupDTO.getName())) {
                     result = true;
                 } else {
@@ -98,14 +105,23 @@ public class GroupServiceImpl implements GroupService {
     public boolean deleteGroup(final String name) {
         boolean result = false;
         if (name != null && groupRepository.exists(name)) {
-            for (final UserEntity userEntity : this.getGroupByName(name).getUsers()) {
-                userEntity.getGroups().removeIf(group -> group.getName().equals(name));
-                userService.updateUser(userEntity);
+
+            final List<UserEntity> groupMembers = this.getGroupByName(name).getUsers();
+            if (groupMembers != null) {
+                for (final UserEntity userEntity : groupMembers) {
+                    userEntity.getGroups().removeIf(group -> group.getName().equals(name));
+                    userService.updateUser(userEntity);
+                }
             }
-            for (final UserEntity userEntity : this.getGroupByName(name).getUsersPending()) {
-                userEntity.getGroupsPending().removeIf(group -> group.getName().equals(name));
-                userService.updateUser(userEntity);
+
+            final List<UserEntity> pendingMembers = this.getGroupByName(name).getUsersPending();
+            if (pendingMembers != null) {
+                for (final UserEntity userEntity : pendingMembers) {
+                    userEntity.getGroupsPending().removeIf(group -> group.getName().equals(name));
+                    userService.updateUser(userEntity);
+                }
             }
+
             groupRepository.delete(name);
             result = true;
         }

@@ -12,6 +12,15 @@ public class UserDTO {
     private byte enabled;
     private String role;
     private List<String> groups;
+    private List<String> pendings;
+
+    public List<String> getPendings() {
+        return pendings;
+    }
+
+    public void setPendings(List<String> pendings) {
+        this.pendings = pendings;
+    }
 
     public List<String> getGroups() {
         return groups;

@@ -11,6 +11,15 @@ public class GroupDTO {
     private String groupOwner;
     private String description;
     private List<String> users;
+    private List<String> pendings;
+
+    public List<String> getPendings() {
+        return pendings;
+    }
+
+    public void setPendings(List<String> pendings) {
+        this.pendings = pendings;
+    }
 
     public List<String> getUsers() {
         return users;
