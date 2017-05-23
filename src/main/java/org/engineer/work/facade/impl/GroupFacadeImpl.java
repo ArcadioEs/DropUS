@@ -1,7 +1,6 @@
 package org.engineer.work.facade.impl;
 
 import org.engineer.work.dto.GroupDTO;
-import org.engineer.work.dto.UserDTO;
 import org.engineer.work.facade.GroupFacade;
 import org.engineer.work.model.GroupEntity;
 import org.engineer.work.model.UserEntity;
@@ -9,6 +8,7 @@ import org.engineer.work.service.GroupService;
 import org.engineer.work.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,6 +45,7 @@ public class GroupFacadeImpl implements GroupFacade {
     }
 
     @Override
+    @Transactional
     public List<GroupDTO> getAllGroups() {
         return groupService.getAllGroups().stream().map(group -> convertEntityToDTO(group)).collect(Collectors.toList());
     }
@@ -62,6 +63,7 @@ public class GroupFacadeImpl implements GroupFacade {
     }
 
     @Override
+    @Transactional
     public boolean updatePendingUsers(final String username, final String groupName, final boolean add) {
         boolean result = false;
         if (username != null && groupName != null) {
@@ -83,6 +85,16 @@ public class GroupFacadeImpl implements GroupFacade {
                     result = true;
                 }
             }
+        }
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public boolean updateGroupMember(final String username, final String groupName) {
+        boolean result = false;
+        if (username != null && groupName != null) {
+            result = groupService.addMemberToGroup(username, groupName);
         }
         return result;
     }

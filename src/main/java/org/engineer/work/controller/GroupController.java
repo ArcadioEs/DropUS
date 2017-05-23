@@ -22,6 +22,10 @@ import static org.engineer.work.controller.abstractcontroller.AbstractController
 @Controller
 @RequestMapping("/group")
 public class GroupController extends AbstractController {
+    private static final String ADMIN = "isAdmin";
+    private static final String MEMBER = "isMember";
+    private static final String PENDING = "isPending";
+    private static final String NOT_PENDING = "isNotPending";
 
     @RequestMapping(value = "/page", method = RequestMethod.GET)
     public String getGroupPage(@AuthenticationPrincipal final User user,
@@ -53,6 +57,19 @@ public class GroupController extends AbstractController {
             this.determineUserRoleInGroup(user.getUsername(), groupName, model);
         }
         this.loadDataForSpecificGroup(groupName, model);
+        return TEMPLATE_SPECIFIC_GROUP;
+    }
+
+    @RequestMapping(value = "/accept", method = RequestMethod.POST)
+    public String acceptUserToGroup(@RequestParam(value = "username") final String username,
+                                    @RequestParam(value = "groupName") final String groupName,
+                                    @AuthenticationPrincipal final User user,
+                                    final Model model) throws InterruptedException {
+        if (user != null && ADMIN.equals(this.determineUserRoleInGroup(user.getUsername(), groupName, model))) {
+            getGroupFacade().updateGroupMember(username, groupName);
+        }
+        this.loadDataForSpecificGroup(groupName, model);
+
         return TEMPLATE_SPECIFIC_GROUP;
     }
 
@@ -155,30 +172,37 @@ public class GroupController extends AbstractController {
                 model.addAttribute("groupUsers", group.getUsers());
                 model.addAttribute("groupName", group.getName());
                 model.addAttribute("groupDescription", group.getDescription());
+                model.addAttribute("usersPending", group.getPendings());
             }
         }
     }
 
-    private void determineUserRoleInGroup(final String username, final String groupName, final Model model) {
+    private String determineUserRoleInGroup(final String username, final String groupName, final Model model) {
+        String role = null;
         if (username != null && groupName != null) {
             final UserDTO userDTO = getUserFacade().getUserByUsername(username);
             final GroupDTO groupDTO = getGroupFacade().getGroupByName(groupName);
 
             if (userDTO != null && groupDTO != null) {
                 if (userDTO.getUsername().equals(groupDTO.getGroupOwner())) {
-                    model.addAttribute("isAdmin", true);
+                    model.addAttribute(ADMIN, true);
+                    role = ADMIN;
                 } else {
                     if (userDTO.getGroups().contains(groupDTO.getName())) {
-                        model.addAttribute("isMember", true);
+                        model.addAttribute(MEMBER, true);
+                        role = MEMBER;
                     } else {
                         if (userDTO.getPendings().contains(groupDTO.getName())) {
-                            model.addAttribute("isPending", true);
+                            model.addAttribute(PENDING, true);
+                            role = PENDING;
                         } else {
-                            model.addAttribute("isNotPending", true);
+                            model.addAttribute(NOT_PENDING, true);
+                            role = NOT_PENDING;
                         }
                     }
                 }
             }
         }
+        return role;
     }
 }
