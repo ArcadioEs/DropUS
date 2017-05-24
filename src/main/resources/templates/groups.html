@@ -34,9 +34,9 @@
             <div class="col-md-12">
                 <div class="col-md-5 col-md-offset-1">
                     <div class="panel panel-default">
-                        <div class="panel-heading">All groups</div>
+                        <div class="panel-heading">Groups</div>
                         <div class="panel-body">
-                            <p>Here you can find all existing groups</p>
+                            <p>Here you can find all existing groups you are not a member of</p>
                         </div>
 
                         <table class="table table-striped">
@@ -49,9 +49,7 @@
                             <tbody>
                                 <tr th:each="group : ${allGroups}">
                                     <td>
-                                       <form th:action="@{/group/display}" method="post">
-                                           <input name="groupName" type="submit" th:value="${group.name}" class="btn btn-link"/>
-                                       </form>
+                                        <a th:href="@{'/group/display/' + ${group.name}}" class="btn btn-link">[[${group.name}]]</a>
                                     </td>
                                     <td style="padding: 1em" th:text="${group.groupOwner}"></td>
                                 </tr>
@@ -63,7 +61,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">Your groups</div>
                         <div class="panel-body">
-                            <p>Here you can find all your groups</p>
+                            <p>Here you can find all groups you are a member of</p>
                         </div>
 
                         <table class="table table-striped">
@@ -76,9 +74,7 @@
                             <tbody>
                                 <tr th:each="group : ${userGroups}">
                                     <td>
-                                        <form th:action="@{/group/display}" method="post">
-                                            <input name="groupName" type="submit" th:value="${group.name}" class="btn btn-link"/>
-                                        </form>
+                                        <a th:href="@{'/group/display/' + ${group.name}}" class="btn btn-link">[[${group.name}]]</a>
                                     </td>
                                     <td style="padding: 1em" th:text="${group.groupOwner}"></td>
                                 </tr>

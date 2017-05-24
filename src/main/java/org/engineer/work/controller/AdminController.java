@@ -31,8 +31,6 @@ public class AdminController extends AbstractController {
                 getUserFacade().updateUserEnabledStatus(username, enabled);
             }
         }
-        model.addAttribute("allusers", getUserFacade().getRegularUsers());
-
-        return TEMPLATE_ADMIN_PANEL;
+        return getAdminView(model);
     }
 }
