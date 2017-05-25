@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Default implementation of UserService.
+ * Default implementation of {@link UserService}.
  */
 @Service
 public class UserServiceImpl implements UserService {
@@ -59,12 +59,8 @@ public class UserServiceImpl implements UserService {
                 && userEntity.getUsername() != null
                 && userRepository.exists(userEntity.getUsername())) {
 
-            try {
-                userRepository.save(userEntity);
-                result = true;
-            } catch (IllegalArgumentException e) {
-                LOG.warn("Updating user with username {} failed", userEntity.getUsername(), e);
-            }
+            userRepository.save(userEntity);
+            result = true;
         }
         return result;
     }

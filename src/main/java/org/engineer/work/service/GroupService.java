@@ -16,6 +16,8 @@ public interface GroupService {
 
     boolean createGroup(final GroupDTO groupDTO);
 
+    boolean updateGroup(final GroupEntity groupEntity);
+
     List<GroupEntity> getAllGroups();
 
     boolean deleteGroup(final String name);

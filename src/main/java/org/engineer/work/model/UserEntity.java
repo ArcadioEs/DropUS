@@ -2,16 +2,10 @@ package org.engineer.work.model;
 
 import org.engineer.work.dto.UserDTO;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import java.util.List;
 
 /**
  * Entity representing User in the system.
@@ -30,22 +24,6 @@ public class UserEntity {
     @Column(nullable = false)
     private String role;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinTable(
-            name = "users_groups",
-            joinColumns = @JoinColumn(name = "users_username", referencedColumnName = "username"),
-            inverseJoinColumns = @JoinColumn(name = "groups_name", referencedColumnName = "name")
-    )
-    private List<GroupEntity> groups;
-
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinTable(
-            name = "pendings",
-            joinColumns = @JoinColumn(name = "users_username", referencedColumnName = "username"),
-            inverseJoinColumns = @JoinColumn(name = "groups_name", referencedColumnName = "name")
-    )
-    private List<GroupEntity> groupsPending;
-
     public UserEntity(final UserDTO userDTO) throws IllegalArgumentException {
         this.setUsername(userDTO.getUsername());
         this.setPassword(userDTO.getPassword());
@@ -54,22 +32,6 @@ public class UserEntity {
     }
 
     protected UserEntity() {
-    }
-
-    public List<GroupEntity> getGroupsPending() {
-        return groupsPending;
-    }
-
-    public void setGroupsPending(final List<GroupEntity> groupsPending) {
-        this.groupsPending = groupsPending;
-    }
-
-    public List<GroupEntity> getGroups() {
-        return groups;
-    }
-
-    public void setGroups(final List<GroupEntity> groups) {
-        this.groups = groups;
     }
 
     public String getRole() {

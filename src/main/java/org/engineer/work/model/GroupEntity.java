@@ -2,14 +2,11 @@ package org.engineer.work.model;
 
 import org.engineer.work.dto.GroupDTO;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -29,12 +26,10 @@ public class GroupEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     @Size(max = 255)
     private String description;
-
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "groups")
-    private List<UserEntity> users;
-
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "groupsPending")
-    private List<UserEntity> usersPending;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> members;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> pendingUsers;
 
     public GroupEntity(final GroupDTO groupDTO) throws IllegalArgumentException {
         this.setName(groupDTO.getName());
@@ -45,20 +40,20 @@ public class GroupEntity {
     protected GroupEntity() {
     }
 
-    public List<UserEntity> getUsersPending() {
-        return usersPending;
+    public List<String> getMembers() {
+        return members;
     }
 
-    public void setUsersPending(final List<UserEntity> usersPending) {
-        this.usersPending = usersPending;
+    public void setMembers(List<String> members) {
+        this.members = members;
     }
 
-    public List<UserEntity> getUsers() {
-        return users;
+    public List<String> getPendingUsers() {
+        return pendingUsers;
     }
 
-    public void setUsers(final List<UserEntity> users) {
-        this.users = users;
+    public void setPendingUsers(List<String> pendingUsers) {
+        this.pendingUsers = pendingUsers;
     }
 
     public String getName() {

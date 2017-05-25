@@ -10,30 +10,30 @@ public class GroupDTO {
     private String name;
     private String groupOwner;
     private String description;
-    private List<String> users;
-    private List<String> pendings;
+    private List<String> members;
+    private List<String> pendingUsers;
 
-    public List<String> getPendings() {
-        return pendings;
+    public List<String> getMembers() {
+        return members;
     }
 
-    public void setPendings(List<String> pendings) {
-        this.pendings = pendings;
+    public void setMembers(final List<String> members) {
+        this.members = members;
     }
 
-    public List<String> getUsers() {
-        return users;
+    public List<String> getPendingUsers() {
+        return pendingUsers;
     }
 
-    public void setUsers(List<String> users) {
-        this.users = users;
+    public void setPendingUsers(final List<String> pendingUsers) {
+        this.pendingUsers = pendingUsers;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -41,7 +41,7 @@ public class GroupDTO {
         return groupOwner;
     }
 
-    public void setGroupOwner(String groupOwner) {
+    public void setGroupOwner(final String groupOwner) {
         this.groupOwner = groupOwner;
     }
 
@@ -49,7 +49,7 @@ public class GroupDTO {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 }
