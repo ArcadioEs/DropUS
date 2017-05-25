@@ -44,19 +44,17 @@ public class GroupServiceImpl implements GroupService {
         boolean result = false;
         if (username != null && groupName != null) {
             final UserEntity userEntity = userService.getUserByUsername(username);
-            final GroupEntity groupEntity = this.getGroupByName(groupName);
+            final GroupEntity groupToAdd = this.getGroupByName(groupName);
 
-            if (userEntity != null && groupEntity != null) {
+            if (userEntity != null && groupToAdd != null) {
                 final List<GroupEntity> userGroups = userEntity.getGroups();
                 final List<GroupEntity> groupsPending = userEntity.getGroupsPending();
-                final GroupEntity groupToAdd = this.getGroupByName(groupName);
 
                 if (groupsPending.contains(groupToAdd) && !userGroups.contains(groupToAdd)) {
                     groupsPending.remove(groupToAdd);
                     userGroups.add(groupToAdd);
 
                     userService.updateUser(userEntity);
-
                     result = true;
                 }
             }
@@ -76,8 +74,7 @@ public class GroupServiceImpl implements GroupService {
                 groupRepository.save(new GroupEntity(groupDTO));
 
                 final UserEntity userEntity = userService.getUserByUsername(groupDTO.getGroupOwner());
-                final List<GroupEntity> groupsPending = userEntity.getGroupsPending();
-                groupsPending.add(this.getGroupByName(groupDTO.getName()));
+                userEntity.getGroupsPending().add(this.getGroupByName(groupDTO.getName()));
                 userService.updateUser(userEntity);
 
                 if (this.addMemberToGroup(groupDTO.getGroupOwner(), groupDTO.getName())) {
