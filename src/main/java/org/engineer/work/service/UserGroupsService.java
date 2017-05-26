@@ -9,9 +9,7 @@ public interface UserGroupsService {
 
     UserGroups getUserGroupsByUsername(final String username);
 
-    boolean createUserGroups(final String username);
-
-    boolean addGroup(final String username, final String groupName);
+    boolean createOrUpdateUserGroups(final String username, final String groupName);
 
     boolean updateUserGroups(final UserGroups user);
 }

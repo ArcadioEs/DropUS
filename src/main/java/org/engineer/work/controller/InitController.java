@@ -19,7 +19,7 @@ public class InitController extends AbstractController {
     public String hello() {
 
         /** Adding initial admin user, will be changed later on */
-        if (getUserFacade().getUserByUsername("admin") != null) {
+        if (getUserFacade().getUserByUsername("admin") == null) {
             final UserDTO userDTO = new UserDTO();
             userDTO.setUsername("admin");
             userDTO.setPassword(getPasswordEncoder().encode("nimda"));

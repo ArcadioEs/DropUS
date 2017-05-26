@@ -3,11 +3,13 @@ package org.engineer.work.facade.impl;
 import org.engineer.work.dto.UserDTO;
 import org.engineer.work.facade.UserFacade;
 import org.engineer.work.model.UserEntity;
+import org.engineer.work.model.UserGroups;
 import org.engineer.work.model.enumeration.AuthorityRoles;
+import org.engineer.work.service.UserGroupsService;
 import org.engineer.work.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,8 +19,10 @@ import java.util.stream.Collectors;
 @Service
 public class UserFacadeImpl implements UserFacade {
 
-    @Autowired
+    @Resource
     private UserService userService;
+    @Resource
+    private UserGroupsService userGroupsService;
 
     @Override
     public boolean userIsAdmin(final String username) {
@@ -80,11 +84,9 @@ public class UserFacadeImpl implements UserFacade {
 
             userDTO.setUsername(userEntity.getUsername());
             userDTO.setEnabled(userEntity.getEnabled());
-            if (userEntity.getGroups() != null) {
-                userDTO.setGroups(userEntity.getGroups().stream().map(group -> group.getName()).collect(Collectors.toList()));
-            }
-            if (userEntity.getGroupsPending() != null) {
-                userDTO.setPendings(userEntity.getGroupsPending().stream().map(group -> group.getName()).collect(Collectors.toList()));
+            final UserGroups userGroups = userGroupsService.getUserGroupsByUsername(userEntity.getUsername());
+            if (userGroups != null) {
+                userDTO.setUserGroups(userGroups.getGroups());
             }
         }
         return userDTO;

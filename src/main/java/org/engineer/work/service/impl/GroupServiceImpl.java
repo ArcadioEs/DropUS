@@ -1,12 +1,13 @@
 package org.engineer.work.service.impl;
 
-import com.google.common.base.Preconditions;
 import org.engineer.work.dto.GroupDTO;
 import org.engineer.work.model.GroupEntity;
+import org.engineer.work.model.UserEntity;
 import org.engineer.work.model.UserGroups;
 import org.engineer.work.repository.GroupRepository;
 import org.engineer.work.service.GroupService;
 import org.engineer.work.service.UserGroupsService;
+import org.engineer.work.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -29,6 +31,8 @@ public class GroupServiceImpl implements GroupService {
     @Resource
     private GroupRepository groupRepository;
     @Resource
+    private UserService userService;
+    @Resource
     private UserGroupsService userGroupsService;
 
     @Override
@@ -36,6 +40,14 @@ public class GroupServiceImpl implements GroupService {
         GroupEntity groupEntity = null;
         if (name != null) {
             groupEntity = groupRepository.findOne(name);
+            if (groupEntity != null) {
+                if (groupEntity.getPendingUsers() == null) {
+                    groupEntity.setPendingUsers(Collections.emptyList());
+                }
+                if (groupEntity.getMembers() == null) {
+                    groupEntity.setMembers(Collections.emptyList());
+                }
+            }
         }
         return groupEntity;
     }
@@ -45,19 +57,15 @@ public class GroupServiceImpl implements GroupService {
     public boolean addMemberToGroup(final String username, final String groupName) {
         boolean result = false;
         if (username != null && groupName != null) {
+            final UserEntity user = userService.getUserByUsername(username);
             final GroupEntity groupToAdd = this.getGroupByName(groupName);
-            final UserGroups user = userGroupsService.getUserGroupsByUsername(username);
 
-            if (this.validateIfMemberCanBeAddedToGroup(groupToAdd, user)) {
+            if (this.validateIfMemberCanBeAddedToGroup(user, groupToAdd)) {
                 groupToAdd.getPendingUsers().remove(username);
-
-                if (groupToAdd.getMembers() != null) {
-                    groupToAdd.getMembers().add(username);
-                } else {
-                    groupToAdd.setMembers(asList(username));
-                }
+                groupToAdd.getMembers().add(username);
+                
                 groupRepository.save(groupToAdd);
-                userGroupsService.addGroup(user.getUsername(), groupToAdd.getName());
+                userGroupsService.createOrUpdateUserGroups(user.getUsername(), groupToAdd.getName());
 
                 result = true;
             }
@@ -78,6 +86,7 @@ public class GroupServiceImpl implements GroupService {
                 groupEntity.setMembers(asList(groupDTO.getGroupOwner()));
 
                 groupRepository.save(groupEntity);
+                userGroupsService.createOrUpdateUserGroups(groupDTO.getGroupOwner(), groupDTO.getName());
 
                 result = true;
             } catch (IllegalArgumentException e) {
@@ -130,11 +139,14 @@ public class GroupServiceImpl implements GroupService {
         return result;
     }
 
-    private boolean validateIfMemberCanBeAddedToGroup(final GroupEntity groupEntity, final UserGroups user) {
-        Preconditions.checkArgument(groupEntity != null);
-        Preconditions.checkArgument(user != null);
-        Preconditions.checkArgument(groupEntity.getPendingUsers() != null);
-
-        return (groupEntity.getPendingUsers().contains(user.getUsername()) && !groupEntity.getMembers().contains(user.getUsername()) && !user.getGroups().contains(groupEntity.getName()));
+    private boolean validateIfMemberCanBeAddedToGroup(final UserEntity user, final GroupEntity groupEntity) {
+        boolean result = false;
+        if (user != null && groupEntity != null) {
+            final UserGroups userGroups = userGroupsService.getUserGroupsByUsername(user.getUsername());
+            if (userGroups == null || !userGroups.getGroups().contains(groupEntity.getName())) {
+                result = groupEntity.getPendingUsers().contains(user.getUsername()) && !groupEntity.getMembers().contains(user.getUsername());
+            }
+        }
+        return result;
     }
 }

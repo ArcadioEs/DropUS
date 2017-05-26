@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Default implementation of {@link UserGroupsService}.
@@ -27,18 +28,29 @@ public class UserGroupsServiceImpl implements UserGroupsService {
         UserGroups userGroups = null;
         if (username != null) {
             userGroups = userGroupsRepository.findOne(username);
+            if (userGroups != null && userGroups.getGroups() == null) {
+                userGroups.setGroups(Collections.emptyList());
+            }
         }
         return userGroups;
     }
 
     @Override
     @Transactional
-    public boolean createUserGroups(final String username) {
+    public boolean createOrUpdateUserGroups(final String username, final String groupName) {
         boolean result = false;
-        if (username != null && !userGroupsRepository.exists(username)) {
+        if (username != null) {
             try {
-                userGroupsRepository.save(new UserGroups(username));
-                result = true;
+                UserGroups userGroups = this.getUserGroupsByUsername(username);
+                if (userGroups == null) {
+                    userGroups = new UserGroups(username);
+                    userGroups.setGroups(Arrays.asList(groupName));
+                    userGroupsRepository.save(userGroups);
+                    result = true;
+                } else {
+                    userGroups.getGroups().add(groupName);
+                    this.updateUserGroups(userGroups);
+                }
             } catch (IllegalArgumentException e) {
                 LOG.warn("Creating UserGroups entity with username {} failed", username, e);
             }
@@ -48,30 +60,8 @@ public class UserGroupsServiceImpl implements UserGroupsService {
 
     @Override
     @Transactional
-    public boolean addGroup(final String username, final String groupName) {
-        boolean result = false;
-        if (username != null && groupName != null) {
-            final UserGroups user = userGroupsRepository.findOne(username);
-
-            if (user != null) {
-                if (user.getGroups() == null) {
-                    user.setGroups(Arrays.asList(groupName));
-                    userGroupsRepository.save(user);
-                    result = true;
-                } else if (!user.getGroups().contains(groupName)) {
-                    user.getGroups().add(groupName);
-                    userGroupsRepository.save(user);
-                    result = true;
-                }
-            }
-        }
-        return result;
-    }
-
-    @Override
-    @Transactional
     public boolean updateUserGroups(final UserGroups user) {
-        boolean result = true;
+        boolean result = false;
         if (user != null
                 && user.getUsername() != null
                 && userGroupsRepository.exists(user.getUsername())) {

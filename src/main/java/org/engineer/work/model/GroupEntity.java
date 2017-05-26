@@ -1,6 +1,8 @@
 package org.engineer.work.model;
 
 import org.engineer.work.dto.GroupDTO;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -26,9 +28,11 @@ public class GroupEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     @Size(max = 255)
     private String description;
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<String> members;
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<String> pendingUsers;
 
     public GroupEntity(final GroupDTO groupDTO) throws IllegalArgumentException {

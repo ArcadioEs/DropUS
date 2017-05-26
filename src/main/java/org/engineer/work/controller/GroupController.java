@@ -163,13 +163,13 @@ public class GroupController extends AbstractController {
             final GroupDTO group = getGroupFacade().getGroupByName(groupName);
             if (group != null) {
                 model.addAttribute("groupAdmin", group.getGroupOwner());
-                if (group.getUsers() != null) {
-                    group.getUsers().removeIf(user -> user.equals(group.getGroupOwner()));
+                if (group.getMembers() != null) {
+                    group.getMembers().removeIf(user -> user.equals(group.getGroupOwner()));
                 }
-                model.addAttribute("groupUsers", group.getUsers());
+                model.addAttribute("groupUsers", group.getMembers());
                 model.addAttribute("groupName", group.getName());
                 model.addAttribute("groupDescription", group.getDescription());
-                model.addAttribute("usersPending", group.getPendings());
+                model.addAttribute("usersPending", group.getPendingUsers());
             }
         }
     }
@@ -185,11 +185,11 @@ public class GroupController extends AbstractController {
                     model.addAttribute(ADMIN, true);
                     role = ADMIN;
                 } else {
-                    if (userDTO.getGroups().contains(groupDTO.getName())) {
+                    if (userDTO.getUserGroups().contains(groupDTO.getName())) {
                         model.addAttribute(MEMBER, true);
                         role = MEMBER;
                     } else {
-                        if (userDTO.getPendings().contains(groupDTO.getName())) {
+                        if (groupDTO.getPendingUsers().contains(userDTO.getUsername())) {
                             model.addAttribute(PENDING, true);
                             role = PENDING;
                         } else {

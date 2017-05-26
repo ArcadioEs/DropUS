@@ -1,5 +1,6 @@
 package org.engineer.work.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,8 +11,8 @@ public class GroupDTO {
     private String name;
     private String groupOwner;
     private String description;
-    private List<String> members;
-    private List<String> pendingUsers;
+    private List<String> members = new ArrayList<>();
+    private List<String> pendingUsers = new ArrayList<>();
 
     public List<String> getMembers() {
         return members;
