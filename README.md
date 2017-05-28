@@ -12,3 +12,4 @@ Application created to help students organize their work, by helping in communic
 * Go to ***DropUS**/target* directory
 * Start server by executing command "*java -jar DropUS-1.0-SNAPSHOT.jar*"
 * Go to *localhost:8080* in your Internet browser
+* This is temporary solution, but to initialize admin user, please go to *localhost:8080/init* and log with credentials: admin/nimda
