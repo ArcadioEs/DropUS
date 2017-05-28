@@ -66,14 +66,14 @@ public class UserServiceTest {
         Assert.assertFalse(userService.createUser(testUser));
     }
 
-    @Test
-    public void shouldDeleteUser() {
-        testUser = getCompleteUserDTO("User");
-
-        Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(true);
-
-        Assert.assertTrue(userService.deleteUser(testUser.getUsername()));
-    }
+//    @Test
+//    public void shouldDeleteUser() {
+//        testUser = getCompleteUserDTO("User");
+//
+//        Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(true);
+//
+//        Assert.assertTrue(userService.deleteUser(testUser.getUsername()));
+//    }
 
     @Test
     public void shouldReturnFalseDuringDeletion() {
