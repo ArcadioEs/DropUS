@@ -8,6 +8,8 @@ import org.engineer.work.model.UserGroups;
 import org.engineer.work.service.GroupService;
 import org.engineer.work.service.UserGroupsService;
 import org.engineer.work.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class GroupFacadeImpl implements GroupFacade {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GroupFacadeImpl.class);
 
     @Resource
     private GroupService groupService;
@@ -73,25 +77,10 @@ public class GroupFacadeImpl implements GroupFacade {
             final UserEntity user = userService.getUserByUsername(username);
             final GroupEntity group = groupService.getGroupByName(groupName);
 
-            if (user != null && group != null) {
-                final UserGroups userToAddGroups = userGroupsService.getUserGroupsByUsername(user.getUsername());
-                final List<String> groupsPending = group.getPendingUsers();
-
-                if (add && !groupsPending.contains(user.getUsername())) {
-                    if (userToAddGroups == null || !userToAddGroups.getGroups().contains(group.getName())) {
-                        groupsPending.add(user.getUsername());
-                        groupService.updateGroup(group);
-                        result = true;
-                    }
-                }
-
-                if (!add && groupsPending != null && groupsPending.contains(user.getUsername())) {
-                    if (userToAddGroups == null || !userToAddGroups.getGroups().contains(group.getName())) {
-                        groupsPending.remove(user.getUsername());
-                        groupService.updateGroup(group);
-                        result = true;
-                    }
-                }
+            if (add) {
+                result = this.addUserToPendingGroup(user, group);
+            } else {
+                result = this.removeUserFromPendingGroup(user, group);
             }
         }
         return result;
@@ -99,12 +88,8 @@ public class GroupFacadeImpl implements GroupFacade {
 
     @Override
     @Transactional
-    public boolean updateGroupMember(final String username, final String groupName) {
-        boolean result = false;
-        if (username != null && groupName != null) {
-            result = groupService.addMemberToGroup(username, groupName);
-        }
-        return result;
+    public boolean addMemberToGroup(final String username, final String groupName) {
+        return groupService.addMemberToGroup(username, groupName);
     }
 
     @Override
@@ -134,5 +119,46 @@ public class GroupFacadeImpl implements GroupFacade {
             }
         }
         return groupDTO;
+    }
+
+    private boolean addUserToPendingGroup(final UserEntity user, final GroupEntity group) {
+        boolean result = false;
+        if (user != null && group != null) {
+            final UserGroups userGroups = userGroupsService.getUserGroupsByUsername(user.getUsername());
+            final List<String> groupsPending = group.getPendingUsers();
+
+            if (!groupsPending.contains(user.getUsername())
+                    && (userGroups == null || !userGroups.getGroups().contains(group.getName()))) {
+
+                groupsPending.add(user.getUsername());
+                result = groupService.updateGroup(group);
+            } else {
+                LOG.warn("User {} could not be added to pending group {}", user.getUsername(), group.getName());
+            }
+        } else {
+            LOG.warn("User and group must not be null");
+        }
+        return result;
+    }
+
+    private boolean removeUserFromPendingGroup(final UserEntity user, final GroupEntity group) {
+        boolean result = false;
+        if (user != null && group != null) {
+            final UserGroups userGroups = userGroupsService.getUserGroupsByUsername(user.getUsername());
+            final List<String> groupsPending = group.getPendingUsers();
+
+            if (groupsPending != null
+                    && groupsPending.contains(user.getUsername())
+                    && (userGroups == null || !userGroups.getGroups().contains(group.getName()))) {
+
+                groupsPending.remove(user.getUsername());
+                result = groupService.updateGroup(group);
+            } else {
+                LOG.warn("User {} could not be removed from pending group {}", user.getUsername(), group.getName());
+            }
+        } else {
+            LOG.warn("User and group must not be null");
+        }
+        return result;
     }
 }

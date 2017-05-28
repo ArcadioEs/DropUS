@@ -1,7 +1,6 @@
 package org.engineer.work.controller.abstractcontroller;
 
 import org.engineer.work.facade.GroupFacade;
-import org.engineer.work.facade.RegisterFacade;
 import org.engineer.work.facade.UserFacade;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -19,8 +18,6 @@ public abstract class AbstractController {
     @Resource
     private GroupFacade groupFacade;
     @Resource
-    private RegisterFacade registerFacade;
-    @Resource
     private PasswordEncoder passwordEncoder;
 
     protected UserFacade getUserFacade() {
@@ -29,10 +26,6 @@ public abstract class AbstractController {
 
     protected GroupFacade getGroupFacade() {
         return groupFacade;
-    }
-
-    protected RegisterFacade getRegisterFacade() {
-        return registerFacade;
     }
 
     protected PasswordEncoder getPasswordEncoder() {

@@ -65,9 +65,7 @@ public class GroupServiceImpl implements GroupService {
                 groupToAdd.getMembers().add(username);
                 
                 groupRepository.save(groupToAdd);
-                userGroupsService.createOrUpdateUserGroups(user.getUsername(), groupToAdd.getName());
-
-                result = true;
+                result = userGroupsService.createOrUpdateUserGroups(user.getUsername(), groupToAdd.getName());
             }
         }
         return result;
@@ -86,9 +84,7 @@ public class GroupServiceImpl implements GroupService {
                 groupEntity.setMembers(asList(groupDTO.getGroupOwner()));
 
                 groupRepository.save(groupEntity);
-                userGroupsService.createOrUpdateUserGroups(groupDTO.getGroupOwner(), groupDTO.getName());
-
-                result = true;
+                result = userGroupsService.createOrUpdateUserGroups(groupDTO.getGroupOwner(), groupDTO.getName());
             } catch (IllegalArgumentException e) {
                 LOG.warn("Creating group with name {} failed", groupDTO.getName(), e);
             }

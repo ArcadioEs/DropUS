@@ -41,7 +41,7 @@ public class RegisterController extends AbstractController {
             userDTO.setRole(AuthorityRoles.USER);
             userDTO.setEnabled((byte) 1);
 
-            if (getRegisterFacade().registerUser(userDTO)) {
+            if (getUserFacade().createUser(userDTO)) {
                 returnTemplate = TEMPLATE_LOGIN_PAGE;
             } else {
                 model.addAttribute("userExists", MessageFormat.format("Username {0} already in use", username));

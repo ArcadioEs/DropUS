@@ -25,7 +25,7 @@ public class InitController extends AbstractController {
             userDTO.setPassword(getPasswordEncoder().encode("nimda"));
             userDTO.setRole(AuthorityRoles.ADMIN);
             userDTO.setEnabled((byte) 1);
-            getRegisterFacade().registerUser(userDTO);
+            getUserFacade().createUser(userDTO);
         }
 
         return TEMPLATE_LOGIN_PAGE;

@@ -3,6 +3,7 @@ package org.engineer.work.service.impl;
 import org.engineer.work.dto.UserDTO;
 import org.engineer.work.model.UserEntity;
 import org.engineer.work.repository.UserRepository;
+import org.engineer.work.service.UserGroupsService;
 import org.engineer.work.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,8 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private UserRepository userRepository;
+    @Resource
+    private UserGroupsService userGroupsService;
 
     @Override
     public UserEntity getUserByUsername(final String username) {
@@ -80,6 +83,7 @@ public class UserServiceImpl implements UserService {
         boolean result = false;
         if (username != null && userRepository.exists(username)) {
             userRepository.delete(username);
+            userGroupsService.deleteUserGroups(username);
             result = true;
         }
         return result;

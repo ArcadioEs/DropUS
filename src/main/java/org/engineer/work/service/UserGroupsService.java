@@ -12,4 +12,6 @@ public interface UserGroupsService {
     boolean createOrUpdateUserGroups(final String username, final String groupName);
 
     boolean updateUserGroups(final UserGroups user);
+
+    boolean deleteUserGroups(final String username);
 }

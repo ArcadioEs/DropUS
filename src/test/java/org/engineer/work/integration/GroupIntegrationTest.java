@@ -2,21 +2,22 @@ package org.engineer.work.integration;
 
 import org.engineer.work.dto.GroupDTO;
 import org.engineer.work.dto.UserDTO;
+import org.engineer.work.facade.GroupFacade;
+import org.engineer.work.facade.UserFacade;
 import org.engineer.work.model.GroupEntity;
-import org.engineer.work.model.UserEntity;
+import org.engineer.work.model.UserGroups;
 import org.engineer.work.model.enumeration.AuthorityRoles;
 import org.engineer.work.service.GroupService;
+import org.engineer.work.service.UserGroupsService;
 import org.engineer.work.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Arrays;
+import javax.annotation.Resource;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -31,11 +32,16 @@ public class GroupIntegrationTest {
     private static final String DESCRIPTION = "Description";
     private static final String PASSWORD = "Password";
 
-    @Autowired
+    @Resource
     private UserService userService;
-
-    @Autowired
+    @Resource
+    private UserFacade userFacade;
+    @Resource
     private GroupService groupService;
+    @Resource
+    private GroupFacade groupFacade;
+    @Resource
+    private UserGroupsService userGroupsService;
 
     private UserDTO userDTO;
     private GroupDTO groupDTO;
@@ -55,38 +61,68 @@ public class GroupIntegrationTest {
     }
 
     @Test
-    public void shouldAssignUserToPendingTable() {
-        userService.createUser(userDTO);
-        groupService.createGroup(groupDTO);
+    public void shouldCreateGroupAndAssignUserToIt() {
+        userFacade.createUser(userDTO);
+        groupFacade.createGroup(groupDTO);
 
-        final UserEntity userEntity = userService.getUserByUsername(USER_NAME);
-        userEntity.setGroupsPending(Arrays.asList(groupService.getGroupByName(GROUP_NAME)));
-        userService.updateUser(userEntity);
+        assertTrue(userFacade.getUserByUsername(USER_NAME) != null);
+        assertTrue(groupFacade.getGroupByName(GROUP_NAME) != null);
+        assertTrue(userGroupsService.getUserGroupsByUsername(USER_NAME).getUsername().equals(userDTO.getUsername()));
+        assertTrue(userGroupsService.getUserGroupsByUsername(USER_NAME).getGroups().get(0).equals(groupDTO.getName()));
 
-        assertEquals(userService.getUserByUsername(USER_NAME).getGroupsPending().get(0).getName(), GROUP_NAME);
-        assertEquals(groupService.getGroupByName(GROUP_NAME).getUsersPending().get(0).getUsername(), USER_NAME);
-
-        groupService.deleteGroup(GROUP_NAME);
-        userService.deleteUser(USER_NAME);
+        groupFacade.deleteGroup(GROUP_NAME);
+        userFacade.deleteUser(USER_NAME);
 
         assertTrue(groupService.getGroupByName(GROUP_NAME) == null);
         assertTrue(userService.getUserByUsername(USER_NAME) == null);
+        assertTrue(userGroupsService.getUserGroupsByUsername(USER_NAME) == null);
     }
 
     @Test
-    public void shouldAssignGroupToUser() {
-        userService.createUser(userDTO);
+    public void shouldAssignUserToPendingGroup() {
+        userFacade.createUser(userDTO);
         groupService.createGroup(groupDTO);
 
-        final GroupEntity userGroupToCheck = userService.getUserByUsername(USER_NAME).getGroups().get(0);
+        final GroupEntity group = groupService.getGroupByName(GROUP_NAME);
+        group.getMembers().remove(0);
+        groupService.updateGroup(group);
 
-        assertEquals(userGroupToCheck.getName(), groupService.getGroupByName(GROUP_NAME).getName());
-        assertEquals(userGroupToCheck.getGroupOwner(), groupService.getGroupByName(GROUP_NAME).getGroupOwner());
+        final UserGroups userGroups = userGroupsService.getUserGroupsByUsername(USER_NAME);
+        userGroups.getGroups().remove(0);
+        userGroupsService.updateUserGroups(userGroups);
 
-        groupService.deleteGroup(GROUP_NAME);
-        userService.deleteUser(USER_NAME);
+        assertTrue(groupFacade.getGroupByName(GROUP_NAME).getMembers().isEmpty());
+        assertTrue(groupFacade.getGroupByName(GROUP_NAME).getPendingUsers().isEmpty());
 
-        assertTrue(userService.getUserByUsername(USER_NAME) == null);
-        assertTrue(groupService.getGroupByName(GROUP_NAME) == null);
+        groupFacade.updatePendingUsers(USER_NAME, GROUP_NAME, true);
+
+        assertTrue(groupFacade.getGroupByName(GROUP_NAME).getMembers().isEmpty());
+        assertTrue(groupFacade.getGroupByName(GROUP_NAME).getPendingUsers().get(0).equals(USER_NAME));
+
+        groupFacade.updatePendingUsers(USER_NAME, GROUP_NAME, false);
+
+        assertTrue(groupFacade.getGroupByName(GROUP_NAME).getMembers().isEmpty());
+        assertTrue(groupFacade.getGroupByName(GROUP_NAME).getPendingUsers().isEmpty());
+
+        groupFacade.deleteGroup(GROUP_NAME);
+        userFacade.deleteUser(USER_NAME);
+
+        assertTrue(userFacade.getUserByUsername(USER_NAME) == null);
+        assertTrue(groupFacade.getGroupByName(GROUP_NAME) == null);
+        assertTrue(userGroupsService.getUserGroupsByUsername(USER_NAME) == null);
+    }
+
+    @Test
+    public void shouldAddUserToGroupIfUserIsPending() {
+//        userService.createUser(userDTO);
+//        groupService.createGroup(groupDTO);
+//
+//        final GroupEntity group = groupService.getGroupByName(GROUP_NAME);
+//        group.getMembers().remove(0);
+//        groupService.updateGroup(group);
+//
+//        final UserGroups userGroups = userGroupsService.getUserGroupsByUsername(USER_NAME);
+//        userGroups.getGroups().remove(0);
+//        userGroupsService.updateUserGroups(userGroups);
     }
 }

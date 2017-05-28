@@ -49,7 +49,7 @@ public class UserGroupsServiceImpl implements UserGroupsService {
                     result = true;
                 } else {
                     userGroups.getGroups().add(groupName);
-                    this.updateUserGroups(userGroups);
+                    result = this.updateUserGroups(userGroups);
                 }
             } catch (IllegalArgumentException e) {
                 LOG.warn("Creating UserGroups entity with username {} failed", username, e);
@@ -67,6 +67,17 @@ public class UserGroupsServiceImpl implements UserGroupsService {
                 && userGroupsRepository.exists(user.getUsername())) {
 
             userGroupsRepository.save(user);
+            result = true;
+        }
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteUserGroups(final String username) {
+        boolean result = false;
+        if (username != null && userGroupsRepository.exists(username)) {
+            userGroupsRepository.delete(username);
             result = true;
         }
         return result;

@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.thymeleaf.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.TEMPLATE_GROUPS;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.TEMPLATE_SPECIFIC_GROUP;
+import static org.thymeleaf.util.StringUtils.capitalize;
 
 /**
  * Controller for group page.
@@ -42,7 +42,7 @@ public class GroupController extends AbstractController {
     public String getSpecificGroup(@PathVariable(value = "groupName") final String groupName,
                                    @AuthenticationPrincipal final User user,
                                    final Model model) {
-        final String validGroupName = StringUtils.capitalize(groupName.toLowerCase());
+        final String validGroupName = capitalize(groupName.toLowerCase());
         if (user != null && getGroupFacade().getGroupByName(validGroupName) != null) {
             this.determineUserRoleInGroup(user.getUsername(), validGroupName, model);
             this.loadDataForSpecificGroup(validGroupName, model);
@@ -57,7 +57,7 @@ public class GroupController extends AbstractController {
                             @RequestParam(value = "add") final String decision,
                             @AuthenticationPrincipal final User user,
                             final Model model) {
-        final String validGroupName = StringUtils.capitalize(groupName.toLowerCase());
+        final String validGroupName = capitalize(groupName.toLowerCase());
         if (user != null) {
             final boolean add = Boolean.parseBoolean(decision);
             getGroupFacade().updatePendingUsers(user.getUsername(), validGroupName, add);
@@ -70,9 +70,9 @@ public class GroupController extends AbstractController {
                                     @RequestParam(value = "groupName") final String groupName,
                                     @AuthenticationPrincipal final User user,
                                     final Model model) throws InterruptedException {
-        final String validGroupName = StringUtils.capitalize(groupName.toLowerCase());
-        if (user != null && ADMIN.equals(this.determineUserRoleInGroup(user.getUsername(), validGroupName, model))) {
-            getGroupFacade().updateGroupMember(username, validGroupName);
+        final String validGroupName = capitalize(groupName.toLowerCase());
+        if (ADMIN.equals(this.determineUserRoleInGroup(user.getUsername(), validGroupName, model))) {
+            getGroupFacade().addMemberToGroup(username, validGroupName);
         }
         return getSpecificGroup(validGroupName, user, model);
     }
@@ -82,7 +82,7 @@ public class GroupController extends AbstractController {
                               @RequestParam(value = "description") final String description,
                               @AuthenticationPrincipal final User user,
                               final Model model) {
-        final String validGroupName = StringUtils.capitalize(groupName.toLowerCase());
+        final String validGroupName = capitalize(groupName.toLowerCase());
         if (user != null && this.validate(model, validGroupName, description)) {
             GroupDTO groupDTO = new GroupDTO();
             groupDTO.setName(validGroupName);
@@ -102,7 +102,7 @@ public class GroupController extends AbstractController {
     public String deleteGroup(@RequestParam(value = "groupName") final String groupName,
                               @AuthenticationPrincipal final User user,
                               final Model model) {
-        final String validGroupName = StringUtils.capitalize(groupName.toLowerCase());
+        final String validGroupName = capitalize(groupName.toLowerCase());
         final GroupDTO group = getGroupFacade().getGroupByName(validGroupName);
         if (group != null && group.getGroupOwner().equals(user.getUsername())) {
             if (getGroupFacade().deleteGroup(validGroupName)) {

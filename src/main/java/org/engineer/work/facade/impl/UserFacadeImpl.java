@@ -41,6 +41,11 @@ public class UserFacadeImpl implements UserFacade {
     }
 
     @Override
+    public boolean createUser(final UserDTO userDTO) {
+        return userService.createUser(userDTO);
+    }
+
+    @Override
     public boolean userExists(final String username) {
         boolean result = false;
         if (username != null && userService.getUserByUsername(username) != null) {
@@ -69,6 +74,11 @@ public class UserFacadeImpl implements UserFacade {
                 userService.updateUser(user);
             }
         }
+    }
+
+    @Override
+    public boolean deleteUser(final String username) {
+        return userService.deleteUser(username);
     }
 
     /**

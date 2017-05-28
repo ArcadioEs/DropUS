@@ -15,9 +15,13 @@ public interface UserFacade {
 
     UserDTO getUserByUsername(final String username);
 
+    boolean createUser(final UserDTO userDTO);
+
     List<UserDTO> getAllUsers();
 
     List<UserDTO> getRegularUsers();
+
+    boolean deleteUser(final String username);
 
     void updateUserEnabledStatus(final String username, final boolean enabled);
 }
