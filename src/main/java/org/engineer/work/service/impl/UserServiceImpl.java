@@ -50,6 +50,12 @@ public class UserServiceImpl implements UserService {
             } catch (IllegalArgumentException e) {
                 LOG.warn("Creating user with username {} failed", userDTO.getUsername(), e);
             }
+        } else {
+            if (userDTO == null) {
+                LOG.warn("User could not be created - DTO is null");
+            } else {
+                LOG.warn("User {} could not be created", userDTO.getUsername());
+            }
         }
         return result;
     }
@@ -64,6 +70,12 @@ public class UserServiceImpl implements UserService {
 
             userRepository.save(userEntity);
             result = true;
+        } else {
+            if (userEntity == null) {
+                LOG.warn("User could not be updated - entity is null");
+            } else {
+                LOG.warn("User {} could not be updated", userEntity.getUsername());
+            }
         }
         return result;
     }
@@ -85,6 +97,8 @@ public class UserServiceImpl implements UserService {
             userRepository.delete(username);
             userGroupsService.deleteUserGroups(username);
             result = true;
+        } else {
+            LOG.warn("User {} could not be deleted", username);
         }
         return result;
     }

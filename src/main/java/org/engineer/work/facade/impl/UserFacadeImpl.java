@@ -7,6 +7,8 @@ import org.engineer.work.model.UserGroups;
 import org.engineer.work.model.enumeration.AuthorityRoles;
 import org.engineer.work.service.UserGroupsService;
 import org.engineer.work.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class UserFacadeImpl implements UserFacade {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UserFacadeImpl.class);
 
     @Resource
     private UserService userService;
@@ -72,7 +76,11 @@ public class UserFacadeImpl implements UserFacade {
             if (user != null) {
                 user.setEnabled(enabled ? (byte) 1 : (byte) 0);
                 userService.updateUser(user);
+            } else {
+                LOG.warn("User {} could not be {}, since user is null", username, enabled ? "enabled" : "disabled");
             }
+        } else {
+            LOG.warn("Could not update user's enabled status - username is null");
         }
     }
 
@@ -98,6 +106,8 @@ public class UserFacadeImpl implements UserFacade {
             if (userGroups != null) {
                 userDTO.setUserGroups(userGroups.getGroups());
             }
+        } else {
+            LOG.warn("Entity is null, therefore cannot be converted to DTO");
         }
         return userDTO;
     }

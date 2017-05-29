@@ -19,7 +19,7 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user"></span> Logged as [[${#httpServletRequest.remoteUser}]] <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a class="text-right" href="#">Profile <span class="glyphicon glyphicon-cog"></span></a></li>
+                                <li><a class="text-right" th:href="@{'/profile/display/' + ${#httpServletRequest.getRemoteUser()}}">Profile <span class="glyphicon glyphicon-cog"></span></a></li>
                                 <li sec:authorize="hasRole('ROLE_ADMIN')"><a class="text-right" th:href="@{/admin/page}">Admin panel <span class="glyphicon glyphicon-user"></span></a></li>
                             </ul>
                         </li>

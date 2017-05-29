@@ -46,8 +46,9 @@ public class GroupController extends AbstractController {
         if (user != null && getGroupFacade().getGroupByName(validGroupName) != null) {
             this.determineUserRoleInGroup(user.getUsername(), validGroupName, model);
             this.loadDataForSpecificGroup(validGroupName, model);
+            model.addAttribute("groupExists", true);
         } else {
-            return "redirect:../../denied";
+            model.addAttribute("groupExists", false);
         }
         return TEMPLATE_SPECIFIC_GROUP;
     }
@@ -71,7 +72,7 @@ public class GroupController extends AbstractController {
                                     @AuthenticationPrincipal final User user,
                                     final Model model) throws InterruptedException {
         final String validGroupName = capitalize(groupName.toLowerCase());
-        if (ADMIN.equals(this.determineUserRoleInGroup(user.getUsername(), validGroupName, model))) {
+        if (user != null && ADMIN.equals(this.determineUserRoleInGroup(user.getUsername(), validGroupName, model))) {
             getGroupFacade().addMemberToGroup(username, validGroupName);
         }
         return getSpecificGroup(validGroupName, user, model);
@@ -104,7 +105,7 @@ public class GroupController extends AbstractController {
                               final Model model) {
         final String validGroupName = capitalize(groupName.toLowerCase());
         final GroupDTO group = getGroupFacade().getGroupByName(validGroupName);
-        if (group != null && group.getGroupOwner().equals(user.getUsername())) {
+        if (user != null && group != null && ADMIN.equals(this.determineUserRoleInGroup(user.getUsername(), group.getName(), model))) {
             if (getGroupFacade().deleteGroup(validGroupName)) {
                 model.addAttribute("groupDeletion", "Group deleted successfully");
             } else {

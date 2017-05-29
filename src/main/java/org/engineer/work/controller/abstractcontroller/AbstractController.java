@@ -40,5 +40,7 @@ public abstract class AbstractController {
 
         String TEMPLATE_REGISTRATION_PAGE = "registration";
         String TEMPLATE_LOGIN_PAGE = "login";
+
+        String TEMPLATE_USER_PROFILE = "userprofile";
     }
 }

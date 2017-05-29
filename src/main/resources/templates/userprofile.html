@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>DropUS Groups page</title>
+        <div th:insert="fragments/bootstrap :: bootstrap"></div>
+    </head>
+    <body class="container-fluid text-center">
+        <div th:insert="fragments/header :: header"></div>
+
+        <div th:switch="${userExists}" class="col-md-12">
+            <div th:case="true">
+                <h2>User details for user <span style="color: red"> [[${userDetails.username}]]</span> will be displayed on this page</h2>
+            </div>
+            <div th:case="false">
+                <h2>Sorry, but it seems like user you are trying to find, doesn't exist</h2>
+            </div>
+        </div>
+    </body>
+</html>

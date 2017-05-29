@@ -68,6 +68,12 @@ public class UserGroupsServiceImpl implements UserGroupsService {
 
             userGroupsRepository.save(user);
             result = true;
+        } else {
+            if (user == null) {
+                LOG.warn("Could not update given UserGroup - user is null");
+            } else {
+                LOG.warn("Could not update UserGroup for user {}", user.getUsername());
+            }
         }
         return result;
     }
@@ -79,6 +85,8 @@ public class UserGroupsServiceImpl implements UserGroupsService {
         if (username != null && userGroupsRepository.exists(username)) {
             userGroupsRepository.delete(username);
             result = true;
+        } else {
+            LOG.warn("UserGroups {} could not be deleted", username);
         }
         return result;
     }

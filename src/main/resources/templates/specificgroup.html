@@ -7,66 +7,72 @@
     <body class="container-fluid text-center">
         <div th:insert="fragments/header :: header"></div>
 
-        <div class="col-md-12">
-            <div class="col-md-6">
-                <div style="border: 1px solid; min-height: 85vh" class="col-md-9 col-md-offset-3">
-                    <h2 th:text="${groupName}"></h2>
-                    <h3 th:text="${groupDescription}"></h3>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div style="border: 1px solid; min-height: 85vh" class="col-md-12">
-                    <h3>Group admin: [[${groupAdmin}]]</h3>
-                    <table class="table table-striped">
-                        <thead>
+        <div th:switch="${groupExists}">
+            <div th:case="true" class="col-md-12">
+                <div class="col-md-3">
+                    <div style="border: 1px solid; min-height: 85vh" class="col-md-12">
+                        <h3>Group admin: [[${groupAdmin}]]</h3>
+                        <table th:if="${!groupUsers.isEmpty()}" class="table table-striped">
+                            <thead>
                             <tr>
                                 <th>Members</th>
                             </tr>
-                        </thead>
-                        <tbody>
+                            </thead>
+                            <tbody>
                             <tr th:each="user : ${groupUsers}">
                                 <td th:text="${user}"></td>
                             </tr>
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div style="border: 1px solid; min-height: 85vh" class="col-md-12">
+                        <h2 th:text="${groupName}"></h2>
+                        <h3 th:text="${groupDescription}"></h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="col-md-12">
+                        <form th:if="${isAdmin}" th:action="@{/group/delete}" method="post">
+                            <button name="groupName" th:value="${groupName}" type="submit" class="btn btn-danger" style="width: 10em; margin-bottom: 2em"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+                        </form>
+                        <form th:if="${isNotPending}" th:action="@{/group/join}" method="post">
+                            <input name="add" th:value="true" type="hidden"/>
+                            <button name="groupName" th:value="${groupName}" type="submit" class="btn btn-success" style="width: 10em; margin-bottom: 2em"><span class="glyphicon glyphicon-ok-sign"></span> Join</button>
+                        </form>
+                        <form th:if="${isPending}" th:action="@{/group/join}" method="post">
+                            <p>Waiting for approval</p>
+                            <input name="add" th:value="false" type="hidden"/>
+                            <button name="groupName" th:value="${groupName}" type="submit" class="btn btn-warning" style="width: 10em; margin-bottom: 2em"><span class="glyphicon glyphicon-remove-sign"></span> Cancel</button>
+                        </form>
+                    </div>
+                    <div th:if="${isAdmin} and ${!usersPending.isEmpty()}" style="border: 1px solid" class="col-md-12">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Users pending</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="user : ${usersPending}">
+                                    <td style="padding: 1em" th:text="${user}"></td>
+                                    <td>
+                                        <form th:action="@{/group/accept}" method="post">
+                                            <input name="groupName" th:value="${groupName}" type="hidden"/>
+                                            <button name="username" type="submit" th:value="${user}" class="btn btn-success"> Accept</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-2">
-                <div class="col-md-12">
-                    <form th:if="${isAdmin}" th:action="@{/group/delete}" method="post">
-                        <button name="groupName" th:value="${groupName}" type="submit" class="btn btn-danger" style="width: 10em; margin-bottom: 2em"><span class="glyphicon glyphicon-remove"></span> Delete</button>
-                    </form>
-                    <form th:if="${isNotPending}" th:action="@{/group/join}" method="post">
-                        <input name="add" th:value="true" type="hidden"/>
-                        <button name="groupName" th:value="${groupName}" type="submit" class="btn btn-success" style="width: 10em; margin-bottom: 2em"><span class="glyphicon glyphicon-ok-sign"></span> Join</button>
-                    </form>
-                    <form th:if="${isPending}" th:action="@{/group/join}" method="post">
-                        <p>Waiting for approval</p>
-                        <input name="add" th:value="false" type="hidden"/>
-                        <button name="groupName" th:value="${groupName}" type="submit" class="btn btn-warning" style="width: 10em; margin-bottom: 2em"><span class="glyphicon glyphicon-remove-sign"></span> Cancel</button>
-                    </form>
-                </div>
-                <div th:if="${isAdmin}" style="border: 1px solid" class="col-md-12">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Users pending</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="user : ${usersPending}">
-                                <td th:text="${user}"></td>
-                                <td>
-                                    <form th:action="@{/group/accept}" method="post">
-                                        <input name="groupName" th:value="${groupName}" type="hidden"/>
-                                        <button name="username" type="submit" th:value="${user}" class="btn btn-success"> Accept</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div th:case="false" class="col-md-12">
+                <h1>Sorry, but group you are trying to find, doesn't exist</h1>
+                <h2>Go ahead, and create it!</h2>
             </div>
         </div>
     </body>
