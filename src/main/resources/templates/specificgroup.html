@@ -46,6 +46,9 @@
                             <input name="add" th:value="false" type="hidden"/>
                             <button name="groupName" th:value="${groupName}" type="submit" class="btn btn-warning" style="width: 10em; margin-bottom: 2em"><span class="glyphicon glyphicon-remove-sign"></span> Cancel</button>
                         </form>
+                        <form th:if="${isMember}" th:action="@{/group/exit}" method="post">
+                            <button name="groupName" th:value="${groupName}" type="submit" class="btn btn-danger" style="width: 10em; margin-bottom: 2em"><span class="glyphicon glyphicon-remove-sign"></span> Exit group</button>
+                        </form>
                     </div>
                     <div th:if="${isAdmin} and ${!usersPending.isEmpty()}" style="border: 1px solid" class="col-md-12">
                         <table class="table table-striped">

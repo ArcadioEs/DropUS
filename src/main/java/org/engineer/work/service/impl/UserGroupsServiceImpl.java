@@ -37,18 +37,21 @@ public class UserGroupsServiceImpl implements UserGroupsService {
 
     @Override
     @Transactional
-    public boolean createOrUpdateUserGroups(final String username, final String groupName) {
+    public boolean createOrUpdateUserGroups(final String username, final String groupName, final boolean add) {
         boolean result = false;
         if (username != null) {
             try {
                 UserGroups userGroups = this.getUserGroupsByUsername(username);
-                if (userGroups == null) {
+                if (add && userGroups == null) {
                     userGroups = new UserGroups(username);
                     userGroups.setGroups(Arrays.asList(groupName));
                     userGroupsRepository.save(userGroups);
                     result = true;
-                } else {
+                } else if (add) {
                     userGroups.getGroups().add(groupName);
+                    result = this.updateUserGroups(userGroups);
+                } else if (userGroups != null) {
+                    userGroups.getGroups().remove(groupName);
                     result = this.updateUserGroups(userGroups);
                 }
             } catch (IllegalArgumentException e) {

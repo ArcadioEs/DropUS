@@ -25,7 +25,11 @@ public interface GroupFacade {
      */
     boolean updatePendingUsers(final String username, final String groupName, final boolean add);
 
-    boolean addMemberToGroup(final String username, final String groupName);
+    /**
+     * If 'add' is true - method adds user to members list.
+     * If false - method removes user from members list.
+     */
+    boolean updateGroupMembers(final String username, final String groupName, final boolean add);
 
     boolean deleteGroup(final String name);
 }

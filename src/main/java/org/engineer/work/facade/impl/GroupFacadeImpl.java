@@ -92,9 +92,11 @@ public class GroupFacadeImpl implements GroupFacade {
 
     @Override
     @Transactional
-    public boolean addMemberToGroup(final String username, final String groupName) {
-        return groupService.addMemberToGroup(username, groupName);
+    public boolean updateGroupMembers(final String username, final String groupName, final boolean add) {
+        return groupService.updateGroupMembers(username, groupName, add);
     }
+
+
 
     @Override
     public boolean deleteGroup(final String name) {

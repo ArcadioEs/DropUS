@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static java.lang.Boolean.*;
 import static java.util.Arrays.asList;
 
 /**
@@ -54,18 +55,24 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public boolean addMemberToGroup(final String username, final String groupName) {
+    public boolean updateGroupMembers(final String username, final String groupName, final boolean add) {
         boolean result = false;
         if (username != null && groupName != null) {
             final UserEntity user = userService.getUserByUsername(username);
-            final GroupEntity groupToAdd = this.getGroupByName(groupName);
+            final GroupEntity group = this.getGroupByName(groupName);
 
-            if (this.validateIfMemberCanBeAddedToGroup(user, groupToAdd)) {
-                groupToAdd.getPendingUsers().remove(username);
-                groupToAdd.getMembers().add(username);
-                
-                groupRepository.save(groupToAdd);
-                result = userGroupsService.createOrUpdateUserGroups(user.getUsername(), groupToAdd.getName());
+            final boolean condition = this.validateIfGroupCanBeUpdated(user, group, add);
+            if (add && condition) {
+                group.getPendingUsers().remove(username);
+                group.getMembers().add(username);
+
+                this.updateGroup(group);
+                result = userGroupsService.createOrUpdateUserGroups(user.getUsername(), group.getName(), TRUE);
+            } else if (!add && condition) {
+                group.getMembers().remove(user.getUsername());
+
+                this.updateGroup(group);
+                result = userGroupsService.createOrUpdateUserGroups(user.getUsername(), group.getName(), FALSE);
             }
         } else {
             LOG.warn("Username and group name must not be null");
@@ -86,7 +93,7 @@ public class GroupServiceImpl implements GroupService {
                 groupEntity.setMembers(asList(groupDTO.getGroupOwner()));
 
                 groupRepository.save(groupEntity);
-                result = userGroupsService.createOrUpdateUserGroups(groupDTO.getGroupOwner(), groupDTO.getName());
+                result = userGroupsService.createOrUpdateUserGroups(groupDTO.getGroupOwner(), groupDTO.getName(), TRUE);
             } catch (IllegalArgumentException e) {
                 LOG.warn("Creating group with name {} failed", groupDTO.getName(), e);
             }
@@ -151,14 +158,22 @@ public class GroupServiceImpl implements GroupService {
         return result;
     }
 
-    private boolean validateIfMemberCanBeAddedToGroup(final UserEntity user, final GroupEntity groupEntity) {
+    private  boolean validateIfGroupCanBeUpdated(final UserEntity user, final GroupEntity group, final boolean add) {
         boolean result = false;
-        if (user != null && groupEntity != null) {
+        if (user != null && group != null) {
             final UserGroups userGroups = userGroupsService.getUserGroupsByUsername(user.getUsername());
-            if (userGroups == null || !userGroups.getGroups().contains(groupEntity.getName())) {
-                result = groupEntity.getPendingUsers().contains(user.getUsername()) && !groupEntity.getMembers().contains(user.getUsername());
+            if (add) {
+                if (userGroups == null || !userGroups.getGroups().contains(group.getName())) {
+                    result = group.getPendingUsers().contains(user.getUsername()) && !group.getMembers().contains(user.getUsername());
+                } else {
+                    LOG.warn("User {} could not be added to group {}", user.getUsername(), group.getName());
+                }
             } else {
-                LOG.warn("User {} could not be added to group {}", user.getUsername(), groupEntity.getName());
+                if (userGroups != null && userGroups.getGroups().contains(group.getName()) && group.getMembers().contains(user.getUsername())) {
+                    result = true;
+                } else {
+                    LOG.warn("User {} could not be removed from group {}", user.getUsername(), group.getName());
+                }
             }
         } else {
             LOG.warn("User and group must not be null");

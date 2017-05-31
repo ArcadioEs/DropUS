@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.TEMPLATE_GROUPS;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.TEMPLATE_SPECIFIC_GROUP;
 import static org.thymeleaf.util.StringUtils.capitalize;
@@ -73,9 +75,21 @@ public class GroupController extends AbstractController {
                                     final Model model) throws InterruptedException {
         final String validGroupName = capitalize(groupName.toLowerCase());
         if (user != null && ADMIN.equals(this.determineUserRoleInGroup(user.getUsername(), validGroupName, model))) {
-            getGroupFacade().addMemberToGroup(username, validGroupName);
+            getGroupFacade().updateGroupMembers(username, validGroupName, TRUE);
         }
         return getSpecificGroup(validGroupName, user, model);
+    }
+
+    @RequestMapping(value = "/exit", method = RequestMethod.POST)
+    public String existGroup(@RequestParam("groupName") final String groupName,
+                             @AuthenticationPrincipal final User user,
+                             final Model model) {
+        final String validGroupName = capitalize(groupName.toLowerCase());
+        if (user != null && MEMBER.equals(this.determineUserRoleInGroup(user.getUsername(), validGroupName, model))) {
+            getGroupFacade().updateGroupMembers(user.getUsername(), validGroupName, FALSE);
+        }
+
+        return getGroupPage(user, model);
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)

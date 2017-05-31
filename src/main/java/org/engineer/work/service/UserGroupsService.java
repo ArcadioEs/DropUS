@@ -9,7 +9,11 @@ public interface UserGroupsService {
 
     UserGroups getUserGroupsByUsername(final String username);
 
-    boolean createOrUpdateUserGroups(final String username, final String groupName);
+    /**
+     * If 'add' is true - method adds user to members list.
+     * If false - method removes user from members list.
+     */
+    boolean createOrUpdateUserGroups(final String username, final String groupName, final boolean add);
 
     boolean updateUserGroups(final UserGroups user);
 
