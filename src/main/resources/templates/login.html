@@ -15,6 +15,9 @@
                 <div th:if="${param.logout}">
                     You have been logged out.
                 </div>
+                <div th:if="${userRegistered != null}">
+                    <h4>User <span style="color: red">[[${userRegistered}]]</span> registered. Go ahead and log in!</h4>
+                </div>
             </div>
             <form class="col-md-2 col-md-offset-5" th:action="@{/login}" method="post">
                 <div class="form-group col-md-12">
@@ -25,7 +28,7 @@
                     <label>Username:</label>
                     <input type="password" name="password" class="form-control" placeholder="Enter password">
                 </div>
-                <input class="btn btn-success col-md-6 col-md-offset-3" type="submit" value="Sign In" />
+                <input class="btn btn-success col-md-6 col-md-offset-3" type="submit" value="Sign in" />
             </form>
         </div>
     </body>
