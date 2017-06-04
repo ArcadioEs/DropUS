@@ -64,8 +64,6 @@ public class GroupFacadeImpl implements GroupFacade {
             final UserGroups user = userGroupsService.getUserGroupsByUsername(username);
             if (user != null && !user.getGroups().isEmpty()) {
                 userGroups = user.getGroups().stream().map(group -> this.getGroupByName(group)).collect(Collectors.toList());
-            } else {
-                LOG.warn("UserGroups could not be found for user {}", username);
             }
         } else {
             LOG.warn("Finding UserGroups failed. Username is null");

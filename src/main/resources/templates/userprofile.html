@@ -7,9 +7,36 @@
     <body class="container-fluid text-center">
         <div th:insert="fragments/header :: header"></div>
 
-        <div th:switch="${userExists}" class="col-md-12">
+        <div th:switch="${userExists}" class="col-md-6 col-md-offset-3">
             <div th:case="true">
-                <h2>User details for user <span style="color: red"> [[${userDetails.username}]]</span> will be displayed on this page</h2>
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#user_details">User Details</a></li>
+                    <li><a data-toggle="tab" href="#user_groups">User Groups</a></li>
+                    <li><a data-toggle="tab" href="#user_files">Shared Files</a></li>
+                    <li th:if="${#httpServletRequest.remoteUser.equals(userDetails.getUsername())}"><a data-toggle="tab" href="#user_panel">User Panel</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div id="user_details" class="tab-pane fade in active">
+                        <h3>Here you can find all details about user</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    </div>
+                    <div id="user_groups" class="tab-pane fade">
+                        <h3>Here you can find all groups user belongs to</h3>
+                        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    </div>
+                    <div id="user_files" class="tab-pane fade">
+                        <h3>Here you can find all user's shared files</h3>
+                        <div class="col-md-12">
+                            <p class="col-md-6">Shared files</p>
+                            <p th:if="${#httpServletRequest.remoteUser.equals(userDetails.getUsername())}" class="col-md-6">Users panel to manage those files</p>
+                        </div>
+                    </div>
+                    <div th:if="${#httpServletRequest.remoteUser.equals(userDetails.getUsername())}" id="user_panel" class="tab-pane fade">
+                        <h3>Feel free to change your personal data</h3>
+                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+                    </div>
+                </div>
             </div>
             <div th:case="false">
                 <h2>Sorry, but it seems like user you are trying to find, doesn't exist</h2>

@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.thymeleaf.util.StringUtils;
 
 import java.text.MessageFormat;
 
@@ -36,7 +37,7 @@ public class RegisterController extends AbstractController {
         if (this.validateCredentials(model, username, password, passwordConfirm)) {
             final UserDTO userDTO = new UserDTO();
 
-            userDTO.setUsername(username);
+            userDTO.setUsername(StringUtils.capitalize(username.toLowerCase()));
             userDTO.setPassword(getPasswordEncoder().encode(password));
             userDTO.setRole(AuthorityRoles.USER);
             userDTO.setEnabled((byte) 1);
