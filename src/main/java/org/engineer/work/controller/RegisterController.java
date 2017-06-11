@@ -33,11 +33,12 @@ public class RegisterController extends AbstractController {
                                @RequestParam("passwordConfirm") final String passwordConfirm,
                                final Model model) {
         String returnTemplate = TEMPLATE_REGISTRATION_PAGE;
+        final String validUsername = StringUtils.capitalize(username.trim().toLowerCase());
 
-        if (this.validateCredentials(model, username, password, passwordConfirm)) {
+        if (this.validateCredentials(model, validUsername, password, passwordConfirm)) {
             final UserDTO userDTO = new UserDTO();
 
-            userDTO.setUsername(StringUtils.capitalize(username.toLowerCase()));
+            userDTO.setUsername(validUsername);
             userDTO.setPassword(getPasswordEncoder().encode(password));
             userDTO.setRole(AuthorityRoles.USER);
             userDTO.setEnabled((byte) 1);
@@ -46,7 +47,7 @@ public class RegisterController extends AbstractController {
                 model.addAttribute("userRegistered", userDTO.getUsername());
                 returnTemplate = TEMPLATE_LOGIN_PAGE;
             } else {
-                model.addAttribute("userExists", MessageFormat.format("Username {0} already in use", username));
+                model.addAttribute("userExists", MessageFormat.format("Username {0} already in use", validUsername));
             }
         }
 

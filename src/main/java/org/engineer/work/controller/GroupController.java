@@ -44,7 +44,7 @@ public class GroupController extends AbstractController {
     public String getSpecificGroup(@PathVariable(value = "groupName") final String groupName,
                                    @AuthenticationPrincipal final User user,
                                    final Model model) {
-        final String validGroupName = capitalize(groupName.toLowerCase());
+        final String validGroupName = capitalize(groupName.trim().toLowerCase());
         if (user != null && getGroupFacade().getGroupByName(validGroupName) != null) {
             this.determineUserRoleInGroup(user.getUsername(), validGroupName, model);
             this.loadDataForSpecificGroup(validGroupName, model);
@@ -60,7 +60,7 @@ public class GroupController extends AbstractController {
                             @RequestParam(value = "add") final String decision,
                             @AuthenticationPrincipal final User user,
                             final Model model) {
-        final String validGroupName = capitalize(groupName.toLowerCase());
+        final String validGroupName = capitalize(groupName.trim().toLowerCase());
         if (user != null) {
             final boolean add = Boolean.parseBoolean(decision);
             getGroupFacade().updatePendingUsers(user.getUsername(), validGroupName, add);
@@ -73,7 +73,7 @@ public class GroupController extends AbstractController {
                                     @RequestParam(value = "groupName") final String groupName,
                                     @AuthenticationPrincipal final User user,
                                     final Model model) throws InterruptedException {
-        final String validGroupName = capitalize(groupName.toLowerCase());
+        final String validGroupName = capitalize(groupName.trim().toLowerCase());
         if (user != null && ADMIN.equals(this.determineUserRoleInGroup(user.getUsername(), validGroupName, model))) {
             getGroupFacade().updateGroupMembers(username, validGroupName, TRUE);
         }
@@ -84,7 +84,7 @@ public class GroupController extends AbstractController {
     public String existGroup(@RequestParam("groupName") final String groupName,
                              @AuthenticationPrincipal final User user,
                              final Model model) {
-        final String validGroupName = capitalize(groupName.toLowerCase());
+        final String validGroupName = capitalize(groupName.trim().toLowerCase());
         if (user != null && MEMBER.equals(this.determineUserRoleInGroup(user.getUsername(), validGroupName, model))) {
             getGroupFacade().updateGroupMembers(user.getUsername(), validGroupName, FALSE);
         }
@@ -97,7 +97,7 @@ public class GroupController extends AbstractController {
                               @RequestParam(value = "description") final String description,
                               @AuthenticationPrincipal final User user,
                               final Model model) {
-        final String validGroupName = capitalize(groupName.toLowerCase());
+        final String validGroupName = capitalize(groupName.trim().toLowerCase());
         if (user != null && this.validate(model, validGroupName, description)) {
             GroupDTO groupDTO = new GroupDTO();
             groupDTO.setName(validGroupName);
@@ -117,7 +117,7 @@ public class GroupController extends AbstractController {
     public String deleteGroup(@RequestParam(value = "groupName") final String groupName,
                               @AuthenticationPrincipal final User user,
                               final Model model) {
-        final String validGroupName = capitalize(groupName.toLowerCase());
+        final String validGroupName = capitalize(groupName.trim().toLowerCase());
         final GroupDTO group = getGroupFacade().getGroupByName(validGroupName);
         if (user != null && group != null && ADMIN.equals(this.determineUserRoleInGroup(user.getUsername(), group.getName(), model))) {
             if (getGroupFacade().deleteGroup(validGroupName)) {
