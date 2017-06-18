@@ -1,6 +1,6 @@
 package org.engineer.work.service.impl;
 
-import org.engineer.work.model.UserGroups;
+import org.engineer.work.model.bounding.UserGroups;
 import org.engineer.work.repository.UserGroupsRepository;
 import org.engineer.work.service.UserGroupsService;
 import org.slf4j.Logger;

@@ -1,4 +1,7 @@
-package org.engineer.work.model;
+package org.engineer.work.model.bounding;
+
+import org.engineer.work.model.GroupEntity;
+import org.engineer.work.model.UserEntity;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;

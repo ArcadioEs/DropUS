@@ -4,7 +4,7 @@ import org.engineer.work.dto.GroupDTO;
 import org.engineer.work.facade.GroupFacade;
 import org.engineer.work.model.GroupEntity;
 import org.engineer.work.model.UserEntity;
-import org.engineer.work.model.UserGroups;
+import org.engineer.work.model.bounding.UserGroups;
 import org.engineer.work.service.GroupService;
 import org.engineer.work.service.UserGroupsService;
 import org.engineer.work.service.UserService;

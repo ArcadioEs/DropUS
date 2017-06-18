@@ -3,7 +3,7 @@ package org.engineer.work.facade.impl;
 import org.engineer.work.dto.UserDTO;
 import org.engineer.work.facade.UserFacade;
 import org.engineer.work.model.UserEntity;
-import org.engineer.work.model.UserGroups;
+import org.engineer.work.model.bounding.UserGroups;
 import org.engineer.work.model.enumeration.AuthorityRoles;
 import org.engineer.work.service.UserGroupsService;
 import org.engineer.work.service.UserService;
