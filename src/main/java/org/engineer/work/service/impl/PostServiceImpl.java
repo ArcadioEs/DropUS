@@ -3,12 +3,15 @@ package org.engineer.work.service.impl;
 import org.engineer.work.dto.PostDTO;
 import org.engineer.work.model.PostEntity;
 import org.engineer.work.repository.PostRepository;
+import org.engineer.work.service.GroupPostsService;
 import org.engineer.work.service.PostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
+import static java.lang.Boolean.*;
 
 /**
  * Default implementation of {@link PostService}.
@@ -20,6 +23,8 @@ public class PostServiceImpl implements PostService {
 
     @Resource
     private PostRepository postRepository;
+    @Resource
+    private GroupPostsService groupPostsService;
 
     @Override
     public PostEntity findPost(final Long id) {
@@ -35,8 +40,9 @@ public class PostServiceImpl implements PostService {
         boolean result = false;
         if (postDTO != null) {
             try {
-                postRepository.save(new PostEntity(postDTO));
-                result = true;
+                PostEntity post = new PostEntity(postDTO);
+                postRepository.save(post);
+                result = groupPostsService.createOrUpdateGroupPosts(postDTO.getPostGroup(), post.getId(), TRUE);
             } catch (IllegalArgumentException e) {
                 LOG.warn("Could not create post with given id", e);
             }

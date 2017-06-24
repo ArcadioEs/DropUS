@@ -3,9 +3,12 @@ package org.engineer.work.service.impl;
 import org.engineer.work.dto.GroupDTO;
 import org.engineer.work.model.GroupEntity;
 import org.engineer.work.model.UserEntity;
+import org.engineer.work.model.bounding.GroupPosts;
 import org.engineer.work.model.bounding.UserGroups;
 import org.engineer.work.repository.GroupRepository;
+import org.engineer.work.service.GroupPostsService;
 import org.engineer.work.service.GroupService;
+import org.engineer.work.service.PostService;
 import org.engineer.work.service.UserGroupsService;
 import org.engineer.work.service.UserService;
 import org.slf4j.Logger;
@@ -34,7 +37,11 @@ public class GroupServiceImpl implements GroupService {
     @Resource
     private UserService userService;
     @Resource
+    private PostService postService;
+    @Resource
     private UserGroupsService userGroupsService;
+    @Resource
+    private GroupPostsService groupPostsService;
 
     @Override
     public GroupEntity getGroupByName(final String name) {
@@ -149,6 +156,10 @@ public class GroupServiceImpl implements GroupService {
                         userGroupsService.updateUserGroups(user);
                     }
                 }
+            }
+            final GroupPosts posts = groupPostsService.getGroupPostsByGroupName(name);
+            if (posts != null) {
+                // TODO: Implement deleting posts and then GroupPosts bounding entity
             }
             groupRepository.delete(name);
             result = true;

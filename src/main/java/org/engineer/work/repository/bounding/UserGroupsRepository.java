@@ -1,4 +1,4 @@
-package org.engineer.work.repository;
+package org.engineer.work.repository.bounding;
 
 import org.engineer.work.model.bounding.UserGroups;
 import org.springframework.data.repository.CrudRepository;

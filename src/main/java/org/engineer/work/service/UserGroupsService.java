@@ -1,9 +1,11 @@
 package org.engineer.work.service;
 
+import org.engineer.work.model.GroupEntity;
+import org.engineer.work.model.UserEntity;
 import org.engineer.work.model.bounding.UserGroups;
 
 /**
- * Service managing relationship between {@link org.engineer.work.model.UserEntity} and {@link org.engineer.work.model.GroupEntity}.
+ * Service managing relationship between {@link UserEntity} and {@link GroupEntity}.
  */
 public interface UserGroupsService {
 
