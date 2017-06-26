@@ -13,6 +13,7 @@ public class GroupDTO {
     private String description;
     private List<String> members = new ArrayList<>();
     private List<String> pendingUsers = new ArrayList<>();
+    private List<String> posts = new ArrayList<>();
 
     public List<String> getMembers() {
         return members;
@@ -52,5 +53,13 @@ public class GroupDTO {
 
     public void setDescription(final String description) {
         this.description = description;
+    }
+
+    public List<String> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(final List<String> posts) {
+        this.posts = posts;
     }
 }

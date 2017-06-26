@@ -2,11 +2,10 @@ package org.engineer.work.service.impl;
 
 import org.engineer.work.dto.GroupDTO;
 import org.engineer.work.model.GroupEntity;
+import org.engineer.work.model.PostEntity;
 import org.engineer.work.model.UserEntity;
-import org.engineer.work.model.bounding.GroupPosts;
 import org.engineer.work.model.bounding.UserGroups;
 import org.engineer.work.repository.GroupRepository;
-import org.engineer.work.service.GroupPostsService;
 import org.engineer.work.service.GroupService;
 import org.engineer.work.service.PostService;
 import org.engineer.work.service.UserGroupsService;
@@ -21,7 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static java.lang.Boolean.*;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static java.util.Arrays.asList;
 
 /**
@@ -40,8 +40,6 @@ public class GroupServiceImpl implements GroupService {
     private PostService postService;
     @Resource
     private UserGroupsService userGroupsService;
-    @Resource
-    private GroupPostsService groupPostsService;
 
     @Override
     public GroupEntity getGroupByName(final String name) {
@@ -54,6 +52,9 @@ public class GroupServiceImpl implements GroupService {
                 }
                 if (groupEntity.getMembers() == null) {
                     groupEntity.setMembers(Collections.emptyList());
+                }
+                if (groupEntity.getPosts() == null) {
+                    groupEntity.setPosts(Collections.emptyList());
                 }
             }
         }
@@ -73,12 +74,10 @@ public class GroupServiceImpl implements GroupService {
                 group.getPendingUsers().remove(username);
                 group.getMembers().add(username);
 
-                this.updateGroup(group);
                 result = userGroupsService.createOrUpdateUserGroups(user.getUsername(), group.getName(), TRUE);
             } else if (!add && condition) {
                 group.getMembers().remove(user.getUsername());
 
-                this.updateGroup(group);
                 result = userGroupsService.createOrUpdateUserGroups(user.getUsername(), group.getName(), FALSE);
             }
         } else {
@@ -115,6 +114,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional
     public boolean updateGroup(final GroupEntity groupEntity) {
         boolean result = false;
         if (groupEntity != null
@@ -128,6 +128,48 @@ public class GroupServiceImpl implements GroupService {
                 LOG.warn("Could not update given group - group is null");
             } else {
                 LOG.warn("Could not update group {}", groupEntity.getName());
+            }
+        }
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public boolean updatePosts(final String groupName, final Long postID, final boolean add) {
+        boolean result = false;
+        if (groupName != null) {
+            if (add) {
+                result = this.addPost(groupName, postID);
+            } else {
+                result = this.removePost(groupName, postID);
+            }
+        }
+        return result;
+    }
+
+    private boolean addPost(final String groupName, final Long postID) {
+        boolean result = false;
+        if (groupName != null && groupRepository.exists(groupName)) {
+            final GroupEntity group = this.getGroupByName(groupName);
+            final PostEntity post = postService.findPost(postID);
+            if (group.getPosts().isEmpty() || !group.getPosts().contains(post)) {
+                group.getPosts().add(post);
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    private boolean removePost(final String groupName, final Long postID) {
+        boolean result = false;
+        if (groupName != null
+                && groupRepository.exists(groupName)
+                && postService.findPost(postID) != null) {
+            final GroupEntity group = this.getGroupByName(groupName);
+            final PostEntity post = postService.findPost(postID);
+            if (group.getPosts().contains(post)) {
+                group.getPosts().remove(post);
+                result = true;
             }
         }
         return result;
@@ -157,11 +199,13 @@ public class GroupServiceImpl implements GroupService {
                     }
                 }
             }
-            final GroupPosts posts = groupPostsService.getGroupPostsByGroupName(name);
-            if (posts != null) {
-                // TODO: Implement deleting posts and then GroupPosts bounding entity
-            }
+
+            final List<PostEntity> postsToDelete = this.getGroupByName(name).getPosts();
             groupRepository.delete(name);
+
+            for (final PostEntity post : postsToDelete) {
+                postService.deletePost(post.getId());
+            }
             result = true;
         } else {
             LOG.warn("Group {} could not be deleted", name);
@@ -169,7 +213,7 @@ public class GroupServiceImpl implements GroupService {
         return result;
     }
 
-    private  boolean validateIfGroupCanBeUpdated(final UserEntity user, final GroupEntity group, final boolean add) {
+    private boolean validateIfGroupCanBeUpdated(final UserEntity user, final GroupEntity group, final boolean add) {
         boolean result = false;
         if (user != null && group != null) {
             final UserGroups userGroups = userGroupsService.getUserGroupsByUsername(user.getUsername());

@@ -18,6 +18,8 @@ public interface GroupService {
 
     boolean updateGroup(final GroupEntity groupEntity);
 
+    boolean updatePosts(final String groupName, final Long postID, final boolean add);
+
     List<GroupEntity> getAllGroups();
 
     boolean deleteGroup(final String name);

@@ -95,7 +95,7 @@ public class UserFacadeImpl implements UserFacade {
      * @param userEntity entity received from service layer
      * @return properly prepared DTO
      */
-    public UserDTO convertEntityToDTO(final UserEntity userEntity) {
+    private UserDTO convertEntityToDTO(final UserEntity userEntity) {
         UserDTO userDTO = null;
         if (userEntity != null) {
             userDTO = new UserDTO();
@@ -107,7 +107,7 @@ public class UserFacadeImpl implements UserFacade {
                 userDTO.setUserGroups(userGroups.getGroups());
             }
         } else {
-            LOG.warn("Entity is null, therefore cannot be converted to DTO");
+            LOG.warn("User entity is null, therefore cannot be converted to DTO");
         }
         return userDTO;
     }

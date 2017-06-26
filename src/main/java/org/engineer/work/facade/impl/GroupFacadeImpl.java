@@ -94,8 +94,6 @@ public class GroupFacadeImpl implements GroupFacade {
         return groupService.updateGroupMembers(username, groupName, add);
     }
 
-
-
     @Override
     public boolean deleteGroup(final String name) {
         return groupService.deleteGroup(name);
@@ -122,7 +120,7 @@ public class GroupFacadeImpl implements GroupFacade {
                 groupDTO.setPendingUsers(groupEntity.getPendingUsers());
             }
         } else {
-            LOG.warn("Entity is null, therefore cannot be converted");
+            LOG.warn("Group entity is null, therefore cannot be converted");
         }
         return groupDTO;
     }
@@ -137,7 +135,7 @@ public class GroupFacadeImpl implements GroupFacade {
                     && (userGroups == null || !userGroups.getGroups().contains(group.getName()))) {
 
                 groupsPending.add(user.getUsername());
-                result = groupService.updateGroup(group);
+                result = true;
             } else {
                 LOG.warn("User {} could not be added to pending group {}", user.getUsername(), group.getName());
             }
@@ -158,7 +156,7 @@ public class GroupFacadeImpl implements GroupFacade {
                     && (userGroups == null || !userGroups.getGroups().contains(group.getName()))) {
 
                 groupsPending.remove(user.getUsername());
-                result = groupService.updateGroup(group);
+                result = true;
             } else {
                 LOG.warn("User {} could not be removed from pending group {}", user.getUsername(), group.getName());
             }

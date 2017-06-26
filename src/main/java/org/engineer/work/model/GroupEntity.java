@@ -33,6 +33,9 @@ public class GroupEntity {
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<String> pendingUsers;
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<PostEntity> posts;
 
     public GroupEntity(final GroupDTO groupDTO) throws IllegalArgumentException {
         this.setName(groupDTO.getName());
@@ -93,5 +96,13 @@ public class GroupEntity {
         } else {
             throw new IllegalArgumentException("Description must not be null nor empty");
         }
+    }
+
+    public List<PostEntity> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(final List<PostEntity> posts) {
+        this.posts = posts;
     }
 }

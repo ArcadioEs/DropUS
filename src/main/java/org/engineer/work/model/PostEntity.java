@@ -22,6 +22,8 @@ public class PostEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(nullable = false)
+    private String author;
+    @Column(nullable = false)
     private String postGroup;
     @Column(nullable = false, columnDefinition = "TEXT")
     @Size(max = 255)
@@ -30,6 +32,7 @@ public class PostEntity {
     private Calendar date;
 
     public PostEntity(final PostDTO postDTO) throws IllegalArgumentException {
+        this.setAuthor(postDTO.getAuthor());
         this.setPostGroup(postDTO.getPostGroup());
         this.setPostContent(postDTO.getPostContent());
         this.setDate(postDTO.getDate());
@@ -44,6 +47,18 @@ public class PostEntity {
 
     public void setId(final Long id) {
         throw new UnsupportedOperationException("ID cannot be initialized manually");
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(final String author) {
+        if (author != null) {
+            this.author = author;
+        } else {
+            throw new IllegalArgumentException("Field author must not be null");
+        }
     }
 
     public String getPostGroup() {

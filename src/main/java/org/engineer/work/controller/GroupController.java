@@ -48,6 +48,8 @@ public class GroupController extends AbstractController {
         if (user != null && getGroupFacade().getGroupByName(validGroupName) != null) {
             this.determineUserRoleInGroup(user.getUsername(), validGroupName, model);
             this.loadDataForSpecificGroup(validGroupName, model);
+
+            model.addAttribute("posts", getPostFacade().getPostsForSpecificGroup(validGroupName));
             model.addAttribute("groupExists", true);
         } else {
             model.addAttribute("groupExists", false);
