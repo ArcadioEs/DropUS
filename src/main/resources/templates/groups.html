@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>DropUS Groups page</title>
+        <link th:href="@{/css/groups.css}" type="text/css" rel="stylesheet" />
         <div th:insert="fragments/bootstrap :: bootstrap"></div>
     </head>
     <body class="container-fluid">
@@ -28,16 +29,16 @@
                                 <table class="table table-striped">
                                     <thead>
                                     <tr>
-                                        <th>Group name</th>
-                                        <th>Group owner</th>
+                                        <th class="text-center">Group name</th>
+                                        <th class="text-center">Group owner</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr th:each="group : ${allGroups}">
-                                        <td>
+                                        <td class="text-center">
                                             <a th:href="@{'/group/display/' + ${group.name}}" class="btn btn-link">[[${group.name}]]</a>
                                         </td>
-                                        <td style="padding: 1em" th:text="${group.groupOwner}"></td>
+                                        <td class="text-center padding1em" th:text="${group.groupOwner}"></td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -53,16 +54,16 @@
                                 <table class="table table-striped">
                                     <thead>
                                     <tr>
-                                        <th>Group name</th>
-                                        <th>Group owner</th>
+                                        <th class="text-center">Group name</th>
+                                        <th class="text-center">Group owner</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr th:each="group : ${userGroups}">
-                                        <td>
+                                        <td class="text-center">
                                             <a th:href="@{'/group/display/' + ${group.name}}" class="btn btn-link">[[${group.name}]]</a>
                                         </td>
-                                        <td style="padding: 1em" th:text="${group.groupOwner}"></td>
+                                        <td class="text-center padding1em" th:text="${group.groupOwner}"></td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -82,10 +83,10 @@
                             </div>
                             <div class="form-group col-md-12">
                                 <label>Description</label>
-                                <input type="text" name="description" class="form-control" placeholder="Write few words about this group...">
+                                <textarea name="description" class="form-control" rows="3" placeholder="Write few words about this group..."></textarea>
                                 <label class="text-danger text-center col-md-12" th:text="${descriptionError}"></label>
                             </div>
-                            <input type="submit" style="margin-bottom: 2em" class="btn btn-success col-md-6 col-md-offset-3" value="Create" />
+                            <input type="submit" class="btn btn-success col-md-6 col-md-offset-3" value="Create" />
                         </form>
                     </div>
                 </div>

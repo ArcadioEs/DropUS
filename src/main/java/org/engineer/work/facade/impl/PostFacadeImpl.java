@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +33,11 @@ public class PostFacadeImpl implements PostFacade {
 
     @Override
     public List<PostDTO> getPostsForSpecificGroup(final String groupName) {
-        return postService.getPostsForSpecificGroup(groupName).stream().map(post -> this.convertEntityToDTO(post)).collect(Collectors.toList());
+        final List<PostDTO> posts = postService.getPostsForSpecificGroup(groupName).stream().map(post -> this.convertEntityToDTO(post)).collect(Collectors.toList());
+        Collections.sort(posts, Comparator.comparing(PostDTO::getDate));
+        Collections.reverse(posts);
+
+        return posts;
     }
 
     @Override

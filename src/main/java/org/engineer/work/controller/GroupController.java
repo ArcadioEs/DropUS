@@ -83,7 +83,7 @@ public class GroupController extends AbstractController {
     }
 
     @RequestMapping(value = "/exit", method = RequestMethod.POST)
-    public String existGroup(@RequestParam("groupName") final String groupName,
+    public String exitGroup(@RequestParam("groupName") final String groupName,
                              @AuthenticationPrincipal final User user,
                              final Model model) {
         final String validGroupName = capitalize(groupName.trim().toLowerCase());

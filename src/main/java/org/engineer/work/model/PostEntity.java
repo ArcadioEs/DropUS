@@ -26,7 +26,7 @@ public class PostEntity {
     @Column(nullable = false)
     private String postGroup;
     @Column(nullable = false, columnDefinition = "TEXT")
-    @Size(max = 255)
+    @Size(max = 1024)
     private String postContent;
     @Column(nullable = false)
     private Calendar date;
