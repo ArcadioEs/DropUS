@@ -37,7 +37,7 @@
                                 <input name="groupName" th:value="${groupName}" type="hidden"/>
                                 <textarea name="postContent" class="form-control" rows="3" placeholder="Share something..."></textarea>
                                 <input type="submit" class="btn btn-success marginTop05em">
-                                <label class="text-danger text-center col-md-12" th:text="${postFailure}"></label>
+                                <label class="text-danger text-center col-md-12" th:text="${postCreationFailure}"></label>
                             </form>
                             <div th:each="post : ${posts}" class="col-md-12 marginBottom2em">
                                 <div class="col-md-12 postContent">
@@ -49,13 +49,21 @@
                                             [[${post.author}]]
                                         </div>
                                     </div>
-                                    <div th:switch="${#httpServletRequest.remoteUser == post.author or isAdmin == true}" class="col-md-4 text-left">
-                                        <form th:case="true" th:action="@{/post/delete}" method="post">
+                                    <div class="col-md-4 text-left">
+                                        <button th:if="${#httpServletRequest.remoteUser == post.author}" class="btn btn-link col-md-6" data-toggle="collapse" th:data-target="${'#post_' + post.id}">edit</button>
+                                        <form th:if="${#httpServletRequest.remoteUser == post.author or isAdmin == true}" th:action="@{/post/delete}" class="col-md-6" method="post">
                                             <input name="postID" th:value="${post.id}" type="hidden"/>
                                             <input type="submit" value="delete" class="btn btn-link" />
                                         </form>
                                     </div>
                                     <div class="col-md-6 text-right" th:text="${post.date.time}"></div>
+                                    <form th:id="${'post_' + post.id}" th:action="@{/post/update}" class="col-md-12 collapse" method="post">
+                                        <label>Edit post</label>
+                                        <input name="postID" th:value="${post.id}" type="hidden"/>
+                                        <textarea name="postContent" class="form-control" rows="3" th:text="${post.postContent}"></textarea>
+                                        <input type="submit" class="btn btn-success marginTop05em">
+                                        <label class="text-danger text-center col-md-12" th:text="${postUpdateFailure}"></label>
+                                    </form>
                                     <div class="col-md-10 col-md-offset-1 text-left marginTop1em marginBottom1em" th:text="${post.postContent}"></div>
                                 </div>
                             </div>

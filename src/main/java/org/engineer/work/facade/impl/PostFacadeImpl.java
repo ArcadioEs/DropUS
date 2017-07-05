@@ -48,6 +48,20 @@ public class PostFacadeImpl implements PostFacade {
 
     @Override
     @Transactional
+    public boolean updatePostContent(final PostDTO postDTO) {
+        boolean result = false;
+        if (postDTO != null) {
+            final PostEntity post = postService.findPost(postDTO.getId());
+            if (post != null) {
+                post.setPostContent(postDTO.getPostContent());
+                result = postService.updatePost(post);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    @Transactional
     public boolean deletePost(final Long id) {
         return postService.deletePost(id);
     }

@@ -16,5 +16,7 @@ public interface PostService {
 
     boolean createPost(final PostDTO postDTO);
 
+    boolean updatePost(final PostEntity postEntity);
+
     boolean deletePost(final Long id);
 }

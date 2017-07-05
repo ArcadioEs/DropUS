@@ -15,5 +15,7 @@ public interface PostFacade {
 
     boolean createPost(final PostDTO postDTO);
 
+    boolean updatePostContent(final PostDTO postDTO);
+
     boolean deletePost(final Long id);
 }

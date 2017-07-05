@@ -18,6 +18,10 @@ public interface GroupService {
 
     boolean updateGroup(final GroupEntity groupEntity);
 
+    /**
+     * Updates posts in given group.
+     * If 'add' is true - post will be added to group's posts, if false - post will be removed.
+     */
     boolean updatePosts(final String groupName, final Long postID, final boolean add);
 
     List<GroupEntity> getAllGroups();

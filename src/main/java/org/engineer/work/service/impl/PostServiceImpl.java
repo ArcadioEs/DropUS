@@ -1,7 +1,6 @@
 package org.engineer.work.service.impl;
 
 import org.engineer.work.dto.PostDTO;
-import org.engineer.work.model.GroupEntity;
 import org.engineer.work.model.PostEntity;
 import org.engineer.work.repository.PostRepository;
 import org.engineer.work.service.GroupService;
@@ -58,6 +57,17 @@ public class PostServiceImpl implements PostService {
             }
         } else {
             LOG.warn("Creating post failed - passed DTO is null or group does not exist");
+        }
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public boolean updatePost(final PostEntity postEntity) {
+        boolean result = false;
+        if (postEntity != null && postRepository.exists(postEntity.getId())) {
+            postRepository.save(postEntity);
+            result = true;
         }
         return result;
     }
