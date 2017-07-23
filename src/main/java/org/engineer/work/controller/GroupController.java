@@ -45,10 +45,14 @@ public class GroupController extends AbstractController {
                                    @AuthenticationPrincipal final User user,
                                    final Model model) {
         final String validGroupName = capitalize(groupName.trim().toLowerCase());
-        if (user != null && getGroupFacade().getGroupByName(validGroupName) != null) {
-            this.determineUserRoleInGroup(user.getUsername(), validGroupName, model);
-            this.loadDataForSpecificGroup(validGroupName, model);
+        final GroupDTO group = getGroupFacade().getGroupByName(validGroupName);
 
+        if (user != null && group != null) {
+            this.determineUserRoleInGroup(user.getUsername(), validGroupName, model);
+            if (group.getMembers() != null) {
+                group.getMembers().removeIf(member -> member.equals(group.getGroupOwner()));
+            }
+            model.addAttribute("group", group);
             model.addAttribute("posts", getPostFacade().getPostsForSpecificGroup(validGroupName));
             model.addAttribute("groupExists", true);
         } else {

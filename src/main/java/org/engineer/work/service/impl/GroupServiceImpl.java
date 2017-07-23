@@ -46,17 +46,6 @@ public class GroupServiceImpl implements GroupService {
         GroupEntity groupEntity = null;
         if (name != null) {
             groupEntity = groupRepository.findOne(name);
-            if (groupEntity != null) {
-                if (groupEntity.getPendingUsers() == null) {
-                    groupEntity.setPendingUsers(Collections.emptyList());
-                }
-                if (groupEntity.getMembers() == null) {
-                    groupEntity.setMembers(Collections.emptyList());
-                }
-                if (groupEntity.getPosts() == null) {
-                    groupEntity.setPosts(Collections.emptyList());
-                }
-            }
         }
         return groupEntity;
     }

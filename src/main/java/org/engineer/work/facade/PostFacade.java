@@ -18,4 +18,8 @@ public interface PostFacade {
     boolean updatePostContent(final PostDTO postDTO);
 
     boolean deletePost(final Long id);
+
+    void updateLikes(final String username, final Long postId);
+
+    void updateDislikes(final String username, final Long postId);
 }

@@ -66,6 +66,18 @@ public class PostFacadeImpl implements PostFacade {
         return postService.deletePost(id);
     }
 
+    @Override
+    @Transactional
+    public void updateLikes(final String username, final Long postId) {
+        postService.updateLikes(username, postId);
+    }
+
+    @Override
+    @Transactional
+    public void updateDislikes(final String username, final Long postId) {
+        postService.updateDislikes(username, postId);
+    }
+
     /**
      * Converts given entity into DTO.
      *
@@ -80,7 +92,9 @@ public class PostFacadeImpl implements PostFacade {
                     .setAuthor(postEntity.getAuthor())
                     .setPostGroup(postEntity.getPostGroup())
                     .setPostContent(postEntity.getPostContent())
-                    .setDate(postEntity.getDate());
+                    .setDate(postEntity.getDate())
+                    .setLikes(postEntity.getLikes())
+                    .setDislikes(postEntity.getDislikes());
         } else {
             LOG.warn("Post entity is null, therefore cannot be converted to DTO");
         }

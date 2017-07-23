@@ -17,6 +17,14 @@ div {
     margin-top: 1em;
 }
 
+.marginTop15em {
+    margin-top: 1.5em;
+}
+
+.marginBottom05em {
+    margin-bottom: 0.5em;
+}
+
 .marginBottom1em {
     margin-bottom: 1em;
 }

@@ -1,15 +1,20 @@
 package org.engineer.work.model;
 
 import org.engineer.work.dto.PostDTO;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Entity representing Post in the system.
@@ -30,6 +35,13 @@ public class PostEntity {
     private String postContent;
     @Column(nullable = false)
     private Calendar date;
+
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<String> likes = new ArrayList<>();
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<String> dislikes = new ArrayList<>();
 
     public PostEntity(final PostDTO postDTO) throws IllegalArgumentException {
         this.setAuthor(postDTO.getAuthor());
@@ -95,5 +107,21 @@ public class PostEntity {
         } else {
             throw new IllegalArgumentException("Field date must not be null");
         }
+    }
+
+    public List<String> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(final List<String> likes) {
+        this.likes = likes;
+    }
+
+    public List<String> getDislikes() {
+        return dislikes;
+    }
+
+    public void setDislikes(final List<String> dislikes) {
+        this.dislikes = dislikes;
     }
 }

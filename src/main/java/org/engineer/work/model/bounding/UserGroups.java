@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ public class UserGroups {
     @Column(nullable = false, unique = true)
     private String username;
     @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> groups;
+    private List<String> groups = new ArrayList<>();
 
     public UserGroups(final String username) throws IllegalArgumentException {
         this.setUsername(username);

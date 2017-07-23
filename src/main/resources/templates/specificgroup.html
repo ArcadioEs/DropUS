@@ -12,15 +12,15 @@
             <div th:case="true" class="col-md-12">
                 <div id="user_section" class="col-md-3">
                     <div class="col-md-12 border groupSectionHeight">
-                        <h3>Group admin: [[${groupAdmin}]]</h3>
-                        <table th:if="${!groupUsers.isEmpty()}" class="table table-striped">
+                        <h3>Group admin: [[${group.groupOwner}]]</h3>
+                        <table th:if="${!group.members.isEmpty()}" class="table table-striped">
                             <thead>
                             <tr>
                                 <th>Members</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="user : ${groupUsers}">
+                            <tr th:each="user : ${group.members}">
                                 <td th:text="${user}"></td>
                             </tr>
                             </tbody>
@@ -29,12 +29,12 @@
                 </div>
                 <div id="content_section" class="col-md-6">
                     <div class="col-md-12 border groupSectionHeight">
-                        <h2 th:text="${groupName}"></h2>
-                        <h3 class="marginBottom1em" th:text="${groupDescription}"></h3>
+                        <h2 th:text="${group.name}"></h2>
+                        <h3 class="marginBottom1em" th:text="${group.description}"></h3>
                         <div th:if="${isAdmin} or ${isMember}">
                             <form th:action="@{/post/create}" method="post" class="col-md-10 col-md-offset-1 marginBottom1em">
                                 <label>Create post</label>
-                                <input name="groupName" th:value="${groupName}" type="hidden"/>
+                                <input name="groupName" th:value="${group.name}" type="hidden"/>
                                 <textarea name="postContent" class="form-control" rows="3" placeholder="Share something..."></textarea>
                                 <input type="submit" class="btn btn-success marginTop05em">
                                 <label class="text-danger text-center col-md-12" th:text="${postCreationFailure}"></label>
@@ -42,29 +42,42 @@
                             <div th:each="post : ${posts}" class="col-md-12 marginBottom2em">
                                 <div class="col-md-12 postContent">
                                     <div class="col-md-2 text-left marginTop05em">
-                                        <div th:if="${post.author.equals(groupAdmin)}">
+                                        <div th:if="${post.author.equals(group.groupOwner)}">
                                             <span class="glyphicon glyphicon-eye-open adminGroupSpan"> [[${post.author}]]</span>
                                         </div>
-                                        <div th:if="${!post.author.equals(groupAdmin)}">
+                                        <div th:if="${!post.author.equals(group.groupOwner)}">
                                             [[${post.author}]]
                                         </div>
                                     </div>
                                     <div class="col-md-4 text-left">
-                                        <button th:if="${#httpServletRequest.remoteUser == post.author}" class="btn btn-link col-md-6" data-toggle="collapse" th:data-target="${'#post_' + post.id}">edit</button>
+                                        <button th:if="${#httpServletRequest.remoteUser == post.author}" class="btn btn-link col-md-6" data-toggle="modal" th:data-target="${'#post_' + post.id}">edit</button>
                                         <form th:if="${#httpServletRequest.remoteUser == post.author or isAdmin == true}" th:action="@{/post/delete}" class="col-md-6" method="post">
                                             <input name="postID" th:value="${post.id}" type="hidden"/>
                                             <input type="submit" value="delete" class="btn btn-link" />
                                         </form>
                                     </div>
                                     <div class="col-md-6 text-right" th:text="${post.date.time}"></div>
-                                    <form th:id="${'post_' + post.id}" th:action="@{/post/update}" class="col-md-12 collapse" method="post">
-                                        <label>Edit post</label>
-                                        <input name="postID" th:value="${post.id}" type="hidden"/>
-                                        <textarea name="postContent" class="form-control" rows="3" th:text="${post.postContent}"></textarea>
-                                        <input type="submit" class="btn btn-success marginTop05em">
-                                        <label class="text-danger text-center col-md-12" th:text="${postUpdateFailure}"></label>
+                                    <form th:id="${'post_' + post.id}" th:action="@{/post/update}" method="post" class="modal fade" role="dialog">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    <label>Edit post</label>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input name="postID" th:value="${post.id}" type="hidden"/>
+                                                    <textarea name="postContent" class="form-control" rows="3" th:text="${post.postContent}"></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <label th:if="${postUpdateFailure != null}" class="text-danger text-center col-md-12" th:text="${postUpdateFailure}"></label>
+                                                    <input type="submit" class="btn btn-success" />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </form>
                                     <div class="col-md-10 col-md-offset-1 text-left marginTop1em marginBottom1em" th:text="${post.postContent}"></div>
+                                    <button id="like_post" class="btn btn-success col-md-2">Like <p id="post_likes_size">[[${post.likes.size()}]]</p></button>
+                                    <button id="dislike_post" class="btn btn-danger col-md-2 col-md-offset-1">Dislike <p id="post_dislikes_size">[[${post.dislikes.size()}]]</p></button>
                                 </div>
                             </div>
                         </div>
@@ -73,36 +86,36 @@
                 <div id="action_section" class="col-md-3">
                     <div class="col-md-12">
                         <form th:if="${isAdmin}" th:action="@{/group/delete}" method="post">
-                            <button name="groupName" th:value="${groupName}" type="submit" class="btn marginBottom2em btn-danger width10em"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+                            <button name="groupName" th:value="${group.name}" type="submit" class="btn marginBottom2em btn-danger width10em"><span class="glyphicon glyphicon-remove"></span> Delete</button>
                         </form>
                         <form th:if="${isNotPending}" th:action="@{/group/join}" method="post">
                             <input name="add" th:value="true" type="hidden"/>
-                            <button name="groupName" th:value="${groupName}" type="submit" class="btn btn-success width10em marginBottom2em"><span class="glyphicon glyphicon-ok-sign"></span> Join</button>
+                            <button name="groupName" th:value="${group.name}" type="submit" class="btn btn-success width10em marginBottom2em"><span class="glyphicon glyphicon-ok-sign"></span> Join</button>
                         </form>
                         <form th:if="${isPending}" th:action="@{/group/join}" method="post">
                             <p>Waiting for approval</p>
                             <input name="add" th:value="false" type="hidden"/>
-                            <button name="groupName" th:value="${groupName}" type="submit" class="btn btn-warning width10em marginBottom2em"><span class="glyphicon glyphicon-remove-sign"></span> Cancel</button>
+                            <button name="groupName" th:value="${group.name}" type="submit" class="btn btn-warning width10em marginBottom2em"><span class="glyphicon glyphicon-remove-sign"></span> Cancel</button>
                         </form>
                         <form th:if="${isMember}" th:action="@{/group/exit}" method="post">
-                            <button name="groupName" th:value="${groupName}" type="submit" class="btn btn-danger width10em marginBottom2em"><span class="glyphicon glyphicon-remove-sign"></span> Exit group</button>
+                            <button name="groupName" th:value="${group.name}" type="submit" class="btn btn-danger width10em marginBottom2em"><span class="glyphicon glyphicon-remove-sign"></span> Exit group</button>
                         </form>
                     </div>
-                    <div th:if="${isAdmin} and ${!usersPending.isEmpty()}" class="col-md-12 border actionSectionHeight">
+                    <div th:if="${isAdmin} and ${!group.pendingUsers.isEmpty()}" class="col-md-12 border actionSectionHeight">
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th class="text-center">Users pending</th>
+                                    <th>Users pending</th>
                                     <th class="text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="user : ${usersPending}">
+                                <tr th:each="user : ${group.pendingUsers}">
                                     <td class="padding1em" th:text="${user}"></td>
                                     <td>
                                         <form th:action="@{/group/accept}" method="post">
-                                            <input name="groupName" th:value="${groupName}" type="hidden"/>
-                                            <button name="username" type="submit" th:value="${user}" class="btn btn-success"> Accept</button>
+                                            <input name="groupName" th:value="${group.name}" type="hidden"/>
+                                            <button name="username" th:value="${user}" class="btn btn-success"> Accept</button>
                                         </form>
                                     </td>
                                 </tr>

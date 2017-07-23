@@ -28,9 +28,6 @@ public class UserGroupsServiceImpl implements UserGroupsService {
         UserGroups userGroups = null;
         if (username != null) {
             userGroups = userGroupsRepository.findOne(username);
-            if (userGroups != null && userGroups.getGroups() == null) {
-                userGroups.setGroups(Collections.emptyList());
-            }
         }
         return userGroups;
     }

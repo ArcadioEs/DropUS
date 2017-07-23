@@ -16,6 +16,10 @@
     background-color: #eaeaea;
 }
 
+#content_section p {
+    display: inline;
+}
+
 .adminGroupSpan {
     color: #ff0000;
     font-weight: bold;

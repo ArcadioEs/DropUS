@@ -19,4 +19,8 @@ public interface PostService {
     boolean updatePost(final PostEntity postEntity);
 
     boolean deletePost(final Long id);
+
+    void updateLikes(final String username, final Long postId);
+
+    void updateDislikes(final String username, final Long postId);
 }

@@ -90,4 +90,44 @@ public class PostServiceImpl implements PostService {
         }
         return result;
     }
+
+    @Override
+    @Transactional
+    public void updateLikes(final String username, final Long postId) {
+        if (username != null && postId != null) {
+            final PostEntity post = this.findPost(postId);
+            if (post != null) {
+                if (post.getLikes().contains(username)) {
+                    post.getLikes().remove(username);
+                } else {
+                    if (post.getDislikes().contains(username)) {
+                        post.getDislikes().remove(username);
+                    }
+                    post.getLikes().add(username);
+                }
+            } else {
+                LOG.warn("Post with id {} does not exist, could not update likes", postId);
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void updateDislikes(final String username, final Long postId) {
+        if (username != null && postId != null) {
+            final PostEntity post = this.findPost(postId);
+            if (post != null) {
+                if (post.getDislikes().contains(username)) {
+                    post.getDislikes().remove(username);
+                } else {
+                    if (post.getLikes().contains(username)) {
+                        post.getLikes().remove(username);
+                    }
+                    post.getDislikes().add(username);
+                }
+            } else {
+                LOG.warn("Post with id {} does not exist, could not update dislikes", postId);
+            }
+        }
+    }
 }

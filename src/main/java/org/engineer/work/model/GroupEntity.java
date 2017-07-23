@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,13 +30,13 @@ public class GroupEntity {
     private String description;
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<String> members;
+    private List<String> members = new ArrayList<>();
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<String> pendingUsers;
+    private List<String> pendingUsers = new ArrayList<>();
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<PostEntity> posts;
+    private List<PostEntity> posts = new ArrayList<>();
 
     public GroupEntity(final GroupDTO groupDTO) throws IllegalArgumentException {
         this.setName(groupDTO.getName());

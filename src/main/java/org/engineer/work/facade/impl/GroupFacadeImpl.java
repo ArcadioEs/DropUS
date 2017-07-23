@@ -113,12 +113,8 @@ public class GroupFacadeImpl implements GroupFacade {
             groupDTO.setName(groupEntity.getName());
             groupDTO.setGroupOwner(groupEntity.getGroupOwner());
             groupDTO.setDescription(groupEntity.getDescription());
-            if (groupEntity.getMembers() != null) {
-                groupDTO.setMembers(groupEntity.getMembers());
-            }
-            if (groupEntity.getPendingUsers() != null) {
-                groupDTO.setPendingUsers(groupEntity.getPendingUsers());
-            }
+            groupDTO.setMembers(groupEntity.getMembers());
+            groupDTO.setPendingUsers(groupEntity.getPendingUsers());
         } else {
             LOG.warn("Group entity is null, therefore cannot be converted");
         }
