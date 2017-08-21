@@ -101,6 +101,31 @@ public class PostController extends AbstractController {
 		return (post != null) ? groupController.getSpecificGroup(post.getPostGroup(), user, model) : groupController.getGroupPage(user, model);
 	}
 
+	@RequestMapping(value = "/like/update", method = RequestMethod.POST)
+	public String updateLikes(@RequestParam(value = "postID") final String postID,
+	                          @RequestParam(value = "like") final String like,
+	                          @AuthenticationPrincipal User user,
+	                          final Model model) {
+		PostDTO post = null;
+		try {
+			final Long validPostID = Long.valueOf(postID);
+			final boolean validLike = Boolean.parseBoolean(like);
+
+			if (user != null) {
+				if (validLike) {
+					getPostFacade().updateLikes(user.getUsername(), validPostID);
+				} else {
+					getPostFacade().updateDislikes(user.getUsername(), validPostID);
+				}
+				post = getPostFacade().findPost(validPostID);
+				model.addAttribute("updatedPost", post);
+			}
+		} catch (NumberFormatException e) {
+			LOG.warn("Given post id for updating post operation is not valid, long value required");
+		}
+		return (post != null) ? groupController.getSpecificGroup(post.getPostGroup(), user, model) : groupController.getGroupPage(user, model);
+	}
+
 	/**
 	 * This method validates if post content is valid.<br>
 	 * Criteria:
