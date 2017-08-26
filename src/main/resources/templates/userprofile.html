@@ -28,8 +28,31 @@
                     <div id="user_files" class="tab-pane fade">
                         <h3>Here you can find all user's shared files</h3>
                         <div class="col-md-12">
-                            <p class="col-md-6">Shared files</p>
-                            <p th:if="${#httpServletRequest.remoteUser.equals(userDetails.getUsername())}" class="col-md-6">Users panel to manage those files</p>
+                            <div class="col-md-6">
+                                <h4>Shared file</h4>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">File</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="filename : ${sharedFiles}">
+                                            <td class="text-center">
+                                                <a th:href="@{'/profile/getfile/' + ${userDetails.username} + '/' + ${filename}}">[[${filename}]]</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div th:if="${#httpServletRequest.remoteUser.equals(userDetails.getUsername())}" class="col-md-6">
+                                <h4>Users panel to manage those files</h4>
+                                <form th:action="@{/profile/savefiles}" method="post" enctype="multipart/form-data">
+                                    <h5>Files to upload:</h5>
+                                    <input type="file" name="files" multiple />
+                                    <button class="btn btn-link">Upload files</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     <div th:if="${#httpServletRequest.remoteUser.equals(userDetails.getUsername())}" id="user_panel" class="tab-pane fade">

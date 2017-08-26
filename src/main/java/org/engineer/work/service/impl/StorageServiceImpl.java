@@ -18,8 +18,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Stream;
 
 @Service
@@ -36,7 +34,7 @@ public class StorageServiceImpl implements StorageService {
 	}
 
 	@Override
-	public void store(final MultipartFile file, final String username) {
+	public void store(final MultipartFile file, final String username) throws StorageException {
 		final String filename = StringUtils.cleanPath(file.getOriginalFilename());
 		try {
 			if (file.isEmpty()) {
@@ -77,7 +75,7 @@ public class StorageServiceImpl implements StorageService {
 	}
 
 	@Override
-	public Resource loadAsResource(final String filename) {
+	public Resource loadAsResource(final String filename) throws StorageFileNotFoundException {
 		try {
 			final Path file = load(filename);
 			final Resource resource = new UrlResource(file.toUri());
@@ -96,7 +94,7 @@ public class StorageServiceImpl implements StorageService {
 
 	@Override
 	public File[] getUserSharedFiles(final String username) {
-		return new File(storageProperties.getLocation() + "/" + username + "/not_shared").listFiles();
+		return new File(storageProperties.getLocation() + "/" + username + "/shared").listFiles();
 	}
 
 	@Override

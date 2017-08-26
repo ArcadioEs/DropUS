@@ -2,9 +2,12 @@ package org.engineer.work.controller;
 
 import org.engineer.work.controller.abstractcontroller.AbstractController;
 import org.engineer.work.dto.UserDTO;
+import org.engineer.work.exception.StorageException;
 import org.engineer.work.exception.StorageFileNotFoundException;
 import org.engineer.work.facade.StorageFacade;
 import org.engineer.work.service.StorageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +37,8 @@ import static org.engineer.work.controller.abstractcontroller.AbstractController
 @RequestMapping("/profile")
 public class UserProfilController extends AbstractController {
 
+	public static final Logger LOG = LoggerFactory.getLogger(UserProfilController.class);
+
 	@javax.annotation.Resource
 	private StorageFacade storageFacade;
 
@@ -55,11 +60,17 @@ public class UserProfilController extends AbstractController {
 		return TEMPLATE_USER_PROFILE;
 	}
 
-	@PostMapping("/savefile")
-	public String handleFileUpload(@RequestParam("file") final MultipartFile file,
+	@PostMapping("/savefiles")
+	public String handleFileUpload(final MultipartFile[] files,
 	                               @AuthenticationPrincipal User user,
 	                               final Model model) throws IOException {
-		storageService.store(file, user.getUsername());
+		try {
+			for (final MultipartFile file : files) {
+				storageService.store(file, user.getUsername());
+			}
+		} catch (StorageException e) { //NOSONAR
+			LOG.warn("Cannot store empty file.");
+		}
 		return this.getProfile(user.getUsername(), model);
 	}
 
