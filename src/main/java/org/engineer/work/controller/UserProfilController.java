@@ -4,7 +4,6 @@ import org.engineer.work.controller.abstractcontroller.AbstractController;
 import org.engineer.work.dto.UserDTO;
 import org.engineer.work.exception.StorageException;
 import org.engineer.work.exception.StorageFileNotFoundException;
-import org.engineer.work.facade.StorageFacade;
 import org.engineer.work.service.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +25,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
+import java.io.File;
 import java.io.IOException;
 
+import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.DISPLAY_USER_PROFILE;
+import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.REDIRECTION_PREFIX;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.TEMPLATE_USER_PROFILE;
 
 /**
@@ -37,10 +39,9 @@ import static org.engineer.work.controller.abstractcontroller.AbstractController
 @RequestMapping("/profile")
 public class UserProfilController extends AbstractController {
 
-	public static final Logger LOG = LoggerFactory.getLogger(UserProfilController.class);
-
-	@javax.annotation.Resource
-	private StorageFacade storageFacade;
+	private static final Logger LOG = LoggerFactory.getLogger(UserProfilController.class);
+	private static final String SHARED = "/shared/";
+	private static final String NOT_SHARED = "/not_shared/";
 
 	// TEMP
 	@javax.annotation.Resource
@@ -53,7 +54,8 @@ public class UserProfilController extends AbstractController {
 		if (user != null) {
 			model.addAttribute("userExists", true);
 			model.addAttribute("userDetails", user);
-			model.addAttribute("sharedFiles", storageFacade.getUserSharedFiles(validUsername));
+			model.addAttribute("sharedFiles", getStorageFacade().getUserSharedFiles(validUsername));
+			model.addAttribute("privateFiles", getStorageFacade().getUserPrivateFiles(validUsername));
 		} else {
 			model.addAttribute("userExists", false);
 		}
@@ -62,8 +64,7 @@ public class UserProfilController extends AbstractController {
 
 	@PostMapping("/savefiles")
 	public String handleFileUpload(final MultipartFile[] files,
-	                               @AuthenticationPrincipal User user,
-	                               final Model model) throws IOException {
+	                               @AuthenticationPrincipal User user) throws IOException {
 		try {
 			for (final MultipartFile file : files) {
 				storageService.store(file, user.getUsername());
@@ -71,20 +72,69 @@ public class UserProfilController extends AbstractController {
 		} catch (StorageException e) { //NOSONAR
 			LOG.warn("Cannot store empty file.");
 		}
-		return this.getProfile(user.getUsername(), model);
+		return REDIRECTION_PREFIX + DISPLAY_USER_PROFILE + user.getUsername();
 	}
 
 	@GetMapping("/getfile/{username}/{filename:.+}")
 	@ResponseBody
 	public ResponseEntity<Resource> serveFile(@PathVariable final String filename,
 	                                          @PathVariable final String username) {
-		final Resource file = storageService.loadAsResource(username + "/not_shared/" + filename);
+		final Resource file = storageService.loadAsResource(username + SHARED + filename);
 		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
 				"attachment; filename=\"" + file.getFilename() + "\"").body(file);
 	}
 
+	@PostMapping("/makepublic")
+	public String makeFilePublic(@RequestParam("filename") final String filename,
+	                             @AuthenticationPrincipal User user) {
+		final String sourceFile = getStorageProperties().getLocation() + user.getUsername() + NOT_SHARED + filename;
+		final String destination = getStorageProperties().getLocation() + user.getUsername() + SHARED + filename;
+
+		this.moveFile(sourceFile, destination);
+
+		return REDIRECTION_PREFIX + DISPLAY_USER_PROFILE + user.getUsername();
+	}
+
+	@PostMapping("/makeprivate")
+	public String makeFilePrivate(@RequestParam("filename") final String filename,
+	                              @AuthenticationPrincipal User user) {
+		final String sourceFile = getStorageProperties().getLocation() + user.getUsername() + SHARED + filename;
+		final String destination = getStorageProperties().getLocation() + user.getUsername() + NOT_SHARED + filename;
+
+		this.moveFile(sourceFile, destination);
+
+		return REDIRECTION_PREFIX + DISPLAY_USER_PROFILE + user.getUsername();
+	}
+
+	@PostMapping("deletefile")
+	public String deleteFile(@RequestParam("filename") final String filename,
+	                         @AuthenticationPrincipal User user) {
+		final String filePath = getStorageProperties().getLocation() + user.getUsername() + NOT_SHARED + filename;
+		final File file = new File(filePath);
+		if (file.exists() && file.canWrite()) {
+			if (!file.delete()) {
+				LOG.warn("Could not delete file {}", filename);
+			}
+		}
+		return REDIRECTION_PREFIX + DISPLAY_USER_PROFILE + user.getUsername();
+	}
+
 	@ExceptionHandler(StorageFileNotFoundException.class)
-	public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
+	public ResponseEntity<?> handleStorageFileNotFound() {
 		return ResponseEntity.notFound().build();
+	}
+
+	@ExceptionHandler(IllegalStateException.class)
+	public String foo() {
+		return "error";
+	}
+
+	private void moveFile(final String src, final String dest) {
+		final File file = new File(src);
+		if (file.exists() || file.canWrite()) {
+			if (!file.renameTo(new File(dest))) {
+				LOG.warn("Could not move file {}", file.getName());
+			}
+		}
 	}
 }

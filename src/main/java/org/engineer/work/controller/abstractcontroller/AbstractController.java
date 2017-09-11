@@ -2,7 +2,9 @@ package org.engineer.work.controller.abstractcontroller;
 
 import org.engineer.work.facade.GroupFacade;
 import org.engineer.work.facade.PostFacade;
+import org.engineer.work.facade.StorageFacade;
 import org.engineer.work.facade.UserFacade;
+import org.engineer.work.service.impl.StorageProperties;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 
@@ -14,8 +16,6 @@ import javax.annotation.Resource;
 @Controller
 public abstract class AbstractController {
 
-    public static final String REDIRECT_PREFIX = "redirect:";
-
     @Resource
     private UserFacade userFacade;
     @Resource
@@ -24,6 +24,10 @@ public abstract class AbstractController {
     private PostFacade postFacade;
     @Resource
     private PasswordEncoder passwordEncoder;
+    @Resource
+    private StorageFacade storageFacade;
+    @Resource
+    private StorageProperties storageProperties;
 
     protected UserFacade getUserFacade() {
         return this.userFacade;
@@ -41,7 +45,21 @@ public abstract class AbstractController {
         return this.passwordEncoder;
     }
 
+    protected StorageFacade getStorageFacade() {
+        return this.storageFacade;
+    }
+
+    protected StorageProperties getStorageProperties() {
+        return this.storageProperties;
+    }
+
     public interface Templates {
+        String REDIRECTION_PREFIX = "redirect:";
+
+        //links
+        String DISPLAY_USER_PROFILE = "/profile/display/";
+
+        // views
         String TEMPLATE_GROUPS = "groups";
         String TEMPLATE_SPECIFIC_GROUP = "specificgroup";
 

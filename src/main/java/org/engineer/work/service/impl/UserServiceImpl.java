@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +23,15 @@ public class UserServiceImpl implements UserService {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
 
+    private static final String SHARED = "/shared/";
+    private static final String NOT_SHARED = "/not_shared/";
+
     @Resource
     private UserRepository userRepository;
     @Resource
     private UserGroupsService userGroupsService;
+    @Resource
+    private StorageProperties storageProperties;
 
     @Override
     public UserEntity getUserByUsername(final String username) {
@@ -46,6 +52,7 @@ public class UserServiceImpl implements UserService {
 
             try {
                 userRepository.save(new UserEntity(userDTO));
+                this.createUserFolder(userDTO.getUsername());
                 result = true;
             } catch (IllegalArgumentException e) {
                 LOG.warn("Creating user with username {} failed", userDTO.getUsername(), e);
@@ -101,5 +108,17 @@ public class UserServiceImpl implements UserService {
             LOG.warn("User {} could not be deleted", username);
         }
         return result;
+    }
+
+    private void createUserFolder(final String username) {
+        final String pathShared = storageProperties.getLocation() + username + SHARED;
+        final String pathNotShared = storageProperties.getLocation() + username + NOT_SHARED;
+
+        if (! new File(pathShared).mkdirs()) {
+            LOG.warn("Path ({}) could not be created", pathShared);
+        }
+        if (! new File(pathNotShared).mkdirs()) {
+            LOG.warn("Path ({}) could not be created", pathNotShared);
+        }
     }
 }

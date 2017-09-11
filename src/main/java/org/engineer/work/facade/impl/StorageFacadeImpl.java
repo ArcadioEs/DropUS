@@ -17,6 +17,11 @@ public class StorageFacadeImpl implements StorageFacade {
 
 	@Override
 	public List<String> getUserSharedFiles(final String username) {
-		return Arrays.stream(storageService.getUserSharedFiles(username)).map(file -> file.getName()).collect(Collectors.toList());
+		return Arrays.stream(storageService.getUserSharedFiles(username)).map(file -> file.getName()).filter(file -> !file.startsWith(".")).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<String> getUserPrivateFiles(final String username) {
+		return Arrays.stream(storageService.getUserPrivateFiles(username)).map(file -> file.getName()).filter(file -> !file.startsWith(".")).collect(Collectors.toList());
 	}
 }

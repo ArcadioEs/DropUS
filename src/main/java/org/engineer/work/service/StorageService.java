@@ -9,11 +9,7 @@ import java.util.stream.Stream;
 
 public interface StorageService {
 
-	void init();
-
 	void store(MultipartFile file, String username);
-
-	Stream<Path> loadAll(String username);
 
 	Path load(String filename);
 
@@ -21,5 +17,5 @@ public interface StorageService {
 
 	File[] getUserSharedFiles(final String username);
 
-	void deleteAll();
+	File[] getUserPrivateFiles(final String username);
 }

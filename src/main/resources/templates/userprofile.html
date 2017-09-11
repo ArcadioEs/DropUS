@@ -7,7 +7,7 @@
     <body class="container-fluid text-center">
         <div th:insert="fragments/header :: header"></div>
 
-        <div th:switch="${userExists}" class="col-md-6 col-md-offset-3">
+        <div th:switch="${userExists}" class="col-md-8 col-md-offset-2">
             <div th:case="true">
                 <ul class="nav nav-tabs">
                     <li class="active"><a data-toggle="tab" href="#user_details">User Details</a></li>
@@ -27,31 +27,67 @@
                     </div>
                     <div id="user_files" class="tab-pane fade">
                         <h3>Here you can find all user's shared files</h3>
+                        <form th:if="${#httpServletRequest.remoteUser.equals(userDetails.getUsername())}" th:action="@{/profile/savefiles}" method="post" enctype="multipart/form-data">
+                            <div class="col-sm-12">
+                                <h5>Files to upload:</h5>
+                                <input class="col-sm-4 col-sm-push-4" type="file" name="files" multiple />
+                                <div class="col-sm-12">
+                                    <button class="col-sm-2 col-sm-push-5 btn btn-link">Upload files</button>
+                                </div>
+                            </div>
+                        </form>
                         <div class="col-md-12">
                             <div class="col-md-6">
                                 <h4>Shared file</h4>
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">File</th>
+                                            <th class="text-center">Files</th>
+                                            <th th:if="${#httpServletRequest.remoteUser.equals(userDetails.getUsername())}" class="text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr th:each="filename : ${sharedFiles}">
-                                            <td class="text-center">
+                                            <td class="text-center" style="vertical-align: inherit">
                                                 <a th:href="@{'/profile/getfile/' + ${userDetails.username} + '/' + ${filename}}">[[${filename}]]</a>
+                                            </td>
+                                            <td th:if="${#httpServletRequest.remoteUser.equals(userDetails.getUsername())}">
+                                                <form th:action="@{/profile/makeprivate}" method="post">
+                                                    <input name="filename" th:value="${filename}" type="hidden" />
+                                                    <button class="btn btn-danger">Make private</button>
+                                                </form>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                             <div th:if="${#httpServletRequest.remoteUser.equals(userDetails.getUsername())}" class="col-md-6">
-                                <h4>Users panel to manage those files</h4>
-                                <form th:action="@{/profile/savefiles}" method="post" enctype="multipart/form-data">
-                                    <h5>Files to upload:</h5>
-                                    <input type="file" name="files" multiple />
-                                    <button class="btn btn-link">Upload files</button>
-                                </form>
+                                <h4>Private files</h4>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Files</th>
+                                            <th th:if="${#httpServletRequest.remoteUser.equals(userDetails.getUsername())}" class="text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="filename : ${privateFiles}">
+                                            <td class="text-center" style="vertical-align: inherit">
+                                                [[${filename}]]
+                                            </td>
+                                            <td th:if="${#httpServletRequest.remoteUser.equals(userDetails.getUsername())}">
+                                                <form th:action="@{/profile/makepublic}" method="post">
+                                                    <input name="filename" th:value="${filename}" type="hidden" />
+                                                    <button class="btn btn-success">Make public</button>
+                                                </form>
+                                                <form th:action="@{/profile/deletefile}" method="post">
+                                                    <input name="filename" th:value="${filename}" type="hidden" />
+                                                    <button class="btn btn-danger">Remove</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
