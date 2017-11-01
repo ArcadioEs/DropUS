@@ -7,9 +7,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -17,6 +18,9 @@ import java.util.stream.Collectors;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.DISPLAY_ALL_GROUPS;
+import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.DISPLAY_GROUP;
+import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.REDIRECTION_PREFIX;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.TEMPLATE_GROUPS;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.TEMPLATE_SPECIFIC_GROUP;
 import static org.thymeleaf.util.StringUtils.capitalize;
@@ -32,7 +36,7 @@ public class GroupController extends AbstractController {
     private static final String PENDING = "isPending";
     private static final String NOT_PENDING = "isNotPending";
 
-    @RequestMapping(value = "/page", method = RequestMethod.GET)
+    @GetMapping(value = "/page")
     public String getGroupPage(@AuthenticationPrincipal final User user,
                                final Model model) {
         this.loadGroupLists(user, model);
@@ -40,7 +44,7 @@ public class GroupController extends AbstractController {
         return TEMPLATE_GROUPS;
     }
 
-    @RequestMapping(value = "/display/{groupName}", method = RequestMethod.GET)
+    @GetMapping(value = "/display/{groupName}")
     public String getSpecificGroup(@PathVariable(value = "groupName") final String groupName,
                                    @AuthenticationPrincipal final User user,
                                    final Model model) {
@@ -61,7 +65,7 @@ public class GroupController extends AbstractController {
         return TEMPLATE_SPECIFIC_GROUP;
     }
 
-    @RequestMapping(value = "/join", method = RequestMethod.POST)
+    @PostMapping(value = "/join")
     public String joinGroup(@RequestParam(value = "groupName") final String groupName,
                             @RequestParam(value = "add") final String decision,
                             @AuthenticationPrincipal final User user,
@@ -71,22 +75,22 @@ public class GroupController extends AbstractController {
             final boolean add = Boolean.parseBoolean(decision);
             getGroupFacade().updatePendingUsers(user.getUsername(), validGroupName, add);
         }
-        return getSpecificGroup(validGroupName, user, model);
+        return REDIRECTION_PREFIX + DISPLAY_GROUP + validGroupName;
     }
 
-    @RequestMapping(value = "/accept", method = RequestMethod.POST)
+    @PostMapping(value = "/accept")
     public String acceptUserToGroup(@RequestParam(value = "username") final String username,
                                     @RequestParam(value = "groupName") final String groupName,
                                     @AuthenticationPrincipal final User user,
-                                    final Model model) throws InterruptedException {
+                                    final Model model) {
         final String validGroupName = capitalize(groupName.trim().toLowerCase());
         if (user != null && ADMIN.equals(this.determineUserRoleInGroup(user.getUsername(), validGroupName, model))) {
             getGroupFacade().updateGroupMembers(username, validGroupName, TRUE);
         }
-        return getSpecificGroup(validGroupName, user, model);
+        return REDIRECTION_PREFIX + DISPLAY_GROUP + validGroupName;
     }
 
-    @RequestMapping(value = "/exit", method = RequestMethod.POST)
+    @PostMapping(value = "/exit")
     public String exitGroup(@RequestParam("groupName") final String groupName,
                              @AuthenticationPrincipal final User user,
                              final Model model) {
@@ -95,10 +99,10 @@ public class GroupController extends AbstractController {
             getGroupFacade().updateGroupMembers(user.getUsername(), validGroupName, FALSE);
         }
 
-        return getGroupPage(user, model);
+        return REDIRECTION_PREFIX + DISPLAY_ALL_GROUPS;
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @PostMapping(value = "/create")
     public String createGroup(@RequestParam(value = "groupName") final String groupName,
                               @RequestParam(value = "description") final String description,
                               @AuthenticationPrincipal final User user,
@@ -111,15 +115,15 @@ public class GroupController extends AbstractController {
             groupDTO.setDescription(description);
 
             if (getGroupFacade().createGroup(groupDTO)) {
-                return getSpecificGroup(validGroupName, user, model);
+                return REDIRECTION_PREFIX + DISPLAY_GROUP + validGroupName;
             } else {
                 model.addAttribute("groupCreationFailed", "Creating group failed for some reason, please try later");
             }
         }
-        return getGroupPage(user, model);
+        return REDIRECTION_PREFIX + DISPLAY_ALL_GROUPS;
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @PostMapping(value = "/delete")
     public String deleteGroup(@RequestParam(value = "groupName") final String groupName,
                               @AuthenticationPrincipal final User user,
                               final Model model) {
@@ -132,7 +136,7 @@ public class GroupController extends AbstractController {
                 model.addAttribute("groupDeletion", "Group couldn't be deleted");
             }
         }
-        return getGroupPage(user, model);
+        return REDIRECTION_PREFIX + DISPLAY_ALL_GROUPS;
     }
 
     private boolean validate(final Model model, final String name, final String description) {
@@ -177,22 +181,6 @@ public class GroupController extends AbstractController {
             }
         }
         model.addAttribute("allGroups", allGroups);
-    }
-
-    private void loadDataForSpecificGroup(final String groupName, final Model model) {
-        if (groupName != null) {
-            final GroupDTO group = getGroupFacade().getGroupByName(groupName);
-            if (group != null) {
-                model.addAttribute("groupAdmin", group.getGroupOwner());
-                if (group.getMembers() != null) {
-                    group.getMembers().removeIf(user -> user.equals(group.getGroupOwner()));
-                }
-                model.addAttribute("groupUsers", group.getMembers());
-                model.addAttribute("groupName", group.getName());
-                model.addAttribute("groupDescription", group.getDescription());
-                model.addAttribute("usersPending", group.getPendingUsers());
-            }
-        }
     }
 
     private String determineUserRoleInGroup(final String username, final String groupName, final Model model) {
