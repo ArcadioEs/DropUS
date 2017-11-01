@@ -9,8 +9,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.DISPLAY_ALL_GROUPS;
@@ -32,7 +32,7 @@ public class PostController extends AbstractController {
 	private static final String CREATE_POST = "create_post";
 	private static final String UPDATE_POST = "update_post";
 
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	@PostMapping(value = "/create")
 	public String createPost(@RequestParam(value = "postContent") final String postContent,
 	                         @RequestParam(value = "groupName") final String groupName,
 	                         @AuthenticationPrincipal User user,
@@ -51,7 +51,7 @@ public class PostController extends AbstractController {
 		return (group != null) ? REDIRECTION_PREFIX + DISPLAY_GROUP + group.getName() : REDIRECTION_PREFIX + DISPLAY_ALL_GROUPS;
 	}
 
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
+	@PostMapping(value = "/update")
 	public String updatePostContent(@RequestParam(value = "postContent") final String postContent,
 	                                @RequestParam(value = "postID") final String postID,
 	                                @AuthenticationPrincipal User user,
@@ -78,7 +78,7 @@ public class PostController extends AbstractController {
 		return (post != null) ? REDIRECTION_PREFIX + DISPLAY_GROUP + post.getPostGroup() : REDIRECTION_PREFIX + DISPLAY_ALL_GROUPS;
 	}
 
-	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	@PostMapping(value = "/delete")
 	public String deletePost(@RequestParam(value = "postID") final String postID,
 	                         @AuthenticationPrincipal User user,
 	                         final Model model) {
@@ -99,7 +99,7 @@ public class PostController extends AbstractController {
 		return (post != null) ? REDIRECTION_PREFIX + DISPLAY_GROUP + post.getPostGroup() : REDIRECTION_PREFIX + DISPLAY_ALL_GROUPS;
 	}
 
-	@RequestMapping(value = "/like/update", method = RequestMethod.POST)
+	@PostMapping(value = "/like/update")
 	public String updateLikes(@RequestParam(value = "postID") final String postID,
 	                          @RequestParam(value = "like") final String like,
 	                          @AuthenticationPrincipal User user,
