@@ -58,6 +58,8 @@ public abstract class AbstractController {
 
         //links
         String DISPLAY_USER_PROFILE = "/profile/display/";
+        String DISPLAY_GROUP = "/group/display/";
+        String DISPLAY_ALL_GROUPS = "/group/page";
 
         // views
         String TEMPLATE_GROUPS = "groups";

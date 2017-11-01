@@ -13,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.annotation.Resource;
-
+import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.DISPLAY_ALL_GROUPS;
+import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.DISPLAY_GROUP;
+import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.REDIRECTION_PREFIX;
 import static org.thymeleaf.util.StringUtils.capitalize;
 
 /**
@@ -30,9 +31,6 @@ public class PostController extends AbstractController {
 	private static final String POST_UPDATE_FAILURE = "postUpdateFailure";
 	private static final String CREATE_POST = "create_post";
 	private static final String UPDATE_POST = "update_post";
-
-	@Resource
-	private GroupController groupController;
 
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public String createPost(@RequestParam(value = "postContent") final String postContent,
@@ -50,7 +48,7 @@ public class PostController extends AbstractController {
 								 .setPostContent(validPostContent)
 			);
 		}
-		return (group != null) ? groupController.getSpecificGroup(group.getName(), user, model) : groupController.getGroupPage(user, model);
+		return (group != null) ? REDIRECTION_PREFIX + DISPLAY_GROUP + group.getName() : REDIRECTION_PREFIX + DISPLAY_ALL_GROUPS;
 	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -77,7 +75,7 @@ public class PostController extends AbstractController {
 		} catch (NumberFormatException e) {
 			LOG.warn("Given post id for updating post operation is not valid, long value required");
 		}
-		return (post != null) ? groupController.getSpecificGroup(post.getPostGroup(), user, model) : groupController.getGroupPage(user, model);
+		return (post != null) ? REDIRECTION_PREFIX + DISPLAY_GROUP + post.getPostGroup() : REDIRECTION_PREFIX + DISPLAY_ALL_GROUPS;
 	}
 
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
@@ -98,7 +96,7 @@ public class PostController extends AbstractController {
 		} catch (NumberFormatException e) {
 			LOG.warn("Given post id for deleting post operation is not valid, long value required");
 		}
-		return (post != null) ? groupController.getSpecificGroup(post.getPostGroup(), user, model) : groupController.getGroupPage(user, model);
+		return (post != null) ? REDIRECTION_PREFIX + DISPLAY_GROUP + post.getPostGroup() : REDIRECTION_PREFIX + DISPLAY_ALL_GROUPS;
 	}
 
 	@RequestMapping(value = "/like/update", method = RequestMethod.POST)
@@ -123,7 +121,7 @@ public class PostController extends AbstractController {
 		} catch (NumberFormatException e) {
 			LOG.warn("Given post id for updating post operation is not valid, long value required");
 		}
-		return (post != null) ? groupController.getSpecificGroup(post.getPostGroup(), user, model) : groupController.getGroupPage(user, model);
+		return (post != null) ? REDIRECTION_PREFIX + DISPLAY_GROUP + post.getPostGroup() : REDIRECTION_PREFIX + DISPLAY_ALL_GROUPS;
 	}
 
 	/**

@@ -14,7 +14,6 @@
                     <ul class="nav nav-tabs">
                         <li class="active"><a data-toggle="tab" href="#user_details">User Details</a></li>
                         <li><a data-toggle="tab" href="#user_groups">User Groups</a></li>
-                        <!--<li><a data-toggle="tab" href="#user_files">Shared Files</a></li>-->
                         <li th:if="${#httpServletRequest.remoteUser.equals(userDetails.getUsername())}"><a data-toggle="tab" href="#user_panel">User Panel</a></li>
                     </ul>
                 </div>

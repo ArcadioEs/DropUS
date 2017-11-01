@@ -33,10 +33,10 @@
                         <h3 class="marginBottom1em" th:text="${group.description}"></h3>
                         <div th:if="${isAdmin} or ${isMember}">
                             <form th:action="@{/post/create}" method="post" class="col-md-10 col-md-offset-1 marginBottom1em">
-                                <label>Create post</label>
+                                <label for="create_post">Create post</label>
                                 <input name="groupName" th:value="${group.name}" type="hidden"/>
-                                <textarea name="postContent" class="form-control" rows="3" placeholder="Share something..."></textarea>
-                                <input type="submit" class="btn btn-success marginTop05em">
+                                <textarea id="create_post" required name="postContent" class="form-control" rows="3" placeholder="Share something..."></textarea>
+                                <input type="submit" class="btn btn-success marginTop05em" value="Submit">
                                 <label class="text-danger text-center col-md-12" th:text="${postCreationFailure}"></label>
                             </form>
                             <div th:each="post : ${posts}" class="col-md-12 marginBottom2em">
@@ -62,15 +62,15 @@
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                    <label>Edit post</label>
                                                 </div>
                                                 <div class="modal-body">
+                                                    <label for="edit_post">Edit post</label>
                                                     <input name="postID" th:value="${post.id}" type="hidden"/>
-                                                    <textarea name="postContent" class="form-control" rows="3" th:text="${post.postContent}"></textarea>
+                                                    <textarea id="edit_post" required name="postContent" class="form-control" rows="3" th:text="${post.postContent}"></textarea>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <label class="text-danger text-center col-md-12" th:text="${postUpdateFailure}"></label>
-                                                    <input type="submit" class="btn btn-success" />
+                                                    <input type="submit" class="btn btn-success" value="Submit" />
                                                 </div>
                                             </div>
                                         </div>
