@@ -57,7 +57,12 @@ public abstract class AbstractController {
         String REDIRECTION_PREFIX = "redirect:";
 
         //links
+        String LOGIN_PAGE = "/login";
+
+        String REGISTRATION_PAGE = "/registration";
+
         String DISPLAY_USER_PROFILE = "/profile/display/";
+
         String DISPLAY_GROUP = "/group/display/";
         String DISPLAY_ALL_GROUPS = "/group/page";
 

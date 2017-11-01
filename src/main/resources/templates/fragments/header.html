@@ -12,7 +12,7 @@
                         <li th:if="${#httpServletRequest.remoteUser}"><a th:href="@{/group/page}">Groups</a></li>
                     </ul>
                     <ul th:if="${#httpServletRequest.remoteUser == null}" class="nav navbar-nav navbar-right">
-                        <li><a th:href="@{/registration/page}"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                        <li><a th:href="@{/registration}"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
                         <li><a th:href="@{/login}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
                     </ul>
                     <ul th:if="${#httpServletRequest.remoteUser != null}" class="nav navbar-nav navbar-right">
