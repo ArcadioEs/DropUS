@@ -1,7 +1,7 @@
 package org.engineer.work.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * Controller for denied view.
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class ErrorController {
 
-    @RequestMapping(value = "/denied")
+    @GetMapping(value = "/denied")
     public String getErrorPage() {
         return "fragments/error";
     }

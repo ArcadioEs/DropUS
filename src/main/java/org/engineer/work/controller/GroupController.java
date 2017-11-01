@@ -39,6 +39,9 @@ public class GroupController extends AbstractController {
     private static final String PENDING = "isPending";
     private static final String NOT_PENDING = "isNotPending";
 
+    private static final String NAME_ERROR = "nameError";
+    private static final String DESCRIPTION_ERROR = "descriptionError";
+
     @GetMapping(value = "/page")
     public String getGroupPage(@AuthenticationPrincipal final User user,
                                final Model model) {
@@ -55,7 +58,7 @@ public class GroupController extends AbstractController {
         final GroupDTO group = getGroupFacade().getGroupByName(validGroupName);
 
         if (user != null && group != null) {
-            this.determineUserRoleInGroup(user.getUsername(), validGroupName, model, null);
+            this.determineUserRoleInGroup(user.getUsername(), validGroupName, model);
             if (group.getMembers() != null) {
                 group.getMembers().removeIf(member -> member.equals(group.getGroupOwner()));
             }
@@ -86,7 +89,7 @@ public class GroupController extends AbstractController {
                                     @AuthenticationPrincipal final User user,
                                     final RedirectAttributes redirectAttributes) {
         final String validGroupName = capitalize(groupName.trim().toLowerCase());
-        if (user != null && ADMIN.equals(this.determineUserRoleInGroup(user.getUsername(), validGroupName, null, redirectAttributes))) {
+        if (user != null && ADMIN.equals(this.determineUserRoleInGroup(user.getUsername(), validGroupName, redirectAttributes))) {
             getGroupFacade().updateGroupMembers(username, validGroupName, TRUE);
         }
         return REDIRECTION_PREFIX + DISPLAY_GROUP + validGroupName;
@@ -97,7 +100,7 @@ public class GroupController extends AbstractController {
                              @AuthenticationPrincipal final User user,
                              final RedirectAttributes redirectAttributes) {
         final String validGroupName = capitalize(groupName.trim().toLowerCase());
-        if (user != null && MEMBER.equals(this.determineUserRoleInGroup(user.getUsername(), validGroupName, null, redirectAttributes))) {
+        if (user != null && MEMBER.equals(this.determineUserRoleInGroup(user.getUsername(), validGroupName, redirectAttributes))) {
             getGroupFacade().updateGroupMembers(user.getUsername(), validGroupName, FALSE);
         }
 
@@ -108,15 +111,15 @@ public class GroupController extends AbstractController {
     public String createGroup(@RequestParam(value = "groupName") final String groupName,
                               @RequestParam(value = "description") final String description,
                               @AuthenticationPrincipal final User user,
-                              final RedirectAttributes model) {
+                              final RedirectAttributes redirectAttributes) {
         final Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
         final Matcher m = p.matcher(groupName);
 
         if (m.find()) {
-            model.addFlashAttribute("nameError", "Group name cannot contain any special character");
+            redirectAttributes.addFlashAttribute(NAME_ERROR, "Group name cannot contain any special character");
         } else {
             final String validGroupName = capitalize(groupName.trim().toLowerCase());
-            if (user != null && this.validate(model, validGroupName, description)) {
+            if (user != null && this.validate(redirectAttributes, validGroupName, description)) {
                 GroupDTO groupDTO = new GroupDTO();
                 groupDTO.setName(validGroupName);
                 groupDTO.setGroupOwner(user.getUsername());
@@ -125,7 +128,7 @@ public class GroupController extends AbstractController {
                 if (getGroupFacade().createGroup(groupDTO)) {
                     return REDIRECTION_PREFIX + DISPLAY_GROUP + validGroupName;
                 } else {
-                    model.addFlashAttribute("groupCreationFailed", "Creating group failed for some reason, please try later");
+                    redirectAttributes.addFlashAttribute("groupCreationFailed", "Creating group failed for some reason, please try later");
                 }
             }
         }
@@ -139,7 +142,7 @@ public class GroupController extends AbstractController {
                               final RedirectAttributes redirectAttributes) {
         final String validGroupName = capitalize(groupName.trim().toLowerCase());
         final GroupDTO group = getGroupFacade().getGroupByName(validGroupName);
-        if (user != null && group != null && ADMIN.equals(this.determineUserRoleInGroup(user.getUsername(), group.getName(), null, redirectAttributes))) {
+        if (user != null && group != null && ADMIN.equals(this.determineUserRoleInGroup(user.getUsername(), group.getName(), redirectAttributes))) {
             if (getGroupFacade().deleteGroup(validGroupName)) {
                 redirectAttributes.addFlashAttribute("groupDeletion", "Group deleted successfully");
             } else {
@@ -153,27 +156,27 @@ public class GroupController extends AbstractController {
         boolean result = true;
 
         if (name == null || name.isEmpty()) {
-            model.addFlashAttribute("nameError", "Group name cannot be empty");
+            model.addFlashAttribute(NAME_ERROR, "Group name cannot be empty");
             result = false;
         }
 
         if (name != null && name.length() > 20) {
-            model.addFlashAttribute("nameError", "Group must not be bigger than 20 digits");
+            model.addFlashAttribute(NAME_ERROR, "Group must not be bigger than 20 digits");
             result = false;
         }
 
         if (name != null && getGroupFacade().groupExists(name)) {
-            model.addFlashAttribute("nameError", "Group with this name already exists");
+            model.addFlashAttribute(NAME_ERROR, "Group with this name already exists");
             result = false;
         }
 
         if (description == null || description.isEmpty()) {
-            model.addFlashAttribute("descriptionError", "Description cannot be empty");
+            model.addFlashAttribute(DESCRIPTION_ERROR, "Description cannot be empty");
             result = false;
         }
 
         if (description != null && description.length() > 255) {
-            model.addFlashAttribute("descriptionError", "Description must not be bigger than 255 digits");
+            model.addFlashAttribute(DESCRIPTION_ERROR, "Description must not be bigger than 255 digits");
             result = false;
         }
 
@@ -193,44 +196,32 @@ public class GroupController extends AbstractController {
         model.addAttribute("allGroups", allGroups);
     }
 
-    private String determineUserRoleInGroup(final String username, final String groupName, final Model model, final RedirectAttributes redirectAttributes) {
-        String role = null;
+    private String determineUserRoleInGroup(final String username, final String groupName, final Model model) {
         if (username != null && groupName != null) {
             final UserDTO userDTO = getUserFacade().getUserByUsername(username);
             final GroupDTO groupDTO = getGroupFacade().getGroupByName(groupName);
 
             if (userDTO != null && groupDTO != null) {
-                if (checkWhetherAdmin(userDTO, groupDTO, model, redirectAttributes) != null) {
-                    return checkWhetherAdmin(userDTO, groupDTO, model, redirectAttributes);
+                if (checkWhetherUserIsAdmin(userDTO, groupDTO, model) != null) {
+                    return checkWhetherUserIsAdmin(userDTO, groupDTO, model);
+                } else if (checkWhetherUserIsMember(userDTO, groupDTO, model) != null) {
+                    return checkWhetherUserIsMember(userDTO, groupDTO, model);
+                } else if (checkWhetherUserIsPending(userDTO, groupDTO, model) != null) {
+                    return checkWhetherUserIsPending(userDTO, groupDTO, model);
                 } else {
-                    if (checkWhetherMember(userDTO, groupDTO, model, redirectAttributes) != null) {
-                        return checkWhetherMember(userDTO, groupDTO, model, redirectAttributes);
-                    } else {
-                        if (checkWhetherPending(userDTO, groupDTO, model, redirectAttributes) != null) {
-                            return checkWhetherPending(userDTO, groupDTO, model, redirectAttributes);
-                        } else {
-                            if (model != null) {
-                                model.addAttribute(NOT_PENDING, true);
-                            }
-                            if (redirectAttributes != null) {
-                                redirectAttributes.addFlashAttribute(NOT_PENDING, true);
-                            }
-                            role = NOT_PENDING;
-                        }
-                    }
+                    return userIsNotPending(model);
                 }
             }
         }
-        return role;
+        return null;
     }
 
-    private String checkWhetherAdmin(final UserDTO userDTO, final GroupDTO groupDTO, final Model model, final RedirectAttributes redirectAttributes) {
+    private String checkWhetherUserIsAdmin(final UserDTO userDTO, final GroupDTO groupDTO, Model model) {
         String role = null;
         if (userDTO.getUsername().equals(groupDTO.getGroupOwner())) {
-            if (redirectAttributes != null) {
-                redirectAttributes.addFlashAttribute(ADMIN, true);
-            }
-            if (model != null) {
+            if (model instanceof RedirectAttributes) {
+                ((RedirectAttributes) model).addFlashAttribute(ADMIN, true);
+            } else {
                 model.addAttribute(ADMIN, true);
             }
             role = ADMIN;
@@ -238,13 +229,12 @@ public class GroupController extends AbstractController {
         return role;
     }
 
-    private String checkWhetherMember(final UserDTO userDTO, final GroupDTO groupDTO, final Model model, final RedirectAttributes redirectAttributes) {
+    private String checkWhetherUserIsMember(final UserDTO userDTO, final GroupDTO groupDTO, final Model model) {
         String role = null;
         if (userDTO.getUserGroups().contains(groupDTO.getName())) {
-            if (redirectAttributes != null) {
-                redirectAttributes.addFlashAttribute(MEMBER, true);
-            }
-            if (model != null) {
+            if (model instanceof RedirectAttributes) {
+                ((RedirectAttributes) model).addFlashAttribute(MEMBER, true);
+            } else {
                 model.addAttribute(MEMBER, true);
             }
             role = MEMBER;
@@ -252,17 +242,25 @@ public class GroupController extends AbstractController {
         return role;
     }
 
-    private String checkWhetherPending(final UserDTO userDTO, final GroupDTO groupDTO, final Model model, final RedirectAttributes redirectAttributes) {
+    private String checkWhetherUserIsPending(final UserDTO userDTO, final GroupDTO groupDTO, final Model model) {
         String role = null;
         if (groupDTO.getPendingUsers().contains(userDTO.getUsername())) {
-            if (redirectAttributes != null) {
-                redirectAttributes.addFlashAttribute(PENDING, true);
-            }
-            if (model != null) {
+            if (model instanceof RedirectAttributes) {
+                ((RedirectAttributes) model).addFlashAttribute(PENDING, true);
+            } else {
                 model.addAttribute(PENDING, true);
             }
             role = PENDING;
         }
         return role;
+    }
+
+    private String userIsNotPending(final Model model) {
+        if (model instanceof RedirectAttributes) {
+            ((RedirectAttributes) model).addFlashAttribute(NOT_PENDING, true);
+        } else {
+            model.addAttribute(NOT_PENDING, true);
+        }
+        return NOT_PENDING;
     }
 }
