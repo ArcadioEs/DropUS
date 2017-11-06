@@ -67,6 +67,8 @@ public abstract class AbstractController {
         String DISPLAY_ALL_GROUPS = "/group/page";
 
         // views
+        String TEMPLATE_ERROR_PAGE = "fragments/error";
+
         String TEMPLATE_GROUPS = "groups";
         String TEMPLATE_SPECIFIC_GROUP = "specificgroup";
 

@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ import static java.lang.Boolean.TRUE;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.DISPLAY_ALL_GROUPS;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.DISPLAY_GROUP;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.REDIRECTION_PREFIX;
+import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.TEMPLATE_ERROR_PAGE;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.TEMPLATE_GROUPS;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.TEMPLATE_SPECIFIC_GROUP;
 import static org.thymeleaf.util.StringUtils.capitalize;
@@ -150,6 +152,11 @@ public class GroupController extends AbstractController {
             }
         }
         return REDIRECTION_PREFIX + DISPLAY_ALL_GROUPS;
+    }
+
+    @ExceptionHandler(value = Exception.class)
+    public String getErrorPage() {
+        return TEMPLATE_ERROR_PAGE;
     }
 
     private boolean validate(final RedirectAttributes model, final String name, final String description) {

@@ -4,6 +4,7 @@ import org.engineer.work.controller.abstractcontroller.AbstractController;
 import org.engineer.work.dto.UserDTO;
 import org.engineer.work.exception.StorageException;
 import org.engineer.work.exception.StorageFileNotFoundException;
+import org.engineer.work.service.PropertiesService;
 import org.engineer.work.service.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,14 +22,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
-import java.io.IOException;
 
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.DISPLAY_USER_PROFILE;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.REDIRECTION_PREFIX;
+import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.TEMPLATE_ERROR_PAGE;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.TEMPLATE_USER_PROFILE;
 
 /**
@@ -41,13 +44,19 @@ public class UserProfilController extends AbstractController {
 	private static final Logger LOG = LoggerFactory.getLogger(UserProfilController.class);
 	private static final String SHARED = "/shared/";
 	private static final String NOT_SHARED = "/not_shared/";
+	private static final String FILE_MAX_SIZE_PROPERTY = "dropus.files.max.size";
 
-	// TEMP
+	// MOVE ALL TO FACADE
+	private static Long FILE_MAX_SIZE;
+
+	// MOVE ALL TO FACADE
 	@javax.annotation.Resource
 	private StorageService storageService;
+	@javax.annotation.Resource
+	private PropertiesService propertiesService;
 
 	@GetMapping("/display/{username}")
-	public String getProfile(@PathVariable(value = "username") final String username, final Model model) throws IOException {
+	public String getProfile(@PathVariable(value = "username") final String username, final Model model) {
 		final String validUsername = StringUtils.capitalize(username.toLowerCase());
 		final UserDTO user = getUserFacade().getUserByUsername(validUsername);
 		if (user != null) {
@@ -63,9 +72,10 @@ public class UserProfilController extends AbstractController {
 
 	@PostMapping("/savefiles")
 	public String handleFileUpload(final MultipartFile[] files,
-	                               @AuthenticationPrincipal User user) throws IOException {
+	                               @AuthenticationPrincipal User user) {
 		try {
 			for (final MultipartFile file : files) {
+				if (file.getSize() > FILE_MAX_SIZE) throw new MaxUploadSizeExceededException(FILE_MAX_SIZE);
 				storageService.store(file, user.getUsername());
 			}
 		} catch (StorageException e) { //NOSONAR
@@ -105,7 +115,7 @@ public class UserProfilController extends AbstractController {
 		return REDIRECTION_PREFIX + DISPLAY_USER_PROFILE + user.getUsername();
 	}
 
-	@PostMapping("deletefile")
+	@PostMapping("/deletefile")
 	public String deleteFile(@RequestParam("filename") final String filename,
 	                         @AuthenticationPrincipal User user) {
 		final String filePath = getStorageProperties().getLocation() + user.getUsername() + NOT_SHARED + filename;
@@ -123,9 +133,14 @@ public class UserProfilController extends AbstractController {
 		return ResponseEntity.notFound().build();
 	}
 
-	@ExceptionHandler(IllegalStateException.class)
-	public String foo() {
-		return "error";
+	@ExceptionHandler(Exception.class)
+	public String getErrorPage() {
+		return TEMPLATE_ERROR_PAGE;
+	}
+
+	@PostConstruct
+	private void setMaxFileSize() {
+		FILE_MAX_SIZE = Long.parseLong(propertiesService.getProperty(FILE_MAX_SIZE_PROPERTY));
 	}
 
 	private void moveFile(final String src, final String dest) {
