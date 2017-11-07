@@ -9,13 +9,17 @@ import java.util.stream.Stream;
 
 public interface StorageService {
 
-	void store(MultipartFile file, String username);
+	void store(final MultipartFile file, final String username);
 
-	Path load(String filename);
+	Path load(final String filename);
 
-	Resource loadAsResource(String filename);
+	Resource loadAsResource(final String path);
+
+	void deleteFile(final String author, final String filename);
 
 	File[] getUserSharedFiles(final String username);
 
 	File[] getUserPrivateFiles(final String username);
+
+	void moveFile(final String src, final String dest);
 }

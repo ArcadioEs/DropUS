@@ -4,7 +4,6 @@ import org.engineer.work.facade.GroupFacade;
 import org.engineer.work.facade.PostFacade;
 import org.engineer.work.facade.StorageFacade;
 import org.engineer.work.facade.UserFacade;
-import org.engineer.work.service.impl.StorageProperties;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 
@@ -26,8 +25,6 @@ public abstract class AbstractController {
     private PasswordEncoder passwordEncoder;
     @Resource
     private StorageFacade storageFacade;
-    @Resource
-    private StorageProperties storageProperties;
 
     protected UserFacade getUserFacade() {
         return this.userFacade;
@@ -47,10 +44,6 @@ public abstract class AbstractController {
 
     protected StorageFacade getStorageFacade() {
         return this.storageFacade;
-    }
-
-    protected StorageProperties getStorageProperties() {
-        return this.storageProperties;
     }
 
     public interface Templates {

@@ -3,6 +3,7 @@ package org.engineer.work.service.impl;
 import org.engineer.work.dto.UserDTO;
 import org.engineer.work.model.UserEntity;
 import org.engineer.work.repository.UserRepository;
+import org.engineer.work.service.PropertiesService;
 import org.engineer.work.service.UserGroupsService;
 import org.engineer.work.service.UserService;
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ public class UserServiceImpl implements UserService {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
 
+    private static final String FILES_LOCATION = "dropus.files.root";
     private static final String SHARED = "/shared/";
     private static final String NOT_SHARED = "/not_shared/";
 
@@ -31,7 +33,7 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserGroupsService userGroupsService;
     @Resource
-    private StorageProperties storageProperties;
+    private PropertiesService propertiesService;
 
     @Override
     public UserEntity getUserByUsername(final String username) {
@@ -111,8 +113,9 @@ public class UserServiceImpl implements UserService {
     }
 
     private void createUserFolder(final String username) {
-        final String pathShared = storageProperties.getLocation() + username + SHARED;
-        final String pathNotShared = storageProperties.getLocation() + username + NOT_SHARED;
+        final String rootLocation = propertiesService.getProperty(FILES_LOCATION);
+        final String pathShared = rootLocation + username + SHARED;
+        final String pathNotShared = rootLocation + username + NOT_SHARED;
 
         if (! new File(pathShared).mkdirs()) {
             LOG.warn("Path ({}) could not be created", pathShared);
