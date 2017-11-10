@@ -22,4 +22,6 @@ public interface StorageFacade {
 	void makeFilePublic(final String author, final String filename);
 
 	void makeFilePrivate(final String author, final String filename);
+
+	long getActualMaximumFileSize();
 }

@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.thymeleaf.util.StringUtils;
 
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.DISPLAY_USER_PROFILE;
@@ -54,13 +56,17 @@ public class UserProfilController extends AbstractController {
 
 	@PostMapping("/savefiles")
 	public String handleFileUpload(final MultipartFile[] files,
-	                               @AuthenticationPrincipal User user) {
+	                               @AuthenticationPrincipal User user,
+	                               final RedirectAttributes redirectAttributes) {
 		try {
 			for (final MultipartFile file : files) {
 				getStorageFacade().storeFile(file, user.getUsername());
 			}
 		} catch (StorageException e) { //NOSONAR
 			LOG.warn("Cannot store empty file.");
+		} catch (MaxUploadSizeExceededException e) {
+			final double maxFileSize = getStorageFacade().getActualMaximumFileSize() / 1000;
+			redirectAttributes.addFlashAttribute("uploadFileError", "File you are trying to upload is too big. The limit is " + String.format("%.2f", maxFileSize) + "KB");
 		}
 		return REDIRECTION_PREFIX + DISPLAY_USER_PROFILE + user.getUsername();
 	}

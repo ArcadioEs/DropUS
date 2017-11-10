@@ -40,3 +40,12 @@ div {
 .padding1em {
     padding: 1em;
 }
+
+.header-navigation {
+    width: 65%;
+    margin: auto;
+}
+
+.login-page-sing-in--button {
+    margin-top: 1em;
+}

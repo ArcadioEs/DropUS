@@ -1,3 +1,30 @@
 #groups .padding1em {
     padding: 1em;
 }
+
+.group-page-navigation {
+    width: 50%;
+    margin: auto;
+}
+
+.group-page-heading {
+    margin-bottom: 1em;
+}
+
+.group-page-error {
+    width: 100%;
+    text-align: center;
+}
+
+#groups .group-columns {
+    margin: 0 5em;
+}
+
+.group-page-creation {
+    width: 30%;
+    margin: auto;
+}
+
+.group-page-creation--button {
+    width: 20%;
+}

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>DropUS Admin panel</title>
+        <title>DropUS Admin Panel</title>
         <div th:insert="fragments/bootstrap :: bootstrap"></div>
     </head>
     <body class="container-fluid">
         <div th:insert="fragments/header :: header"></div>
 
-        <div class="col-md-12 text-center">
+        <div class="text-center">
             <h1 class="text-center">Enable or disable users</h1>
 
             <form th:action="@{/admin/update}" method="post">

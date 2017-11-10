@@ -8,87 +8,85 @@
     <body class="container-fluid">
         <div th:insert="fragments/header :: header"></div>
 
-        <div class="col-md-12">
-            <ul class="nav nav-tabs col-md-6 col-md-offset-3">
-                <li class="active"><a data-toggle="tab" href="#groups">Groups</a></li>
-                <li><a data-toggle="tab" href="#create_group">Create</a></li>
-            </ul>
+        <ul class="nav nav-tabs group-page-navigation">
+            <li class="active"><a data-toggle="tab" href="#groups">Groups</a></li>
+            <li><a data-toggle="tab" href="#create_group">Create</a></li>
+        </ul>
 
-            <div class="tab-content">
-                <div id="groups" class="tab-pane fade in active">
-                    <h3 class="col-md-12 text-center">Groups</h3>
-                    <label class="text-danger text-center col-md-12" th:text="${groupDeletion}"></label>
-                    <div class="col-md-12">
-                        <div class="col-md-5 col-md-offset-1">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">Groups</div>
-                                <div class="panel-body">
-                                    <p>Here you can find all existing groups you are not a member of</p>
-                                </div>
-
-                                <table class="table table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th class="text-center">Group name</th>
-                                        <th class="text-center">Group owner</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr th:each="group : ${allGroups}">
-                                        <td class="text-center">
-                                            <a th:href="@{'/group/display/' + ${group.name}}" class="btn btn-link">[[${group.name}]]</a>
-                                        </td>
-                                        <td class="text-center padding1em" th:text="${group.groupOwner}"></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+        <div class="tab-content">
+            <div id="groups" class="tab-pane fade in active">
+                <h3 class="text-center group-page-heading">Groups</h3>
+                <label th:if="${nameError}" class="text-danger group-page-error" th:text="${nameError}"></label>
+                <label th:if="${descriptionError}" class="text-danger group-page-error" th:text="${descriptionError}"></label>
+                <label th:if="${groupDeletion}" class="text-danger group-page-error" th:text="${groupDeletion}"></label>
+                <div class="row group-columns">
+                    <div class="col-xs-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Groups</div>
+                            <div class="panel-body">
+                                <p>Here you can find all existing groups you are not a member of</p>
                             </div>
+
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">Group name</th>
+                                    <th class="text-center">Group owner</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="group : ${allGroups}">
+                                    <td class="text-center">
+                                        <a th:href="@{'/group/display/' + ${group.name}}" class="btn btn-link">[[${group.name}]]</a>
+                                    </td>
+                                    <td class="text-center padding1em" th:text="${group.groupOwner}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="col-md-5">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">Your groups</div>
-                                <div class="panel-body">
-                                    <p>Here you can find all groups you are a member of</p>
-                                </div>
-
-                                <table class="table table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th class="text-center">Group name</th>
-                                        <th class="text-center">Group owner</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr th:each="group : ${userGroups}">
-                                        <td class="text-center">
-                                            <a th:href="@{'/group/display/' + ${group.name}}" class="btn btn-link">[[${group.name}]]</a>
-                                        </td>
-                                        <td class="text-center padding1em" th:text="${group.groupOwner}"></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Your groups</div>
+                            <div class="panel-body">
+                                <p>Here you can find all groups you are a member of</p>
                             </div>
+
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">Group name</th>
+                                    <th class="text-center">Group owner</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="group : ${userGroups}">
+                                    <td class="text-center">
+                                        <a th:href="@{'/group/display/' + ${group.name}}" class="btn btn-link">[[${group.name}]]</a>
+                                    </td>
+                                    <td class="text-center padding1em" th:text="${group.groupOwner}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-                <div id="create_group" class="tab-pane fade">
-                    <h3 class="col-md-12 text-center">Create group</h3>
-                    <div class="col-md-4 col-md-offset-4">
-                        <form th:action="@{/group/create}" method="post">
-                            <p class="text-center" th:text="${groupCreationFailed}"></p>
-                            <div class="form-group col-md-12">
-                                <label for="new_group_name">Group name</label>
-                                <input required id="new_group_name" type="text" name="groupName" class="form-control" placeholder="Enter group name">
-                                <label class="text-danger text-center col-md-12" th:text="${nameError}"></label>
-                            </div>
-                            <div class="form-group col-md-12">
-                                <label for="new_group_description">Description</label>
-                                <textarea required id="new_group_description" name="description" class="form-control" rows="3" placeholder="Write few words about this group..."></textarea>
-                                <label class="text-danger text-center col-md-12" th:text="${descriptionError}"></label>
-                            </div>
-                            <input type="submit" class="btn btn-success col-md-6 col-md-offset-3" value="Create" />
-                        </form>
-                    </div>
+            </div>
+            <div id="create_group" class="tab-pane fade text-center">
+                <h3>Create group</h3>
+                <div class="group-page-creation">
+                    <form th:action="@{/group/create}" method="post">
+                        <p class="text-center" th:text="${groupCreationFailed}"></p>
+                        <div class="form-group">
+                            <label for="new_group_name">Group name</label>
+                            <input required id="new_group_name" type="text" name="groupName" class="form-control" placeholder="Enter group name">
+                        </div>
+                        <div class="form-group">
+                            <label for="new_group_description">Description</label>
+                            <textarea required id="new_group_description" name="description" class="form-control" rows="3" placeholder="Write few words about this group..."></textarea>
+                        </div>
+                        <input type="submit" class="btn btn-success group-page-creation--button" value="Create" />
+                    </form>
                 </div>
             </div>
         </div>

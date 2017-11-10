@@ -5,3 +5,46 @@
 #user_files .btn-red {
     color: red;
 }
+
+.user-panel-navigation {
+    margin: auto;
+    width: 50%;
+}
+
+.user-panel-navigation--content {
+    width: 75%;
+    margin: auto;
+}
+
+.file-input {
+    width: 15%;
+    margin: auto;
+}
+
+.file-input--submit-button {
+    width: 20%;
+    margin: auto;
+}
+
+.file-input--error-label {
+    width: 50%;
+    margin: auto;
+    display: block;
+}
+
+.shared-files-label {
+    width: 50%;
+}
+
+.private-files-label {
+    width: 40%;
+}
+
+.table>tbody>tr>.user-files-filename {
+    vertical-align: inherit;
+}
+
+.private-files-action-form {
+    display: inline-block;
+    margin: 0 2em;
+}

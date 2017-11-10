@@ -76,4 +76,9 @@ public class StorageFacadeImpl implements StorageFacade {
 
 		storageService.moveFile(sourceFile, destination);
 	}
+
+	@Override
+	public long getActualMaximumFileSize() {
+		return Long.parseLong(propertiesService.getProperty(FILE_MAX_SIZE));
+	}
 }
