@@ -8,10 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.DISPLAY_ALL_GROUPS;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.DISPLAY_GROUP;
@@ -36,9 +36,9 @@ public class PostController extends AbstractController {
 	public String createPost(@RequestParam(value = "postContent") final String postContent,
 	                         @RequestParam(value = "groupName") final String groupName,
 	                         @AuthenticationPrincipal User user,
-	                         final Model model) {
+	                         final RedirectAttributes redirectAttributes) {
 		final String validGroupName = capitalize(groupName.trim().toLowerCase());
-		final String validPostContent = this.validatePostContent(postContent, model, CREATE_POST);
+		final String validPostContent = this.validatePostContent(postContent, redirectAttributes, CREATE_POST);
 
 		final GroupDTO group = getGroupFacade().getGroupByName(validGroupName);
 		if (user != null && group != null && validPostContent != null) {
@@ -55,8 +55,8 @@ public class PostController extends AbstractController {
 	public String updatePostContent(@RequestParam(value = "postContent") final String postContent,
 	                                @RequestParam(value = "postID") final String postID,
 	                                @AuthenticationPrincipal User user,
-	                                final Model model) {
-		final String validPostContent = this.validatePostContent(postContent, model, UPDATE_POST);
+	                                final RedirectAttributes redirectAttributes) {
+		final String validPostContent = this.validatePostContent(postContent, redirectAttributes, UPDATE_POST);
 		PostDTO post = null;
 		try {
 			final Long validPostID = Long.valueOf(postID);
@@ -80,8 +80,7 @@ public class PostController extends AbstractController {
 
 	@PostMapping(value = "/delete")
 	public String deletePost(@RequestParam(value = "postID") final String postID,
-	                         @AuthenticationPrincipal User user,
-	                         final Model model) {
+	                         @AuthenticationPrincipal User user) {
 		PostDTO post = null;
 		try {
 			final Long validPostID = Long.valueOf(postID);
@@ -102,8 +101,7 @@ public class PostController extends AbstractController {
 	@PostMapping(value = "/like/update")
 	public String updateLikes(@RequestParam(value = "postID") final String postID,
 	                          @RequestParam(value = "like") final String like,
-	                          @AuthenticationPrincipal User user,
-	                          final Model model) {
+	                          @AuthenticationPrincipal User user) {
 		PostDTO post = null;
 		try {
 			final Long validPostID = Long.valueOf(postID);
@@ -116,7 +114,6 @@ public class PostController extends AbstractController {
 					getPostFacade().updateDislikes(user.getUsername(), validPostID);
 				}
 				post = getPostFacade().findPost(validPostID);
-				model.addAttribute("updatedPost", post);
 			}
 		} catch (NumberFormatException e) {
 			LOG.warn("Given post id for updating post operation is not valid, long value required");
@@ -135,7 +132,7 @@ public class PostController extends AbstractController {
 	 *
 	 * @return Post content if valid, null otherwise
 	 */
-	private String validatePostContent(final String postContent, final Model model, String mode) {
+	private String validatePostContent(final String postContent, final RedirectAttributes redirectAttributes, String mode) { //NOSONAR
 		String result = null;
 		if (postContent != null && postContent.length() <= 1024) {
 			if (!postContent.trim().isEmpty()) {
@@ -145,9 +142,9 @@ public class PostController extends AbstractController {
 					if (word.length() > 60) {
 						invalid = false;
 						if (CREATE_POST.equals(mode)) {
-							model.addAttribute(POST_CREATION_FAILURE, "Single words cannot be bigger than 60 digits each");
+							redirectAttributes.addFlashAttribute(POST_CREATION_FAILURE, "Single words cannot be bigger than 60 digits each");
 						} else {
-							model.addAttribute(POST_UPDATE_FAILURE, "Single words cannot be bigger than 60 digits each");
+							redirectAttributes.addFlashAttribute(POST_UPDATE_FAILURE, "Single words cannot be bigger than 60 digits each");
 						}
 						break;
 					}
@@ -155,16 +152,16 @@ public class PostController extends AbstractController {
 				if (invalid) result = postContent.trim();
 			} else {
 				if (CREATE_POST.equals(mode)) {
-					model.addAttribute(POST_CREATION_FAILURE, "Post content cannot be empty");
+					redirectAttributes.addFlashAttribute(POST_CREATION_FAILURE, "Post content cannot be empty");
 				} else {
-					model.addAttribute(POST_UPDATE_FAILURE, "Post content cannot be empty");
+					redirectAttributes.addFlashAttribute(POST_UPDATE_FAILURE, "Post content cannot be empty");
 				}
 			}
 		} else {
 			if (CREATE_POST.equals(mode)) {
-				model.addAttribute(POST_CREATION_FAILURE, "Post is too large");
+				redirectAttributes.addFlashAttribute(POST_CREATION_FAILURE, "Post is too large");
 			} else {
-				model.addAttribute(POST_UPDATE_FAILURE, "Post is too large");
+				redirectAttributes.addFlashAttribute(POST_UPDATE_FAILURE, "Post is too large");
 			}
 		}
 		return result;

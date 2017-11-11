@@ -12,6 +12,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.thymeleaf.util.StringUtils;
 
 import java.text.MessageFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.LOGIN_PAGE;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.REDIRECTION_PREFIX;
@@ -24,6 +26,10 @@ import static org.engineer.work.controller.abstractcontroller.AbstractController
 @Controller
 @RequestMapping(value = "/registration")
 public class RegisterController extends AbstractController {
+
+    private static final String USERNAME_ERROR = "usernameError";
+    private static final String PASSWORD_ERROR = "passwordError"; //NOSONAR
+    private static final String CONFIRM_PASSWORD_ERROR = "confirmError"; //NOSONAR
 
     @GetMapping
     public String getRegistrationPage() {
@@ -56,31 +62,41 @@ public class RegisterController extends AbstractController {
         return REDIRECTION_PREFIX + REGISTRATION_PAGE;
     }
 
-    private boolean validateCredentials(final RedirectAttributes model, final String username, final String password, final String passwordConfirm) {
+    private boolean validateCredentials(final RedirectAttributes redirectAttributes, final String username, final String password, final String passwordConfirm) {
         boolean result = true;
 
         if (username == null || username.isEmpty()) {
-            model.addFlashAttribute("usernameError", "Username cannot be empty!");
+            redirectAttributes.addFlashAttribute(USERNAME_ERROR, "Username cannot be empty!");
             result = false;
         }
 
+        if (username != null) {
+            final Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+            final Matcher m = p.matcher(username);
+
+            if (m.find()) {
+                redirectAttributes.addFlashAttribute(USERNAME_ERROR, "Username cannot contain any special characters!");
+                result = false;
+            }
+        }
+
         if (username != null && getUserFacade().userExists(username)) {
-            model.addFlashAttribute("usernameError", "Username already in use!");
+            redirectAttributes.addFlashAttribute(USERNAME_ERROR, "Username already in use!");
             result = false;
         }
 
         if (username != null && username.toLowerCase().contains("admin")) {
-            model.addFlashAttribute("usernameError", "Username cannot contain \"admin\" keyword!");
+            redirectAttributes.addFlashAttribute(USERNAME_ERROR, "Username cannot contain \"admin\" keyword!");
             result = false;
         }
 
         if (password == null || password.isEmpty()) {
-            model.addFlashAttribute("passwordError", "Password cannot be empty!");
+            redirectAttributes.addFlashAttribute(PASSWORD_ERROR, "Password cannot be empty!");
             result = false;
         }
 
         if (passwordConfirm == null || !passwordConfirm.equals(password)) {
-            model.addFlashAttribute("confirmError", "Password should be identical!");
+            redirectAttributes.addFlashAttribute(CONFIRM_PASSWORD_ERROR, "Password should be identical!");
             result = false;
         }
 

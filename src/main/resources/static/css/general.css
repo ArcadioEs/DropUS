@@ -4,6 +4,11 @@
     margin-left: 8px;
 }
 
+.header-navigation {
+    width: 65%;
+    margin: auto;
+}
+
 /* General */
 div {
     font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
@@ -40,12 +45,14 @@ div {
 .padding1em {
     padding: 1em;
 }
-
-.header-navigation {
-    width: 65%;
-    margin: auto;
-}
+/* End generals */
 
 .login-page-sing-in--button {
     margin-top: 1em;
+}
+
+.login-page--login, .login-page--password, .registration-page--username,
+.registration-page--password, .registration-page--password-confirmation {
+    width: 10%;
+    margin: 1em auto 0;
 }

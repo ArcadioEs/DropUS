@@ -15,15 +15,15 @@
                 You have been logged out.
             </div>
             <div th:if="${userRegistered != null}">
-                <h4>User <span>[[${userRegistered}]]</span> registered. Go ahead and log in!</h4>
+                <h4>User <span class="text-success">[[${userRegistered}]]</span> registered. Go ahead and log in!</h4>
             </div>
         </div>
         <form class="text-center" th:action="@{/login}" method="post">
-            <div class="form-group" style="width: 10%; margin: 1em auto 0">
+            <div class="form-group login-page--login">
                 <label for="login_username">Username:</label>
                 <input id="login_username" required type="text" name="username" class="form-control" placeholder="Enter username">
             </div>
-            <div class="form-group" style="width: 10%; margin: 1em auto 0">
+            <div class="form-group login-page--password">
                 <label for="login_password">Password:</label>
                 <input id="login_password" required type="password" name="password" class="form-control" placeholder="Enter password">
             </div>

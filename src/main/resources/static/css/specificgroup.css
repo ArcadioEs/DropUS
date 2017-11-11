@@ -3,32 +3,75 @@
     box-shadow: 0 0 0 3px #fff, 0 0 0 5px #ddd, 0 0 0 10px #fff, 0 0 2px 10px #eee;
 }
 
-#specific_group .groupSectionHeight {
-    min-height: 85vh;
+#specific_group .specific-group--content {
+    margin: 0 10em;
 }
 
-#specific_group .actionSectionHeight {
-    min-height: 77.2vh;
+.group-description {
+    padding-bottom: 1em;
 }
 
-#content_section .postContent {
+.group-create {
+    width: 70%;
+    margin: 0 auto 2em;
+}
+
+.group-create > label {
+    display: block;
+}
+
+.group-users--user-list {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.group-post--content {
     border: 5px #f0f2ff ridge;
     background-color: #eaeaea;
+    margin: 0 3em 2em;
+    text-align: left;
 }
 
-#content_section p {
-    display: inline;
+.group-post--actions > div > * {
+    margin: 0 1em;
 }
 
-.adminGroupSpan {
+.group-post--actions > div {
+    display: inline-block;
+}
+
+.group-post--delete-post {
+    display: inline-block;
+}
+
+.group-post--content-substance {
+    margin: 1em 3em;
+}
+
+.group-post--content-likes {
+    margin: 0 1em;
+}
+
+.group-post--content-likes > form {
+    display: inline-block;
+    margin: 1em;
+}
+
+.group-admin--label {
     color: #ff0000;
     font-weight: bold;
 }
 
-#action_section .marginBottom2em {
-    margin-bottom: 2em;
+.group-actions > form {
+    margin: 1em auto;
 }
 
-#action_section .padding1em {
+#action_section .group-actions--users {
     padding: 1em;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
