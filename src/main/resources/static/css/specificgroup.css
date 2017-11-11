@@ -7,6 +7,10 @@
     margin: 0 10em;
 }
 
+#specific_group .table {
+    margin-bottom: 0;
+}
+
 .group-description {
     padding-bottom: 1em;
 }
@@ -64,7 +68,7 @@
     font-weight: bold;
 }
 
-.group-actions > form {
+.group-actions > button, .group-actions > form {
     margin: 1em auto;
 }
 
