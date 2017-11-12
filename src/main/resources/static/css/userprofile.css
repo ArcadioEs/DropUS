@@ -6,6 +6,11 @@
     color: red;
 }
 
+#user_files .user-profile--file-tables {
+    width: 70%;
+    margin: auto;
+}
+
 .user-panel-navigation {
     margin: auto;
     width: 50%;
@@ -42,9 +47,27 @@
 
 .table>tbody>tr>.user-files-filename {
     vertical-align: inherit;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .private-files-action-form {
     display: inline-block;
-    margin: 0 2em;
+}
+
+.user-profile--file-section {
+    margin-top: 10em;
+}
+
+.user-profile--user-groups {
+    width: 50%;
+    margin: 3em auto;
+}
+
+.user-profile--file-tables > div {
+    display: inline-block;
+    width: 49%;
+    margin: auto;
 }

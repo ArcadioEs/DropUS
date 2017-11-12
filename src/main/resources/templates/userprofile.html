@@ -21,9 +21,9 @@
                 <div class="tab-content user-panel-navigation--content">
                     <div id="user_details" class="tab-pane fade in active">
                         <h3>Here you can find all details about user</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                        <p>Some details about user :)</p>
 
-                        <div id="user_files">
+                        <div id="user_files" class="user-profile--file-section">
                             <h3>Here you can find all user's shared files</h3>
                             <form th:if="${#httpServletRequest.remoteUser.equals(userDetails.getUsername())}" th:action="@{/profile/savefiles}" method="post" enctype="multipart/form-data">
                                 <h5>Files to upload:</h5>
@@ -31,8 +31,8 @@
                                 <button class="btn btn-link file-input--submit-button">Upload files</button>
                                 <label class="text-danger file-input--error-label" th:text="${uploadFileError}"></label>
                             </form>
-                            <div class="row">
-                                <div th:switch="${sharedFiles.isEmpty()}" class="col-xs-6">
+                            <div class="user-profile--file-tables">
+                                <div th:switch="${sharedFiles.isEmpty()}">
                                     <div th:case="false">
                                         <h4>Shared file</h4>
                                         <table class="table table-striped">
@@ -61,7 +61,7 @@
                                         <h3>User does not share any files</h3>
                                     </div>
                                 </div>
-                                <div th:if="${#httpServletRequest.remoteUser.equals(userDetails.getUsername())}" class="col-xs-6">
+                                <div th:if="${#httpServletRequest.remoteUser.equals(userDetails.getUsername())}">
                                     <div th:switch="${privateFiles.isEmpty()}">
                                         <div th:case="false">
                                             <h4>Private files</h4>
@@ -99,9 +99,28 @@
                             </div>
                         </div>
                     </div>
-                    <div id="user_groups" class="tab-pane fade">
-                        <h3>Here you can find all groups user belongs to</h3>
-                        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <div id="user_groups" class="tab-pane fade user-profile--user-groups">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">User's groups</div>
+                            <div class="panel-body">
+                                <p>Here you can find all groups user is member of</p>
+                            </div>
+
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">Group name</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="group : ${userDetails.userGroups}">
+                                    <td class="text-center">
+                                        <a th:href="@{'/group/display/' + ${group}}" class="btn btn-link">[[${group}]]</a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div th:if="${#httpServletRequest.remoteUser.equals(userDetails.getUsername())}" id="user_panel" class="tab-pane fade">
                         <h3>Feel free to change your personal data</h3>
