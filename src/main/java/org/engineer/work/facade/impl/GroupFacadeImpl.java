@@ -2,9 +2,10 @@ package org.engineer.work.facade.impl;
 
 import org.engineer.work.dto.GroupDTO;
 import org.engineer.work.facade.GroupFacade;
+import org.engineer.work.facade.UserFacade;
 import org.engineer.work.model.GroupEntity;
-import org.engineer.work.model.UserEntity;
 import org.engineer.work.model.bounding.UserGroups;
+import org.engineer.work.model.UserEntity;
 import org.engineer.work.service.GroupService;
 import org.engineer.work.service.UserGroupsService;
 import org.engineer.work.service.UserService;
@@ -25,10 +26,17 @@ public class GroupFacadeImpl implements GroupFacade {
 
     private static final Logger LOG = LoggerFactory.getLogger(GroupFacadeImpl.class);
 
+    private static final String ADMIN = "isAdmin";
+    private static final String MEMBER = "isMember";
+    private static final String PENDING = "isPending";
+    private static final String NOT_PENDING = "isNotPending";
+
     @Resource
     private GroupService groupService;
     @Resource
     private UserService userService;
+    @Resource
+    private UserFacade userFacade;
     @Resource
     private UserGroupsService userGroupsService;
 
@@ -99,13 +107,58 @@ public class GroupFacadeImpl implements GroupFacade {
         return groupService.deleteGroup(name);
     }
 
+    @Override
+    public String determineUserRoleInGroup(final String username, final String groupName) {
+        if (username != null && groupName != null) {
+            final UserEntity userDTO = userService.getUserByUsername(username);
+            final GroupEntity groupDTO = groupService.getGroupByName(groupName);
+
+            if (userDTO != null && groupDTO != null) {
+                if (checkWhetherUserIsAdmin(userDTO, groupDTO) != null) {
+                    return checkWhetherUserIsAdmin(userDTO, groupDTO);
+                } else if (checkWhetherUserIsMember(userDTO, groupDTO) != null) {
+                    return checkWhetherUserIsMember(userDTO, groupDTO);
+                } else if (checkWhetherUserIsPending(userDTO, groupDTO) != null) {
+                    return checkWhetherUserIsPending(userDTO, groupDTO);
+                } else {
+                    return NOT_PENDING;
+                }
+            }
+        }
+        return null;
+    }
+
+    private String checkWhetherUserIsAdmin(final UserEntity UserEntity, final GroupEntity groupEntity) {
+        String role = null;
+        if (UserEntity.getUsername().equals(groupEntity.getGroupOwner())) {
+            role = ADMIN;
+        }
+        return role;
+    }
+
+    private String checkWhetherUserIsMember(final UserEntity UserEntity, final GroupEntity groupEntity) {
+        String role = null;
+        if (userFacade.getUserByUsername(UserEntity.getUsername()).getUserGroups().contains(groupEntity.getName())) {
+            role = MEMBER;
+        }
+        return role;
+    }
+
+    private String checkWhetherUserIsPending(final UserEntity UserEntity, final GroupEntity groupEntity) {
+        String role = null;
+        if (groupEntity.getPendingUsers().contains(UserEntity.getUsername())) {
+            role = PENDING;
+        }
+        return role;
+    }
+
     /**
      * Converts given entity into DTO.
      *
      * @param groupEntity entity received from service layer
      * @return properly prepared DTO
      */
-    public GroupDTO convertEntityToDTO(final GroupEntity groupEntity) {
+    private GroupDTO convertEntityToDTO(final GroupEntity groupEntity) {
         GroupDTO groupDTO = null;
         if (groupEntity != null) {
             groupDTO = new GroupDTO();

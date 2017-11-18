@@ -98,29 +98,6 @@ public class PostController extends AbstractController {
 		return (post != null) ? REDIRECTION_PREFIX + DISPLAY_GROUP + post.getPostGroup() : REDIRECTION_PREFIX + DISPLAY_ALL_GROUPS;
 	}
 
-	@PostMapping(value = "/like/update")
-	public String updateLikes(@RequestParam(value = "postID") final String postID,
-	                          @RequestParam(value = "like") final String like,
-	                          @AuthenticationPrincipal User user) {
-		PostDTO post = null;
-		try {
-			final Long validPostID = Long.valueOf(postID);
-			final boolean validLike = Boolean.parseBoolean(like);
-
-			if (user != null) {
-				if (validLike) {
-					getPostFacade().updateLikes(user.getUsername(), validPostID);
-				} else {
-					getPostFacade().updateDislikes(user.getUsername(), validPostID);
-				}
-				post = getPostFacade().findPost(validPostID);
-			}
-		} catch (NumberFormatException e) {
-			LOG.warn("Given post id for updating post operation is not valid, long value required");
-		}
-		return (post != null) ? REDIRECTION_PREFIX + DISPLAY_GROUP + post.getPostGroup() : REDIRECTION_PREFIX + DISPLAY_ALL_GROUPS;
-	}
-
 	/**
 	 * This method validates if post content is valid.<br>
 	 * Criteria:

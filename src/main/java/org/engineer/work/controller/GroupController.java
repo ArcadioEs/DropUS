@@ -2,7 +2,6 @@ package org.engineer.work.controller;
 
 import org.engineer.work.controller.abstractcontroller.AbstractController;
 import org.engineer.work.dto.GroupDTO;
-import org.engineer.work.dto.UserDTO;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -38,8 +37,6 @@ import static org.thymeleaf.util.StringUtils.capitalize;
 public class GroupController extends AbstractController {
     private static final String ADMIN = "isAdmin";
     private static final String MEMBER = "isMember";
-    private static final String PENDING = "isPending";
-    private static final String NOT_PENDING = "isNotPending";
 
     private static final String NAME_ERROR = "nameError";
     private static final String DESCRIPTION_ERROR = "descriptionError";
@@ -60,7 +57,7 @@ public class GroupController extends AbstractController {
         final GroupDTO group = getGroupFacade().getGroupByName(validGroupName);
 
         if (user != null && group != null) {
-            this.determineUserRoleInGroup(user.getUsername(), validGroupName, model);
+            model.addAttribute(getGroupFacade().determineUserRoleInGroup(user.getUsername(), validGroupName), true);
             if (group.getMembers() != null) {
                 group.getMembers().removeIf(member -> member.equals(group.getGroupOwner()));
             }
@@ -78,6 +75,7 @@ public class GroupController extends AbstractController {
                             @RequestParam(value = "add") final String decision,
                             @AuthenticationPrincipal final User user) {
         final String validGroupName = capitalize(groupName.trim().toLowerCase());
+
         if (user != null) {
             final boolean add = Boolean.parseBoolean(decision);
             getGroupFacade().updatePendingUsers(user.getUsername(), validGroupName, add);
@@ -91,18 +89,22 @@ public class GroupController extends AbstractController {
                                     @AuthenticationPrincipal final User user,
                                     final RedirectAttributes redirectAttributes) {
         final String validGroupName = capitalize(groupName.trim().toLowerCase());
-        if (user != null && ADMIN.equals(this.determineUserRoleInGroup(user.getUsername(), validGroupName, redirectAttributes))) {
+        final String userRole = getGroupFacade().determineUserRoleInGroup(user.getUsername(), validGroupName);
+
+        if (ADMIN.equals(userRole)) {
             getGroupFacade().updateGroupMembers(username, validGroupName, TRUE);
+            redirectAttributes.addFlashAttribute(userRole, true);
         }
         return REDIRECTION_PREFIX + DISPLAY_GROUP + validGroupName;
     }
 
     @PostMapping(value = "/exit")
     public String exitGroup(@RequestParam("groupName") final String groupName,
-                             @AuthenticationPrincipal final User user,
-                             final RedirectAttributes redirectAttributes) {
+                             @AuthenticationPrincipal final User user) {
         final String validGroupName = capitalize(groupName.trim().toLowerCase());
-        if (user != null && MEMBER.equals(this.determineUserRoleInGroup(user.getUsername(), validGroupName, redirectAttributes))) {
+        final String userRole = getGroupFacade().determineUserRoleInGroup(user.getUsername(), validGroupName);
+
+        if (MEMBER.equals(userRole)) {
             getGroupFacade().updateGroupMembers(user.getUsername(), validGroupName, FALSE);
         }
 
@@ -144,7 +146,9 @@ public class GroupController extends AbstractController {
                               final RedirectAttributes redirectAttributes) {
         final String validGroupName = capitalize(groupName.trim().toLowerCase());
         final GroupDTO group = getGroupFacade().getGroupByName(validGroupName);
-        if (user != null && group != null && ADMIN.equals(this.determineUserRoleInGroup(user.getUsername(), group.getName(), redirectAttributes))) {
+        final String userRole = getGroupFacade().determineUserRoleInGroup(user.getUsername(), validGroupName);
+
+        if (group != null && ADMIN.equals(userRole)) {
             if (getGroupFacade().deleteGroup(validGroupName)) {
                 redirectAttributes.addFlashAttribute("groupDeletion", "Group deleted successfully");
             } else {
@@ -201,73 +205,5 @@ public class GroupController extends AbstractController {
             }
         }
         model.addAttribute("allGroups", allGroups);
-    }
-
-    private String determineUserRoleInGroup(final String username, final String groupName, final Model model) {
-        if (username != null && groupName != null) {
-            final UserDTO userDTO = getUserFacade().getUserByUsername(username);
-            final GroupDTO groupDTO = getGroupFacade().getGroupByName(groupName);
-
-            if (userDTO != null && groupDTO != null) {
-                if (checkWhetherUserIsAdmin(userDTO, groupDTO, model) != null) {
-                    return checkWhetherUserIsAdmin(userDTO, groupDTO, model);
-                } else if (checkWhetherUserIsMember(userDTO, groupDTO, model) != null) {
-                    return checkWhetherUserIsMember(userDTO, groupDTO, model);
-                } else if (checkWhetherUserIsPending(userDTO, groupDTO, model) != null) {
-                    return checkWhetherUserIsPending(userDTO, groupDTO, model);
-                } else {
-                    return userIsNotPending(model);
-                }
-            }
-        }
-        return null;
-    }
-
-    private String checkWhetherUserIsAdmin(final UserDTO userDTO, final GroupDTO groupDTO, Model model) {
-        String role = null;
-        if (userDTO.getUsername().equals(groupDTO.getGroupOwner())) {
-            if (model instanceof RedirectAttributes) {
-                ((RedirectAttributes) model).addFlashAttribute(ADMIN, true);
-            } else {
-                model.addAttribute(ADMIN, true);
-            }
-            role = ADMIN;
-        }
-        return role;
-    }
-
-    private String checkWhetherUserIsMember(final UserDTO userDTO, final GroupDTO groupDTO, final Model model) {
-        String role = null;
-        if (userDTO.getUserGroups().contains(groupDTO.getName())) {
-            if (model instanceof RedirectAttributes) {
-                ((RedirectAttributes) model).addFlashAttribute(MEMBER, true);
-            } else {
-                model.addAttribute(MEMBER, true);
-            }
-            role = MEMBER;
-        }
-        return role;
-    }
-
-    private String checkWhetherUserIsPending(final UserDTO userDTO, final GroupDTO groupDTO, final Model model) {
-        String role = null;
-        if (groupDTO.getPendingUsers().contains(userDTO.getUsername())) {
-            if (model instanceof RedirectAttributes) {
-                ((RedirectAttributes) model).addFlashAttribute(PENDING, true);
-            } else {
-                model.addAttribute(PENDING, true);
-            }
-            role = PENDING;
-        }
-        return role;
-    }
-
-    private String userIsNotPending(final Model model) {
-        if (model instanceof RedirectAttributes) {
-            ((RedirectAttributes) model).addFlashAttribute(NOT_PENDING, true);
-        } else {
-            model.addAttribute(NOT_PENDING, true);
-        }
-        return NOT_PENDING;
     }
 }
