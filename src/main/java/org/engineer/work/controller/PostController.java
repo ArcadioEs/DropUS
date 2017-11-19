@@ -39,9 +39,10 @@ public class PostController extends AbstractController {
 	                         final RedirectAttributes redirectAttributes) {
 		final String validGroupName = capitalize(groupName.trim().toLowerCase());
 		final String validPostContent = this.validatePostContent(postContent, redirectAttributes, CREATE_POST);
+		final String userRole = determineUserRoleInGroup(user.getUsername(), validGroupName);
 
 		final GroupDTO group = getGroupFacade().getGroupByName(validGroupName);
-		if (user != null && group != null && validPostContent != null) {
+		if (group != null && validPostContent != null && checkWhetherIsMemberGroup(userRole)) {
 			getPostFacade().createPost(
 					new PostDTO().setAuthor(user.getUsername())
 							     .setPostGroup(group.getName())
@@ -57,15 +58,17 @@ public class PostController extends AbstractController {
 	                                @AuthenticationPrincipal User user,
 	                                final RedirectAttributes redirectAttributes) {
 		final String validPostContent = this.validatePostContent(postContent, redirectAttributes, UPDATE_POST);
+
 		PostDTO post = null;
 		try {
 			final Long validPostID = Long.valueOf(postID);
 
 			post = getPostFacade().findPost(validPostID);
-			if (user != null
-					&& post != null
+			if (post != null
 					&& validPostContent != null) {
-				if (post.getAuthor().equals(user.getUsername())) {
+				final String userRole = determineUserRoleInGroup(user.getUsername(), post.getPostGroup());
+
+				if (checkWhetherIsMemberGroup(userRole) && post.getAuthor().equals(user.getUsername())) {
 					getPostFacade().updatePostContent(
 							new PostDTO().setId(post.getId())
 										 .setPostContent(validPostContent)
@@ -86,9 +89,11 @@ public class PostController extends AbstractController {
 			final Long validPostID = Long.valueOf(postID);
 
 			post = getPostFacade().findPost(validPostID);
-			if (post != null && user != null) {
+			if (post != null) {
+				final String userRole = determineUserRoleInGroup(user.getUsername(), post.getPostGroup());
 				final GroupDTO group = getGroupFacade().getGroupByName(post.getPostGroup());
-				if (post.getAuthor().equals(user.getUsername()) || group.getGroupOwner().equals(user.getUsername())) {
+
+				if (checkWhetherIsMemberGroup(userRole) && checkWhetherAbleToDeletePost(post, group, user.getUsername())) {
 					getPostFacade().deletePost(validPostID);
 				}
 			}
@@ -96,6 +101,13 @@ public class PostController extends AbstractController {
 			LOG.warn("Given post id for deleting post operation is not valid, long value required");
 		}
 		return (post != null) ? REDIRECTION_PREFIX + DISPLAY_GROUP + post.getPostGroup() : REDIRECTION_PREFIX + DISPLAY_ALL_GROUPS;
+	}
+
+	/**
+	 * Checks whether user is permitted to delete post
+	 */
+	private boolean checkWhetherAbleToDeletePost(final PostDTO post, final GroupDTO group, final String username) {
+		return (post.getAuthor().equals(username) || group.getGroupOwner().equals(username));
 	}
 
 	/**

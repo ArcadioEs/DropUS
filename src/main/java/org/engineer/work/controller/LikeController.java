@@ -16,18 +16,15 @@ import java.util.Map;
 @RequestMapping(value = "/update")
 public class LikeController extends AbstractController {
 
-	private static final String ADMIN = "isAdmin";
-	private static final String MEMBER = "isMember";
-
 	@PostMapping(value = "/likes")
 	public @ResponseBody Map<String, Object> updateLikes(@AuthenticationPrincipal final User user, @RequestBody final Map<String, String> data) {
 		Map<String, Object> response = new HashMap<>();
 
 		final Long validPostID = Long.valueOf(data.get("postID"));
 		final boolean validLike = Boolean.parseBoolean(data.get("like"));
-		final String userRole = getGroupFacade().determineUserRoleInGroup(user.getUsername(), getPostFacade().findPost(validPostID).getPostGroup());
+		final String userRole = determineUserRoleInGroup(user.getUsername(), getPostFacade().findPost(validPostID).getPostGroup());
 
-		if (ADMIN.equals(userRole) || MEMBER.equals(userRole)) {
+		if (checkWhetherIsMemberGroup(userRole)) {
 			if (validLike) {
 				getPostFacade().updateLikes(user.getUsername(), validPostID);
 			} else {

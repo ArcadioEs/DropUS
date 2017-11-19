@@ -26,11 +26,6 @@ public class GroupFacadeImpl implements GroupFacade {
 
     private static final Logger LOG = LoggerFactory.getLogger(GroupFacadeImpl.class);
 
-    private static final String ADMIN = "isAdmin";
-    private static final String MEMBER = "isMember";
-    private static final String PENDING = "isPending";
-    private static final String NOT_PENDING = "isNotPending";
-
     @Resource
     private GroupService groupService;
     @Resource
@@ -105,51 +100,6 @@ public class GroupFacadeImpl implements GroupFacade {
     @Override
     public boolean deleteGroup(final String name) {
         return groupService.deleteGroup(name);
-    }
-
-    @Override
-    public String determineUserRoleInGroup(final String username, final String groupName) {
-        if (username != null && groupName != null) {
-            final UserEntity userDTO = userService.getUserByUsername(username);
-            final GroupEntity groupDTO = groupService.getGroupByName(groupName);
-
-            if (userDTO != null && groupDTO != null) {
-                if (checkWhetherUserIsAdmin(userDTO, groupDTO) != null) {
-                    return checkWhetherUserIsAdmin(userDTO, groupDTO);
-                } else if (checkWhetherUserIsMember(userDTO, groupDTO) != null) {
-                    return checkWhetherUserIsMember(userDTO, groupDTO);
-                } else if (checkWhetherUserIsPending(userDTO, groupDTO) != null) {
-                    return checkWhetherUserIsPending(userDTO, groupDTO);
-                } else {
-                    return NOT_PENDING;
-                }
-            }
-        }
-        return null;
-    }
-
-    private String checkWhetherUserIsAdmin(final UserEntity UserEntity, final GroupEntity groupEntity) {
-        String role = null;
-        if (UserEntity.getUsername().equals(groupEntity.getGroupOwner())) {
-            role = ADMIN;
-        }
-        return role;
-    }
-
-    private String checkWhetherUserIsMember(final UserEntity UserEntity, final GroupEntity groupEntity) {
-        String role = null;
-        if (userFacade.getUserByUsername(UserEntity.getUsername()).getUserGroups().contains(groupEntity.getName())) {
-            role = MEMBER;
-        }
-        return role;
-    }
-
-    private String checkWhetherUserIsPending(final UserEntity UserEntity, final GroupEntity groupEntity) {
-        String role = null;
-        if (groupEntity.getPendingUsers().contains(UserEntity.getUsername())) {
-            role = PENDING;
-        }
-        return role;
     }
 
     /**

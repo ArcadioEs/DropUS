@@ -32,16 +32,4 @@ public interface GroupFacade {
     boolean updateGroupMembers(final String username, final String groupName, final boolean add);
 
     boolean deleteGroup(final String name);
-
-    /**
-     * Returns user role in given group.
-     * @return
-     * <ul>
-     *  <li>isAdmin - if given user is admin of group</li>
-     *  <li>isMember - if given user is member of group</li>
-     *  <li>isPending - if user already wants to join group</li>
-     *  <li>isNotPending - if user is not connected with group in any way</li>
-     * </ul>
-     */
-    String determineUserRoleInGroup(final String username, final String groupName);
 }

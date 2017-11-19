@@ -35,8 +35,6 @@ import static org.thymeleaf.util.StringUtils.capitalize;
 @Controller
 @RequestMapping("/group")
 public class GroupController extends AbstractController {
-    private static final String ADMIN = "isAdmin";
-    private static final String MEMBER = "isMember";
 
     private static final String NAME_ERROR = "nameError";
     private static final String DESCRIPTION_ERROR = "descriptionError";
@@ -57,7 +55,7 @@ public class GroupController extends AbstractController {
         final GroupDTO group = getGroupFacade().getGroupByName(validGroupName);
 
         if (user != null && group != null) {
-            model.addAttribute(getGroupFacade().determineUserRoleInGroup(user.getUsername(), validGroupName), true);
+            model.addAttribute(determineUserRoleInGroup(user.getUsername(), validGroupName), true);
             if (group.getMembers() != null) {
                 group.getMembers().removeIf(member -> member.equals(group.getGroupOwner()));
             }
@@ -89,7 +87,7 @@ public class GroupController extends AbstractController {
                                     @AuthenticationPrincipal final User user,
                                     final RedirectAttributes redirectAttributes) {
         final String validGroupName = capitalize(groupName.trim().toLowerCase());
-        final String userRole = getGroupFacade().determineUserRoleInGroup(user.getUsername(), validGroupName);
+        final String userRole = determineUserRoleInGroup(user.getUsername(), validGroupName);
 
         if (ADMIN.equals(userRole)) {
             getGroupFacade().updateGroupMembers(username, validGroupName, TRUE);
@@ -102,7 +100,7 @@ public class GroupController extends AbstractController {
     public String exitGroup(@RequestParam("groupName") final String groupName,
                              @AuthenticationPrincipal final User user) {
         final String validGroupName = capitalize(groupName.trim().toLowerCase());
-        final String userRole = getGroupFacade().determineUserRoleInGroup(user.getUsername(), validGroupName);
+        final String userRole = determineUserRoleInGroup(user.getUsername(), validGroupName);
 
         if (MEMBER.equals(userRole)) {
             getGroupFacade().updateGroupMembers(user.getUsername(), validGroupName, FALSE);
@@ -146,7 +144,7 @@ public class GroupController extends AbstractController {
                               final RedirectAttributes redirectAttributes) {
         final String validGroupName = capitalize(groupName.trim().toLowerCase());
         final GroupDTO group = getGroupFacade().getGroupByName(validGroupName);
-        final String userRole = getGroupFacade().determineUserRoleInGroup(user.getUsername(), validGroupName);
+        final String userRole = determineUserRoleInGroup(user.getUsername(), validGroupName);
 
         if (group != null && ADMIN.equals(userRole)) {
             if (getGroupFacade().deleteGroup(validGroupName)) {
