@@ -27,7 +27,7 @@ public class LikeController extends AbstractController {
 		final boolean validLike = Boolean.parseBoolean(data.get("like"));
 		final String userRole = getGroupFacade().determineUserRoleInGroup(user.getUsername(), getPostFacade().findPost(validPostID).getPostGroup());
 
-		if (userRole.equals(ADMIN) || userRole.equals(MEMBER)) {
+		if (ADMIN.equals(userRole) || MEMBER.equals(userRole)) {
 			if (validLike) {
 				getPostFacade().updateLikes(user.getUsername(), validPostID);
 			} else {
