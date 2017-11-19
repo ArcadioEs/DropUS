@@ -81,12 +81,8 @@
                                     </form>
                                     <div class="group-post--content-substance" th:text="${post.postContent}"></div>
                                     <div th:id="${post.id}" class="group-post--content-likes">
-                                        <!--<form th:action="@{/post/like/update}" method="post">-->
-                                            <button th:class="${'btn btn-success btn-trigger btn-like-' + post.id}" th:data-post-id="${post.id}" th:data-like="${true}">Likes [[${post.likes.size()}]]</button>
-                                        <!--</form>-->
-                                        <!--<form th:action="@{/post/like/update}" method="post">-->
-                                            <button th:class="${'btn btn-danger btn-trigger btn-dislike-' + post.id}" th:data-post-id="${post.id}" th:data-like="${false}">Dislikes [[${post.dislikes.size()}]]</button>
-                                        <!--</form>-->
+                                        <button th:class="${'btn btn-success btn-trigger btn-like-' + post.id}" th:data-like="${true}">Likes [[${post.likes.size()}]]</button>
+                                        <button th:class="${'btn btn-danger btn-trigger btn-dislike-' + post.id}" th:data-like="${false}">Dislikes [[${post.dislikes.size()}]]</button>
                                     </div>
                                 </div>
                             </div>

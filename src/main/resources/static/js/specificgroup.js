@@ -11,7 +11,7 @@ $(document).ready(function() {
             contentType: 'application/json',
             dataType: 'json',
             data: JSON.stringify({
-                'postID': trigger.data('post-id'),
+                'postID': triggerId,
                 'like': trigger.data('like')
             }),
             headers: {
