@@ -11,6 +11,10 @@
     margin-bottom: 0;
 }
 
+#content_section .group-content {
+    background-color: #e0e0e0;
+}
+
 .group-description {
     padding-bottom: 1em;
 }
@@ -32,8 +36,8 @@
 }
 
 .group-post--content {
-    border: 5px #f0f2ff ridge;
-    background-color: #eaeaea;
+    border-radius: 5px;
+    background-color: #ffffff;
     margin: 0 3em 2em;
     text-align: left;
 }
@@ -61,6 +65,36 @@
 .group-post--content-likes > form {
     display: inline-block;
     margin: 1em;
+}
+
+#specific_group button:hover {
+    outline: 0;
+    text-decoration: underline;
+}
+
+#specific_group button:focus {
+    outline: 0;
+    text-decoration: none;
+}
+
+#specific_group .btn-like:hover {
+    color: green;
+}
+
+#specific_group .btn-dislike:hover {
+    color: red;
+}
+
+.group-post--content-likes .btn-green {
+    color: green;
+}
+
+.group-post--content-likes .btn-red {
+    color: red;
+}
+
+.group-post--content-likes .btn-black {
+    color: black;
 }
 
 .group-admin--label {

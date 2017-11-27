@@ -6,6 +6,7 @@
         <div th:insert="fragments/bootstrap :: bootstrap"></div>
         <script th:src="@{/js/specificgroup.js}" type="text/javascript"></script>
         <meta name="_csrf" th:content="${_csrf.token}"/>
+        <meta name="_remoteUser" th:content="${#httpServletRequest.remoteUser}"/>
     </head>
     <body id="specific_group" class="container-fluid text-center">
         <div th:insert="fragments/header :: header"></div>
@@ -81,8 +82,12 @@
                                     </form>
                                     <div class="group-post--content-substance" th:text="${post.postContent}"></div>
                                     <div th:id="${post.id}" class="group-post--content-likes">
-                                        <button th:class="${'btn btn-success btn-trigger btn-like-' + post.id}" th:data-like="${true}">Likes [[${post.likes.size()}]]</button>
-                                        <button th:class="${'btn btn-danger btn-trigger btn-dislike-' + post.id}" th:data-like="${false}">Dislikes [[${post.dislikes.size()}]]</button>
+                                        <button th:class="${'btn btn-link btn-like btn-trigger btn-like-' + post.id}" th:classappend="${post.likes.contains(#httpServletRequest.remoteUser)} ? btn-green : btn-black" th:data-likes="${post.likes}" th:data-like="${true}">
+                                            <span class="glyphicon glyphicon-thumbs-up"></span> Likes [[${post.likes.size()}]]
+                                        </button>
+                                        <button th:class="${'btn btn-link btn-dislike btn-trigger btn-dislike-' + post.id}" th:classappend="${post.dislikes.contains(#httpServletRequest.remoteUser)} ? btn-red : btn-black" th:data-dislikes="${post.dislikes}" th:data-like="${false}">
+                                            <span class="glyphicon glyphicon-thumbs-down"></span> Dislikes [[${post.dislikes.size()}]]
+                                        </button>
                                     </div>
                                 </div>
                             </div>
