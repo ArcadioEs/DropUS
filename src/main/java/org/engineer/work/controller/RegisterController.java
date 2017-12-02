@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.thymeleaf.util.StringUtils;
 
 import java.text.MessageFormat;
 import java.util.regex.Matcher;
@@ -41,7 +40,7 @@ public class RegisterController extends AbstractController {
                                @RequestParam("password") final String password,
                                @RequestParam("passwordConfirm") final String passwordConfirm,
                                final RedirectAttributes model) {
-        final String validUsername = StringUtils.capitalize(username.trim().toLowerCase());
+        final String validUsername = validateName(username);
 
         if (this.validateCredentials(model, validUsername, password, passwordConfirm)) {
             final UserDTO userDTO = new UserDTO();
@@ -78,6 +77,11 @@ public class RegisterController extends AbstractController {
                 redirectAttributes.addFlashAttribute(USERNAME_ERROR, "Username cannot contain any special characters!");
                 result = false;
             }
+        }
+
+        if (username != null && username.length() > 15) {
+            redirectAttributes.addFlashAttribute(USERNAME_ERROR, "Username must not be longer than 15 digits!");
+            result = false;
         }
 
         if (username != null && getUserFacade().userExists(username)) {

@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 /**
  * Entity representing User in the system.
@@ -16,6 +17,7 @@ public class UserEntity {
 
     @Id
     @Column(nullable = false, unique = true)
+    @Size(max = 15)
     private String username;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String password;

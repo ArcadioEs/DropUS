@@ -46,7 +46,7 @@ public class StorageFacadeImpl implements StorageFacade {
 
 	@Override
 	public void checkIfMaximumSizeExceeded(final Long size) {
-		Long maxSize = Long.parseLong(propertiesService.getProperty(FILE_MAX_SIZE));
+		final Long maxSize = this.getActualMaximumFileSize();
 
 		if (size > maxSize) throw new MaxUploadSizeExceededException(maxSize);
 	}

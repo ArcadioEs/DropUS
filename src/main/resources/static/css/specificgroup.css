@@ -28,11 +28,17 @@
     display: block;
 }
 
-.group-users--user-list {
+#user_section .group-users--user-list {
+    padding: 1em;
     max-width: 100px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.group-users--actions {
+    text-align: center;
+    width: 1px;
 }
 
 .group-post--content {

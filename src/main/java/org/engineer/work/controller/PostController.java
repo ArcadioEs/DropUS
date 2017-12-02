@@ -16,7 +16,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.DISPLAY_ALL_GROUPS;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.DISPLAY_GROUP;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.REDIRECTION_PREFIX;
-import static org.thymeleaf.util.StringUtils.capitalize;
 
 /**
  * Controller for post page.
@@ -37,7 +36,7 @@ public class PostController extends AbstractController {
 	                         @RequestParam(value = "groupName") final String groupName,
 	                         @AuthenticationPrincipal User user,
 	                         final RedirectAttributes redirectAttributes) {
-		final String validGroupName = capitalize(groupName.trim().toLowerCase());
+		final String validGroupName = validateName(groupName);
 		final String validPostContent = this.validatePostContent(postContent, redirectAttributes, CREATE_POST);
 		final String userRole = determineUserRoleInGroup(user.getUsername(), validGroupName);
 

@@ -27,7 +27,6 @@ import static org.engineer.work.controller.abstractcontroller.AbstractController
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.TEMPLATE_ERROR_PAGE;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.TEMPLATE_GROUPS;
 import static org.engineer.work.controller.abstractcontroller.AbstractController.Templates.TEMPLATE_SPECIFIC_GROUP;
-import static org.thymeleaf.util.StringUtils.capitalize;
 
 /**
  * Controller for group page.
@@ -51,7 +50,7 @@ public class GroupController extends AbstractController {
     public String getSpecificGroup(@PathVariable(value = "groupName") final String groupName,
                                    @AuthenticationPrincipal final User user,
                                    final Model model) {
-        final String validGroupName = capitalize(groupName.trim().toLowerCase());
+        final String validGroupName = validateName(groupName);
         final GroupDTO group = getGroupFacade().getGroupByName(validGroupName);
 
         if (user != null && group != null) {
@@ -72,7 +71,7 @@ public class GroupController extends AbstractController {
     public String joinGroup(@RequestParam(value = "groupName") final String groupName,
                             @RequestParam(value = "add") final String decision,
                             @AuthenticationPrincipal final User user) {
-        final String validGroupName = capitalize(groupName.trim().toLowerCase());
+        final String validGroupName = validateName(groupName);
 
         if (user != null) {
             final boolean add = Boolean.parseBoolean(decision);
@@ -84,14 +83,12 @@ public class GroupController extends AbstractController {
     @PostMapping(value = "/accept")
     public String acceptUserToGroup(@RequestParam(value = "username") final String username,
                                     @RequestParam(value = "groupName") final String groupName,
-                                    @AuthenticationPrincipal final User user,
-                                    final RedirectAttributes redirectAttributes) {
-        final String validGroupName = capitalize(groupName.trim().toLowerCase());
+                                    @AuthenticationPrincipal final User user) {
+        final String validGroupName = validateName(groupName);
         final String userRole = determineUserRoleInGroup(user.getUsername(), validGroupName);
 
         if (ADMIN.equals(userRole)) {
             getGroupFacade().updateGroupMembers(username, validGroupName, TRUE);
-            redirectAttributes.addFlashAttribute(userRole, true);
         }
         return REDIRECTION_PREFIX + DISPLAY_GROUP + validGroupName;
     }
@@ -99,7 +96,7 @@ public class GroupController extends AbstractController {
     @PostMapping(value = "/exit")
     public String exitGroup(@RequestParam("groupName") final String groupName,
                              @AuthenticationPrincipal final User user) {
-        final String validGroupName = capitalize(groupName.trim().toLowerCase());
+        final String validGroupName = validateName(groupName);
         final String userRole = determineUserRoleInGroup(user.getUsername(), validGroupName);
 
         if (MEMBER.equals(userRole)) {
@@ -120,7 +117,7 @@ public class GroupController extends AbstractController {
         if (m.find()) {
             redirectAttributes.addFlashAttribute(NAME_ERROR, "Group name cannot contain any special character");
         } else {
-            final String validGroupName = capitalize(groupName.trim().toLowerCase());
+            final String validGroupName = validateName(groupName);
             if (user != null && this.validate(redirectAttributes, validGroupName, description)) {
                 GroupDTO groupDTO = new GroupDTO();
                 groupDTO.setName(validGroupName);
@@ -142,7 +139,7 @@ public class GroupController extends AbstractController {
     public String deleteGroup(@RequestParam(value = "groupName") final String groupName,
                               @AuthenticationPrincipal final User user,
                               final RedirectAttributes redirectAttributes) {
-        final String validGroupName = capitalize(groupName.trim().toLowerCase());
+        final String validGroupName = validateName(groupName);
         final GroupDTO group = getGroupFacade().getGroupByName(validGroupName);
         final String userRole = determineUserRoleInGroup(user.getUsername(), validGroupName);
 
@@ -154,6 +151,22 @@ public class GroupController extends AbstractController {
             }
         }
         return REDIRECTION_PREFIX + DISPLAY_ALL_GROUPS;
+    }
+
+    @PostMapping(value = "/remove")
+    public String removeUser(@RequestParam(value = "groupName") final String groupName,
+                             @RequestParam(value = "userToRemove") final String userToRemove,
+                             @AuthenticationPrincipal final User user) {
+	    final String validUsername = validateName(userToRemove);
+	    final String validGroupName = validateName(groupName);
+	    final GroupDTO group = getGroupFacade().getGroupByName(validGroupName);
+	    final String userRole = determineUserRoleInGroup(user.getUsername(), validGroupName);
+
+	    if (group != null && ADMIN.equals(userRole)) {
+	    	getGroupFacade().updateGroupMembers(validUsername, validGroupName, FALSE);
+	    }
+
+	    return REDIRECTION_PREFIX + DISPLAY_GROUP + validGroupName;
     }
 
     @ExceptionHandler(value = Exception.class)

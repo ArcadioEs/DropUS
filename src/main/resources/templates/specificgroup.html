@@ -13,24 +13,32 @@
 
         <div th:switch="${groupExists}">
             <div th:case="true" class="row specific-group--content">
-                <div id="user_section" class="col-sm-3">
+                <div id="user_section" class="col-xs-3">
                     <div class="border group-users">
                         <h3>Group admin: [[${group.groupOwner}]]</h3>
                         <table th:if="${!group.members.isEmpty()}" class="table table-striped">
                             <thead>
                             <tr>
                                 <th>Members</th>
+                                <th th:if="${isAdmin}" class="text-center">Actions</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr th:each="user : ${group.members}">
                                 <td class="group-users--user-list"><a th:href="@{'/profile/display/' + ${user}}">[[${user}]]</a></td>
+                                <td th:if="${isAdmin}" class="group-users--actions">
+                                    <form th:action="@{/group/remove}" method="post">
+                                        <input name="userToRemove" th:value="${user}" type="hidden"/>
+                                        <input name="groupName" th:value="${group.name}" type="hidden"/>
+                                        <input type="submit" class="btn btn-danger" value="Remove">
+                                    </form>
+                                </td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <div id="content_section" class="col-sm-6">
+                <div id="content_section" class="col-xs-6">
                     <div class="border group-content">
                         <h2 th:text="${group.name}"></h2>
                         <h3 class="group-description" th:text="${group.description}"></h3>
@@ -94,7 +102,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="action_section" class="col-sm-3">
+                <div id="action_section" class="col-xs-3">
                     <div class="border group-actions">
                         <button th:if="${isAdmin}" class="btn btn-danger" data-toggle="modal" data-target="#delete_group"><span class="glyphicon glyphicon-remove"></span> Delete</button>
                         <form id="delete_group" th:action="@{/group/delete}" method="post" class="modal fade" role="dialog">

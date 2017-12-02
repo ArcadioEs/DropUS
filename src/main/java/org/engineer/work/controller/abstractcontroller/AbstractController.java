@@ -11,6 +11,8 @@ import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
 
+import static org.thymeleaf.util.StringUtils.capitalize;
+
 /**
  * Abstract, generic controller to hold all repetitive data.
  */
@@ -51,6 +53,15 @@ public abstract class AbstractController {
 
     protected StorageFacade getStorageFacade() {
         return this.storageFacade;
+    }
+
+    /**
+     * Transforms any kind of name for proper ones - capitalised, trimmed strings
+     * @param name name to be validated
+     * @return validated name
+     */
+    protected String validateName(final String name) {
+        return (name != null) ? capitalize(name.trim().toLowerCase()) : null;
     }
 
     /**
