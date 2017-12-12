@@ -183,7 +183,7 @@ public class GroupController extends AbstractController {
         }
 
         if (name != null && name.length() > 20) {
-            model.addFlashAttribute(NAME_ERROR, "Group must not be bigger than 20 digits");
+            model.addFlashAttribute(NAME_ERROR, "Group name must not be bigger than 20 digits");
             result = false;
         }
 

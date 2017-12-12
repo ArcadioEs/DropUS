@@ -22,6 +22,13 @@ import java.util.List;
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
 
+    /**
+     * Name constructed this way to avoid collision with real user name.
+     * User can not create account with more than 15 digits within username.
+     */
+    private static final String MOCK_USERNAME = "User123456789012";
+    private static final String MOCK_FILES_LOCATION = "dropus.files.root";
+
     @InjectMocks
     private final UserService userService = new UserServiceImpl();
     private UserDTO testUser;
@@ -29,14 +36,27 @@ public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
     @Mock
+    private PropertiesService propertiesService;
+    @Mock
     private UserGroupsService userGroupsService;
 
     @Test
+    public void shouldReturnUserByUsername() {
+        testUser = getCompleteUserDTO(MOCK_USERNAME);
+
+        Mockito.when(userRepository.findOne(MOCK_USERNAME)).thenReturn(new UserEntity(testUser));
+
+        Assert.assertEquals(testUser.getUsername(), userService.getUserByUsername(MOCK_USERNAME).getUsername());
+        Assert.assertEquals(testUser.getPassword(), userService.getUserByUsername(MOCK_USERNAME).getPassword());
+        Assert.assertEquals(testUser.getRole(), userService.getUserByUsername(MOCK_USERNAME).getRole());
+    }
+
+    @Test
     public void shouldReturnAllUsersAsAList() {
-        UserDTO userDTO = getCompleteUserDTO("User0");
+        UserDTO userDTO = getCompleteUserDTO(MOCK_USERNAME + "0");
         final UserEntity user0 = new UserEntity(userDTO);
 
-        userDTO = getCompleteUserDTO("User1");
+        userDTO = getCompleteUserDTO(MOCK_USERNAME + "1");
         final UserEntity user1 = new UserEntity(userDTO);
 
         final Iterable<UserEntity> users = new ArrayIterator<>(new UserEntity[]{user0, user1});
@@ -52,16 +72,17 @@ public class UserServiceTest {
 
     @Test
     public void shouldCreateUser() {
-        testUser = getCompleteUserDTO("User");
+        testUser = getCompleteUserDTO(MOCK_USERNAME);
 
         Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(false);
+        Mockito.when(propertiesService.getProperty(MOCK_FILES_LOCATION)).thenReturn("");
 
         Assert.assertTrue(userService.createUser(testUser));
     }
 
     @Test
     public void shouldReturnFalseDuringCreation() {
-        testUser = getCompleteUserDTO("User");
+        testUser = getCompleteUserDTO(MOCK_USERNAME);
 
         Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(true);
 
@@ -70,16 +91,17 @@ public class UserServiceTest {
 
     @Test
     public void shouldDeleteUser() {
-        testUser = getCompleteUserDTO("User");
+        testUser = getCompleteUserDTO(MOCK_USERNAME);
 
         Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(true);
+        Mockito.when(userGroupsService.deleteUserGroups(testUser.getUsername())).thenReturn(true);
 
         Assert.assertTrue(userService.deleteUser(testUser.getUsername()));
     }
 
     @Test
     public void shouldReturnFalseDuringDeletion() {
-        testUser = getCompleteUserDTO("User");
+        testUser = getCompleteUserDTO(MOCK_USERNAME);
 
         Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(false);
 
@@ -88,7 +110,7 @@ public class UserServiceTest {
 
     @Test
     public void shouldUpdateUser() {
-        testUser = getCompleteUserDTO("User");
+        testUser = getCompleteUserDTO(MOCK_USERNAME);
 
         Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(true);
 
@@ -97,7 +119,7 @@ public class UserServiceTest {
 
     @Test
     public void shouldReturnFalseDuringUpdating() {
-        testUser = getCompleteUserDTO("User");
+        testUser = getCompleteUserDTO(MOCK_USERNAME);
 
         Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(false);
 

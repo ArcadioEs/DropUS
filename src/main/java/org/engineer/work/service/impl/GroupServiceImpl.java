@@ -201,6 +201,10 @@ public class GroupServiceImpl implements GroupService {
         return result;
     }
 
+    /**
+     * Validates whether specified user can be added or removed from given group.
+     * @param add flag which determines whether user should be added to group or removed
+     */
     private boolean validateIfGroupCanBeUpdated(final UserEntity user, final GroupEntity group, final boolean add) {
         boolean result = false;
         if (user != null && group != null) {
