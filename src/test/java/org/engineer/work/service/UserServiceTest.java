@@ -3,8 +3,8 @@ package org.engineer.work.service;
 import com.fasterxml.jackson.databind.util.ArrayIterator;
 import org.engineer.work.dto.UserDTO;
 import org.engineer.work.model.UserEntity;
-import org.engineer.work.model.enumeration.AuthorityRoles;
 import org.engineer.work.repository.UserRepository;
+import org.engineer.work.service.abstractlayer.AbstractUnitTest;
 import org.engineer.work.service.impl.UserServiceImpl;
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,14 +20,7 @@ import java.util.List;
  * Test of {@link UserService} implementation.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class UserServiceTest {
-
-    /**
-     * Name constructed this way to avoid collision with real user name.
-     * User can not create account with more than 15 digits within username.
-     */
-    private static final String MOCK_USERNAME = "User123456789012";
-    private static final String MOCK_FILES_LOCATION = "dropus.files.root";
+public class UserServiceTest extends AbstractUnitTest {
 
     @InjectMocks
     private final UserService userService = new UserServiceImpl();
@@ -78,6 +71,8 @@ public class UserServiceTest {
         Mockito.when(propertiesService.getProperty(MOCK_FILES_LOCATION)).thenReturn("");
 
         Assert.assertTrue(userService.createUser(testUser));
+
+        // TODO: cleanup created files in the root location of the project
     }
 
     @Test
@@ -124,16 +119,5 @@ public class UserServiceTest {
         Mockito.when(userRepository.exists(testUser.getUsername())).thenReturn(false);
 
         Assert.assertFalse(userService.updateUser(new UserEntity(testUser)));
-    }
-
-    private UserDTO getCompleteUserDTO(final String username) {
-        final UserDTO userDTO = new UserDTO();
-
-        userDTO.setUsername(username);
-        userDTO.setPassword("test");
-        userDTO.setEnabled((byte) 0);
-        userDTO.setRole(AuthorityRoles.USER);
-
-        return userDTO;
     }
 }
