@@ -15,12 +15,13 @@ import java.util.Properties;
 @Service
 public class PropertiesServiceImpl implements PropertiesService {
 	private static final Logger LOG = LoggerFactory.getLogger(PropertiesServiceImpl.class);
+	private static final String CONFIG_LOCATION = "src/main/resources/application.properties";
 
 	private Properties properties = new Properties();
 
 	public PropertiesServiceImpl() {
 		try {
-			properties.load(new FileInputStream("src/main/resources/application.properties"));
+			properties.load(new FileInputStream(CONFIG_LOCATION));
 		} catch (IOException e) {
 			LOG.warn("Something went wrong while loading property file");
 		}

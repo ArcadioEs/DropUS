@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.util.ArrayIterator;
 import org.engineer.work.dto.UserDTO;
 import org.engineer.work.model.UserEntity;
 import org.engineer.work.repository.UserRepository;
-import org.engineer.work.service.abstractlayer.AbstractUnitTest;
+import org.engineer.work.abstractlayer.AbstractTest;
 import org.engineer.work.service.impl.UserServiceImpl;
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,7 +20,7 @@ import java.util.List;
  * Test of {@link UserService} implementation.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class UserServiceTest extends AbstractUnitTest {
+public class UserServiceTest extends AbstractTest {
 
     @InjectMocks
     private final UserService userService = new UserServiceImpl();

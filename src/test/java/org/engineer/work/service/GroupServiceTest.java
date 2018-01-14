@@ -6,7 +6,7 @@ import org.engineer.work.model.GroupEntity;
 import org.engineer.work.model.UserEntity;
 import org.engineer.work.model.bounding.UserGroups;
 import org.engineer.work.repository.GroupRepository;
-import org.engineer.work.service.abstractlayer.AbstractUnitTest;
+import org.engineer.work.abstractlayer.AbstractTest;
 import org.engineer.work.service.impl.GroupServiceImpl;
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,13 +16,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.validation.constraints.AssertTrue;
-
 /**
  * Test of {@link GroupService} implementation.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class GroupServiceTest extends AbstractUnitTest {
+public class GroupServiceTest extends AbstractTest {
 
 	@Mock
 	private GroupRepository groupRepository;

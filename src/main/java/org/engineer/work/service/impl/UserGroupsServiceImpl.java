@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Default implementation of {@link UserGroupsService}.
@@ -40,7 +40,7 @@ public class UserGroupsServiceImpl implements UserGroupsService {
                 UserGroups userGroups = this.getUserGroupsByUsername(username);
                 if (add && userGroups == null) {
                     userGroups = new UserGroups(username);
-                    userGroups.setGroups(Arrays.asList(groupName));
+                    userGroups.setGroups(Collections.singletonList(groupName));
                     userGroupsRepository.save(userGroups);
                     result = true;
                 } else if (add) {

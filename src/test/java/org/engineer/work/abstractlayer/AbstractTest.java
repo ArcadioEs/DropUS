@@ -1,24 +1,23 @@
-package org.engineer.work.service.abstractlayer;
+package org.engineer.work.abstractlayer;
 
 import org.engineer.work.dto.GroupDTO;
 import org.engineer.work.dto.UserDTO;
 import org.engineer.work.model.enumeration.AuthorityRoles;
 
-public abstract class AbstractUnitTest {
+public abstract class AbstractTest {
 
 	/**
 	 * Name constructed this way to avoid collision with real user name.
-	 * User can not create account with more than 15 digits within username.
+	 * User can not create account with special characters in it (_).
 	 */
-	protected static final String MOCK_USERNAME = "User123456789012";
+	protected static final String MOCK_USERNAME = "Test_user";
 	protected static final String MOCK_USER_PASSWORD = "test";
 	/**
 	 * Group name constructed this way to avoid collision with real group name.
-	 * User can not create group with more than 20 digits within group name.
+	 * User can not create group with special characters in it (_).
 	 */
-	protected static final String MOCK_GROUP_NAME = "Group1234567890123456";
+	protected static final String MOCK_GROUP_NAME = "Test_group";
 	protected static final String MOCK_GROUP_DESCRIPTION = "Description";
-	protected static final String MOCK_GROUP_OWNER = "Owner";
 	protected static final String MOCK_FILES_LOCATION = "dropus.files.root";
 
 	protected UserDTO getCompleteUserDTO(final String username) {
@@ -37,7 +36,7 @@ public abstract class AbstractUnitTest {
 
 		groupDTO.setName(groupName);
 		groupDTO.setDescription(MOCK_GROUP_DESCRIPTION);
-		groupDTO.setGroupOwner(MOCK_GROUP_OWNER);
+		groupDTO.setGroupOwner(MOCK_USERNAME);
 
 		return groupDTO;
 	}

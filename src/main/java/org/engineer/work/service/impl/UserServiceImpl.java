@@ -1,5 +1,6 @@
 package org.engineer.work.service.impl;
 
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.engineer.work.dto.UserDTO;
 import org.engineer.work.model.UserEntity;
 import org.engineer.work.repository.UserRepository;
@@ -11,8 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +30,8 @@ public class UserServiceImpl implements UserService {
     private static final String FILES_LOCATION = "dropus.files.root";
     private static final String SHARED = "/shared/";
     private static final String NOT_SHARED = "/not_shared/";
+
+    private String rootLocation;
 
     @Resource
     private UserRepository userRepository;
@@ -105,6 +110,7 @@ public class UserServiceImpl implements UserService {
         if (username != null && userRepository.exists(username)) {
             userRepository.delete(username);
             userGroupsService.deleteUserGroups(username);
+            this.deleteUserFolder(username);
             result = true;
         } else {
             LOG.warn("User {} could not be deleted", username);
@@ -113,7 +119,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private void createUserFolder(final String username) {
-        final String rootLocation = propertiesService.getProperty(FILES_LOCATION);
         final String pathShared = rootLocation + username + SHARED;
         final String pathNotShared = rootLocation + username + NOT_SHARED;
 
@@ -123,5 +128,20 @@ public class UserServiceImpl implements UserService {
         if (! new File(pathNotShared).mkdirs()) {
             LOG.warn("Path ({}) could not be created", pathNotShared);
         }
+    }
+
+    private void deleteUserFolder(final String username) {
+        final String userPath = rootLocation + username;
+
+        try {
+            FileUtils.deleteDirectory(new File(userPath));
+        } catch (IOException e) {
+            LOG.warn("Could not delete storage folders for user {}", username);
+        }
+    }
+
+    @PostConstruct
+    public void setRootLocation() {
+        this.rootLocation = propertiesService.getProperty(FILES_LOCATION);
     }
 }
