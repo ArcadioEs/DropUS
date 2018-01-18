@@ -38,7 +38,7 @@ public class GroupEntity {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<PostEntity> posts = new ArrayList<>();
 
-    public GroupEntity(final GroupDTO groupDTO) throws IllegalArgumentException {
+    public GroupEntity(final GroupDTO groupDTO) {
         this.setName(groupDTO.getName());
         this.setGroupOwner(groupDTO.getGroupOwner());
         this.setDescription(groupDTO.getDescription());

@@ -25,7 +25,7 @@ public class UserGroups {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> groups = new ArrayList<>();
 
-    public UserGroups(final String username) throws IllegalArgumentException {
+    public UserGroups(final String username) {
         this.setUsername(username);
     }
 

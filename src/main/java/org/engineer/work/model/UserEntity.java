@@ -26,7 +26,7 @@ public class UserEntity {
     @Column(nullable = false)
     private String role;
 
-    public UserEntity(final UserDTO userDTO) throws IllegalArgumentException {
+    public UserEntity(final UserDTO userDTO) {
         this.setUsername(userDTO.getUsername());
         this.setPassword(userDTO.getPassword());
         this.setEnabled(userDTO.getEnabled());

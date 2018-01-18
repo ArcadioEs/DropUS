@@ -3,14 +3,14 @@ package org.engineer.work.integration;
 import org.engineer.work.dto.GroupDTO;
 import org.engineer.work.dto.UserDTO;
 import org.engineer.work.integration.abstractlayer.AbstractIntegrationTest;
-import org.engineer.work.model.GroupEntity;
-import org.engineer.work.model.bounding.UserGroups;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -19,6 +19,8 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class GroupIntegrationTest extends AbstractIntegrationTest {
+
+    private final String OTHER_TEST_USER = "Other_test_user";
 
     private UserDTO userDTO;
     private GroupDTO groupDTO;
@@ -29,60 +31,41 @@ public class GroupIntegrationTest extends AbstractIntegrationTest {
         groupDTO = getCompleteGroupDTO(MOCK_GROUP_NAME);
     }
 
+    @After
+    public void cleanUp() {
+        getUserFacade().deleteUser(MOCK_USERNAME);
+        getUserFacade().deleteUser(OTHER_TEST_USER);
+    }
+
     @Test
-    public void shouldCreateGroupAndAssignUserToIt() {
+    public void checkGroupMechanism() {
         getUserFacade().createUser(userDTO);
         getGroupFacade().createGroup(groupDTO);
 
-        assertTrue(getUserFacade().getUserByUsername(MOCK_USERNAME) != null);
-        assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME) != null);
-        assertTrue(getUserGroupsService().getUserGroupsByUsername(MOCK_USERNAME).getUsername().equals(userDTO.getUsername()));
-        assertTrue(getUserGroupsService().getUserGroupsByUsername(MOCK_USERNAME).getGroups().get(0).equals(groupDTO.getName()));
+        assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME).getName().equals(MOCK_GROUP_NAME));
+        assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME).getGroupOwner().equals(MOCK_USERNAME));
+        assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME).getDescription().equals(MOCK_GROUP_DESCRIPTION));
+
+        assertTrue(getGroupFacade().getUserGroups(MOCK_USERNAME).get(0).getName().equals(groupDTO.getName()));
+        assertTrue(getGroupFacade().getUserGroups(MOCK_USERNAME).get(0).getGroupOwner().equals(groupDTO.getGroupOwner()));
+        assertTrue(getGroupFacade().getUserGroups(MOCK_USERNAME).get(0).getDescription().equals(groupDTO.getDescription()));
+
+        final UserDTO otherUser = getCompleteUserDTO(OTHER_TEST_USER);
+        getUserFacade().createUser(otherUser);
+
+        getGroupFacade().updatePendingUsers(OTHER_TEST_USER, MOCK_GROUP_NAME, true);
+        assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME).getPendingUsers().contains(OTHER_TEST_USER));
+
+        getGroupFacade().updateGroupMembers(OTHER_TEST_USER, MOCK_GROUP_NAME, true);
+        assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME).getMembers().contains(OTHER_TEST_USER));
+
+        getGroupFacade().updateGroupMembers(OTHER_TEST_USER, MOCK_GROUP_NAME, false);
+        assertFalse(getGroupFacade().getGroupByName(MOCK_GROUP_NAME).getMembers().contains(OTHER_TEST_USER));
+
+        assertTrue(getGroupFacade().getAllGroups().stream().map(g -> g.getName().equals(groupDTO.getName())).findFirst() != null);
 
         getGroupFacade().deleteGroup(MOCK_GROUP_NAME);
-        getUserFacade().deleteUser(MOCK_USERNAME);
 
-        assertTrue(getGroupService().getGroupByName(MOCK_GROUP_NAME) == null);
-        assertTrue(getUserService().getUserByUsername(MOCK_USERNAME) == null);
-        assertTrue(getUserGroupsService().getUserGroupsByUsername(MOCK_USERNAME) == null);
-    }
-
-    @Test
-    public void shouldAssignUserToPendingGroup() {
-        getUserFacade().createUser(userDTO);
-        getGroupService().createGroup(groupDTO);
-
-        final GroupEntity group = getGroupService().getGroupByName(MOCK_GROUP_NAME);
-        group.getMembers().remove(0);
-        getGroupService().updateGroup(group);
-
-        final UserGroups userGroups = getUserGroupsService().getUserGroupsByUsername(MOCK_USERNAME);
-        userGroups.getGroups().remove(0);
-        getUserGroupsService().updateUserGroups(userGroups);
-
-        assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME).getMembers().isEmpty());
-        assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME).getPendingUsers().isEmpty());
-
-        getGroupFacade().updatePendingUsers(MOCK_USERNAME, MOCK_GROUP_NAME, true);
-
-        assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME).getMembers().isEmpty());
-        assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME).getPendingUsers().get(0).equals(MOCK_USERNAME));
-
-        getGroupFacade().updatePendingUsers(MOCK_USERNAME, MOCK_GROUP_NAME, false);
-
-        assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME).getMembers().isEmpty());
-        assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME).getPendingUsers().isEmpty());
-
-        getGroupFacade().deleteGroup(MOCK_GROUP_NAME);
-        getUserFacade().deleteUser(MOCK_USERNAME);
-
-        assertTrue(getUserFacade().getUserByUsername(MOCK_USERNAME) == null);
         assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME) == null);
-        assertTrue(getUserGroupsService().getUserGroupsByUsername(MOCK_USERNAME) == null);
     }
-
-//    @Test
-//    public void shouldAddUserToGroupIfUserIsPending() {
-//
-//    }
 }

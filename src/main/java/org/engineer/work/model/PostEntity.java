@@ -43,7 +43,7 @@ public class PostEntity {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<String> dislikes = new ArrayList<>();
 
-    public PostEntity(final PostDTO postDTO) throws IllegalArgumentException {
+    public PostEntity(final PostDTO postDTO) {
         this.setAuthor(postDTO.getAuthor());
         this.setPostGroup(postDTO.getPostGroup());
         this.setPostContent(postDTO.getPostContent());

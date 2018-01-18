@@ -6,10 +6,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import org.springframework.web.multipart.MultipartFile;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -44,20 +43,26 @@ public class UserIntegrationTest extends AbstractIntegrationTest {
 	}
 
 	@Test
-	public void checkFileStorageDirectory() {
+	public void checkFileStorageMechanism() {
+		final String fileName = "textFile.txt";
+		
 		getUserFacade().createUser(userDTO);
-		final String userRootFilePath = getPropertiesService().getProperty(MOCK_FILES_LOCATION) + MOCK_USERNAME + "/";
 
-		assertTrue(Files.exists(Paths.get(userRootFilePath)));
+		final MultipartFile testFile = new MockMultipartFile(fileName, fileName, "", new byte[] {'a', 'b', 'c'});
 
-		final String sharedFolder = userRootFilePath + "shared";
-		final String notSharedFolder = userRootFilePath + "not_shared";
+		getStorageFacade().storeFile(testFile, MOCK_USERNAME);
+		assertTrue(getStorageFacade().getUserPrivateFiles(MOCK_USERNAME).contains(fileName));
 
-		assertTrue(Files.exists(Paths.get(sharedFolder)));
-		assertTrue(Files.exists(Paths.get(notSharedFolder)));
+		getStorageFacade().makeFilePublic(MOCK_USERNAME, fileName);
+		assertTrue(getStorageFacade().getUserSharedFiles(MOCK_USERNAME).contains(fileName));
+		assertTrue(getStorageFacade().getFile(MOCK_USERNAME, fileName).getFilename().equals(fileName));
+
+		getStorageFacade().makeFilePrivate(MOCK_USERNAME, fileName);
+		assertTrue(getStorageFacade().getUserPrivateFiles(MOCK_USERNAME).contains(fileName));
+
+		getStorageFacade().deleteFile(MOCK_USERNAME, fileName);
+		assertFalse(getStorageFacade().getUserPrivateFiles(MOCK_USERNAME).contains(fileName));
 
 		getUserFacade().deleteUser(MOCK_USERNAME);
-
-		assertFalse(Files.exists(Paths.get(userRootFilePath)));
 	}
 }

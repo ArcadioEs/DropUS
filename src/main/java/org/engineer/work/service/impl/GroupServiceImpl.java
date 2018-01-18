@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -176,29 +177,30 @@ public class GroupServiceImpl implements GroupService {
     public boolean deleteGroup(final String name) {
         boolean result = false;
         if (name != null && groupRepository.exists(name)) {
-
-            final List<String> groupMembers = this.getGroupByName(name).getMembers();
-            if (groupMembers != null) {
-                for (final String member : groupMembers) {
-                    final UserGroups user = userGroupsService.getUserGroupsByUsername(member);
-                    if (user != null) {
-                        user.getGroups().removeIf(group -> name.equals(group));
-                        userGroupsService.updateUserGroups(user);
-                    }
-                }
-            }
-
-            final List<PostEntity> postsToDelete = this.getGroupByName(name).getPosts();
+            this.deleteGroupMembers(name, this.getGroupByName(name).getMembers());
+            this.deleteGroupPosts(this.getGroupByName(name).getPosts());
             groupRepository.delete(name);
-
-            for (final PostEntity post : postsToDelete) {
-                postService.deletePost(post.getId());
-            }
             result = true;
         } else {
             LOG.warn("Group {} could not be deleted", name);
         }
         return result;
+    }
+
+    private void deleteGroupMembers(@NotNull final String groupName, @NotNull final List<String> groupMembers) {
+        for (final String member : groupMembers) {
+            final UserGroups user = userGroupsService.getUserGroupsByUsername(member);
+            if (user != null) {
+                user.getGroups().removeIf(group -> groupName.equals(group));
+                userGroupsService.updateUserGroups(user);
+            }
+        }
+    }
+
+    private void deleteGroupPosts(@NotNull final List<PostEntity> postsToDelete) {
+        for (final PostEntity post : postsToDelete) {
+            postService.deletePost(post.getId());
+        }
     }
 
     /**

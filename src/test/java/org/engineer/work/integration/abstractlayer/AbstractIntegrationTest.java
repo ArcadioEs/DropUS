@@ -2,6 +2,7 @@ package org.engineer.work.integration.abstractlayer;
 
 import org.engineer.work.abstractlayer.AbstractTest;
 import org.engineer.work.facade.GroupFacade;
+import org.engineer.work.facade.StorageFacade;
 import org.engineer.work.facade.UserFacade;
 import org.engineer.work.service.GroupService;
 import org.engineer.work.service.PostService;
@@ -21,6 +22,8 @@ public abstract class AbstractIntegrationTest extends AbstractTest {
 	private GroupService groupService;
 	@Resource
 	private GroupFacade groupFacade;
+	@Resource
+	private StorageFacade storageFacade;
 	@Resource
 	private UserGroupsService userGroupsService;
 	@Resource
@@ -42,6 +45,10 @@ public abstract class AbstractIntegrationTest extends AbstractTest {
 
 	protected GroupFacade getGroupFacade() {
 		return groupFacade;
+	}
+
+	public StorageFacade getStorageFacade() {
+		return storageFacade;
 	}
 
 	protected UserGroupsService getUserGroupsService() {
