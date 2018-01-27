@@ -20,21 +20,21 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class GroupIntegrationTest extends AbstractIntegrationTest {
 
-    private final String OTHER_TEST_USER = "Other_test_user";
-
     private UserDTO userDTO;
+	private UserDTO otherUserDTO;
     private GroupDTO groupDTO;
 
     @Before
     public void setUp() {
         userDTO = getCompleteUserDTO(MOCK_USERNAME);
+	    otherUserDTO = getCompleteUserDTO(OTHER_TEST_USER);
         groupDTO = getCompleteGroupDTO(MOCK_GROUP_NAME);
     }
 
     @After
     public void cleanUp() {
-        getUserFacade().deleteUser(MOCK_USERNAME);
-        getUserFacade().deleteUser(OTHER_TEST_USER);
+	    getUserFacade().deleteUser(userDTO.getUsername());
+	    getUserFacade().deleteUser(otherUserDTO.getUsername());
     }
 
     @Test
@@ -42,30 +42,47 @@ public class GroupIntegrationTest extends AbstractIntegrationTest {
         getUserFacade().createUser(userDTO);
         getGroupFacade().createGroup(groupDTO);
 
-        assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME).getName().equals(MOCK_GROUP_NAME));
-        assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME).getGroupOwner().equals(MOCK_USERNAME));
-        assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME).getDescription().equals(MOCK_GROUP_DESCRIPTION));
+        /**
+         * Checking basic information of created group
+         */
+        assertTrue(getGroupFacade().getGroupByName(groupDTO.getName()).getName().equals(groupDTO.getName()));
+        assertTrue(getGroupFacade().getGroupByName(groupDTO.getName()).getGroupOwner().equals(userDTO.getUsername()));
+        assertTrue(getGroupFacade().getGroupByName(groupDTO.getName()).getDescription().equals(MOCK_GROUP_DESCRIPTION));
 
-        assertTrue(getGroupFacade().getUserGroups(MOCK_USERNAME).get(0).getName().equals(groupDTO.getName()));
-        assertTrue(getGroupFacade().getUserGroups(MOCK_USERNAME).get(0).getGroupOwner().equals(groupDTO.getGroupOwner()));
-        assertTrue(getGroupFacade().getUserGroups(MOCK_USERNAME).get(0).getDescription().equals(groupDTO.getDescription()));
+        /**
+         * Checking basic information of created usergroups
+         */
+        assertTrue(getGroupFacade().getUserGroups(userDTO.getUsername()).get(0).getName().equals(groupDTO.getName()));
+        assertTrue(getGroupFacade().getUserGroups(userDTO.getUsername()).get(0).getGroupOwner().equals(groupDTO.getGroupOwner()));
+        assertTrue(getGroupFacade().getUserGroups(userDTO.getUsername()).get(0).getDescription().equals(groupDTO.getDescription()));
+        
+        getUserFacade().createUser(otherUserDTO);
 
-        final UserDTO otherUser = getCompleteUserDTO(OTHER_TEST_USER);
-        getUserFacade().createUser(otherUser);
+        /**
+         * Adding user to pending group
+         */
+        getGroupFacade().updatePendingUsers(otherUserDTO.getUsername(), groupDTO.getName(), true);
+        assertTrue(getGroupFacade().getGroupByName(groupDTO.getName()).getPendingUsers().contains(otherUserDTO.getUsername()));
 
-        getGroupFacade().updatePendingUsers(OTHER_TEST_USER, MOCK_GROUP_NAME, true);
-        assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME).getPendingUsers().contains(OTHER_TEST_USER));
+        /**
+         * Accepting user to group
+         */
+        getGroupFacade().updateGroupMembers(otherUserDTO.getUsername(), groupDTO.getName(), true);
+        assertTrue(getGroupFacade().getGroupByName(groupDTO.getName()).getMembers().contains(otherUserDTO.getUsername()));
 
-        getGroupFacade().updateGroupMembers(OTHER_TEST_USER, MOCK_GROUP_NAME, true);
-        assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME).getMembers().contains(OTHER_TEST_USER));
-
-        getGroupFacade().updateGroupMembers(OTHER_TEST_USER, MOCK_GROUP_NAME, false);
-        assertFalse(getGroupFacade().getGroupByName(MOCK_GROUP_NAME).getMembers().contains(OTHER_TEST_USER));
+        /**
+         * Removing user from group
+         */
+        getGroupFacade().updateGroupMembers(otherUserDTO.getUsername(), groupDTO.getName(), false);
+        assertFalse(getGroupFacade().getGroupByName(groupDTO.getName()).getMembers().contains(otherUserDTO.getUsername()));
 
         assertTrue(getGroupFacade().getAllGroups().stream().map(g -> g.getName().equals(groupDTO.getName())).findFirst() != null);
 
-        getGroupFacade().deleteGroup(MOCK_GROUP_NAME);
+        /**
+         * Deleting group
+         */
+        getGroupFacade().deleteGroup(groupDTO.getName());
 
-        assertTrue(getGroupFacade().getGroupByName(MOCK_GROUP_NAME) == null);
+        assertTrue(getGroupFacade().getGroupByName(groupDTO.getName()) == null);
     }
 }

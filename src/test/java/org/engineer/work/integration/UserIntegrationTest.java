@@ -31,15 +31,21 @@ public class UserIntegrationTest extends AbstractIntegrationTest {
 	public void createAndDeleteUser() {
 		getUserFacade().createUser(userDTO);
 
-		final UserDTO user = getUserFacade().getUserByUsername(MOCK_USERNAME);
+		final UserDTO user = getUserFacade().getUserByUsername(userDTO.getUsername());
 
-		assertTrue(getUserFacade().userExists(MOCK_USERNAME));
-		assertTrue(user.getUsername().equals(MOCK_USERNAME));
+		/**
+		 * Checking basic information after creating user
+		 */
+		assertTrue(getUserFacade().userExists(userDTO.getUsername()));
+		assertTrue(user.getUsername().equals(userDTO.getUsername()));
 		assertTrue(user.getEnabled() == (byte) 0);
 
-		getUserFacade().deleteUser(MOCK_USERNAME);
+		/**
+		 * Checking whether deleting user works
+		 */
+		getUserFacade().deleteUser(userDTO.getUsername());
 
-		assertFalse(getUserFacade().userExists(MOCK_USERNAME));
+		assertFalse(getUserFacade().userExists(userDTO.getUsername()));
 	}
 
 	@Test
@@ -50,19 +56,31 @@ public class UserIntegrationTest extends AbstractIntegrationTest {
 
 		final MultipartFile testFile = new MockMultipartFile(fileName, fileName, "", new byte[] {'a', 'b', 'c'});
 
-		getStorageFacade().storeFile(testFile, MOCK_USERNAME);
-		assertTrue(getStorageFacade().getUserPrivateFiles(MOCK_USERNAME).contains(fileName));
+		/**
+		 * Storing file
+		 */
+		getStorageFacade().storeFile(testFile, userDTO.getUsername());
+		assertTrue(getStorageFacade().getUserPrivateFiles(userDTO.getUsername()).contains(fileName));
 
-		getStorageFacade().makeFilePublic(MOCK_USERNAME, fileName);
-		assertTrue(getStorageFacade().getUserSharedFiles(MOCK_USERNAME).contains(fileName));
-		assertTrue(getStorageFacade().getFile(MOCK_USERNAME, fileName).getFilename().equals(fileName));
+		/**
+		 * Making file public
+		 */
+		getStorageFacade().makeFilePublic(userDTO.getUsername(), fileName);
+		assertTrue(getStorageFacade().getUserSharedFiles(userDTO.getUsername()).contains(fileName));
+		assertTrue(getStorageFacade().getFile(userDTO.getUsername(), fileName).getFilename().equals(fileName));
 
-		getStorageFacade().makeFilePrivate(MOCK_USERNAME, fileName);
-		assertTrue(getStorageFacade().getUserPrivateFiles(MOCK_USERNAME).contains(fileName));
+		/**
+		 * Making file private again (after storing its private by default)
+		 */
+		getStorageFacade().makeFilePrivate(userDTO.getUsername(), fileName);
+		assertTrue(getStorageFacade().getUserPrivateFiles(userDTO.getUsername()).contains(fileName));
 
-		getStorageFacade().deleteFile(MOCK_USERNAME, fileName);
-		assertFalse(getStorageFacade().getUserPrivateFiles(MOCK_USERNAME).contains(fileName));
+		/**
+		 * Deleting file
+		 */
+		getStorageFacade().deleteFile(userDTO.getUsername(), fileName);
+		assertFalse(getStorageFacade().getUserPrivateFiles(userDTO.getUsername()).contains(fileName));
 
-		getUserFacade().deleteUser(MOCK_USERNAME);
+		getUserFacade().deleteUser(userDTO.getUsername());
 	}
 }

@@ -177,9 +177,12 @@ public class GroupServiceImpl implements GroupService {
     public boolean deleteGroup(final String name) {
         boolean result = false;
         if (name != null && groupRepository.exists(name)) {
+            final List<PostEntity> postsToDelete = this.getGroupByName(name).getPosts();
+
             this.deleteGroupMembers(name, this.getGroupByName(name).getMembers());
-            this.deleteGroupPosts(this.getGroupByName(name).getPosts());
             groupRepository.delete(name);
+
+            this.deleteGroupPosts(postsToDelete);
             result = true;
         } else {
             LOG.warn("Group {} could not be deleted", name);
