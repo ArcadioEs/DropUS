@@ -55,9 +55,6 @@ public class PostIntegrationTest extends AbstractIntegrationTest {
 		assertTrue(postDTO.getAuthor().equals(this.postDTO.getAuthor()));
 		assertTrue(postDTO.getPostGroup().equals(this.postDTO.getPostGroup()));
 		assertTrue(postDTO.getPostContent().equals(this.postDTO.getPostContent()));
-		// I don't know why, but the difference is always one millisecond, although it should be exactly the same.
-		// I do not have time to dive into investigation.
-		assertTrue(postDTO.getDate().compareTo(this.postDTO.getDate()) == -1);
 
 		/**
 		 * Checking likes/dislikes functionality
